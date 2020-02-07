@@ -48,12 +48,16 @@ sql_from_clause <- function(from, con, table_name, cols = NULL) {
 }
 
 sql_returning <- function(sql, returning, con) {
+  # TODO column name is currently ambigous --> prefix with "target"?
   if (is.null(returning)) {
     sql
   } else {
     returning_clause <- purrr::map2(
       returning, names2(returning),
       ~ {
+        if (!is_sql(.x)) {
+          .x <- glue_sql("target.{`.x`}", .con = con)
+        }
         if (.y != "") {
           glue_sql("{`.x`} AS {`.y`}", .con = con)
         } else {
