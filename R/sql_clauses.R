@@ -29,13 +29,11 @@ sql_from_clause <- function(from, con) {
 }
 
 sql_returning <- function(sql, returning, con) {
-  # TODO returned sql should have parameter returning (TRUE/FALSE)
-  # so that subsequent execution function knows whether to use get or execute
   if (is.null(returning)) {
     sql
   } else {
-    returning_clause <- purrr::imap(
-      returning,
+    returning_clause <- purrr::map2(
+      returning, names2(returning),
       ~ {
         if (.y != "") {
           glue_sql("{`.x`} AS {`.y`}", .con = con)
@@ -51,8 +49,8 @@ sql_returning <- function(sql, returning, con) {
 }
 
 sql_clause_generator <- function(x, expr_sql, expr_chr, collapse) {
-  r <- purrr::imap(
-    x,
+  r <- purrr::map2(
+    x, names2(x),
     ~ {
       if (is_sql(.x)) {
         eval_tidy(enexpr(expr_sql))
