@@ -1,5 +1,5 @@
 test_sql_insert_missing <- function(from = "my_value_table",
-                                    insert_cols = c("ins 1", "ins 2"),
+                                    insert_cols = c("Sepal.Length", "Species"),
                                     conflict_target = NULL,
                                     returning = NULL) {
   sql_insert_missing(
@@ -41,6 +41,11 @@ test_that("from dataframe works", {
   expect_known_value(
     test_sql_insert_missing(from = df),
     ref_file("from_dataframe")
+  )
+
+  expect_known_value(
+    test_sql_insert_missing(from = df[0, ]),
+    ref_file("from_empty_dataframe")
   )
 })
 
