@@ -3,7 +3,7 @@
 #' @export
 #' @examples
 #' sql_values(mtcars[1:3, ], con)
-sql_values <- function(data, con) {
+sql_values <- function(data, con, table_name) {
   if (nrow(data) == 0) {
     # very hacky...
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
@@ -14,7 +14,7 @@ sql_values <- function(data, con) {
       "ARRAY[]::text[]"
     ) %>%
       collapse_sql(", ")
-    inner <- glue_sql("unnest({escaped_data}) AS V({`colnames(data)`*})", .con = con)
+    inner <- glue_sql("unnest({escaped_data}) AS {`table_name`} ({`colnames(data)`*})", .con = con)
     glue_sql("(SELECT * FROM {inner})", .con = con)
   } else {
     escaped_data <- sqlData(con, data)
@@ -25,23 +25,23 @@ sql_values <- function(data, con) {
     ) %>%
       collapse_sql(",\n")
 
-    glue_sql("(VALUES {vals}) AS t ({`colnames(data)`*})", .con = con)
+    glue_sql("(VALUES {vals}) AS {`table_name`} ({`colnames(data)`*})", .con = con)
   }
 }
 
 
-sql_from_clause <- function(from, con, cols = NULL) {
+sql_from_clause <- function(from, con, table_name, cols = NULL) {
   if (is.character(from)) {
     if (length(from) != 1) {
       abort("from must be a table name or a dataframe.")
     }
 
-    DBI::dbQuoteIdentifier(con, from)
+    glue_sql("{`from`} AS {`table_name`}", .con = con)
   } else if (is.data.frame(from)) {
     if (!is_null(cols)) {
       from <- as.data.frame(from)[, cols, drop = FALSE]
     }
-    sql_values(from, con)
+    sql_values(from, con, table_name)
   } else {
     abort("type not supported")
   }

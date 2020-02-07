@@ -63,13 +63,13 @@ sql_conflict_insert <- function(from,
     abort("must specify insert_cols when from is not a dataframe!")
   }
 
-  from <- sql_from_clause(from, con, cols = insert_cols)
+  from <- sql_from_clause(from, con, table_name = "source", cols = insert_cols)
   conflict_clause <- to_sql(conflict, con)
 
   glue_sql("
     INSERT INTO {`table`} ({`insert_cols`*})
     SELECT {`insert_cols`*}
-      FROM {`from`} AS source
+      FROM {`from`}
         ON CONFLICT {conflict_clause}",
     .con = con
   ) %>%

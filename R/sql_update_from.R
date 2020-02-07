@@ -23,7 +23,7 @@ sql_update <- function(from,
                        update,
                        where,
                        returning = NULL) {
-  from <- sql_from_clause(from, con)
+  from <- sql_from_clause(from, con, table_name = "source")
 
   # create update clause
   # character may be named, sql must be named
@@ -60,11 +60,10 @@ sql_update <- function(from,
     abort("every element of returning must be a bare character or named bare SQL")
   }
 
-
   glue_sql("
     UPDATE {`table`} AS target
        SET {update_clause}
-      FROM {`from`} AS source
+      FROM {`from`}
      WHERE {where_clause}
      ", .con = con
   ) %>%

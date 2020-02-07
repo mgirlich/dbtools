@@ -14,7 +14,7 @@ sql_delete <- function(from,
                        con,
                        where,
                        returning = NULL) {
-  from <- sql_from_clause(from, con)
+  from <- sql_from_clause(from, con, table_name = "source")
 
   # create where clause
   # character may be named, sql must not be named
@@ -40,7 +40,7 @@ sql_delete <- function(from,
 
   glue_sql("
     DELETE FROM {`table`} AS target
-     USING {`from`} AS source
+     USING {`from`}
      WHERE {where_clause}
      ", .con = con
   ) %>%
