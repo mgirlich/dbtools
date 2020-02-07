@@ -9,3 +9,6 @@ sql_values(data, con)
 \description{
 SQL VALUES clause
 }
+\examples{
+sql_values(mtcars[1:3, ], con)
+}

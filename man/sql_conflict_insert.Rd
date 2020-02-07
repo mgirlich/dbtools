@@ -5,9 +5,9 @@
 \title{SQL query to insert missing records}
 \usage{
 sql_conflict_insert(
+  from,
   table,
   con,
-  from,
   conflict,
   insert_cols = NULL,
   returning = NULL

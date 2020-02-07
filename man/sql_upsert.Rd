@@ -5,9 +5,9 @@
 \title{SQL for inserting missing values}
 \usage{
 sql_upsert(
+  from,
   table,
   con,
-  from,
   insert_cols,
   updates,
   conflict_target,

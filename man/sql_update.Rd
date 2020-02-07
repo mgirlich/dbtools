@@ -4,15 +4,15 @@
 \alias{sql_update}
 \title{SQL query to update records}
 \usage{
-sql_update(table, con, from, update, where, returning = NULL)
+sql_update(from, table, con, update, where, returning = NULL)
 }
 \arguments{
+\item{from}{Either the name of a database table (a scalar character) or
+a dataframe to use for updating.}
+
 \item{table}{Name of the table to update.}
 
 \item{con}{A DBIConnection object.}
-
-\item{from}{Either the name of a database table (a scalar character) or
-a dataframe to use for updating.}
 
 \item{update}{Specifies which columns to update how.}
 

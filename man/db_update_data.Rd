@@ -4,11 +4,20 @@
 \alias{db_update_data}
 \title{Update a database table}
 \usage{
-db_update_data()
+db_update_data(
+  data,
+  table,
+  con,
+  update,
+  where,
+  returning = NULL,
+  trans = TRUE,
+  batch_size = 50000
+)
 }
 \value{
 If \code{returning} is \code{NULL} the number of rows updated; Otherwise a
-tibble of the updated rows and the columns as specified in \code{returning}.
+tibble of the updated rows and the columns as specified in \code{returning}..
 }
 \description{
 Update a database table

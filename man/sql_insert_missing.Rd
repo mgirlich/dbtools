@@ -5,9 +5,9 @@
 \title{SQL for inserting missing values}
 \usage{
 sql_insert_missing(
+  from,
   table,
   con,
-  from,
   insert_cols,
   conflict_target = NULL,
   returning = NULL
