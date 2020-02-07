@@ -21,7 +21,8 @@ to_sql.dbtools_conflict_do_update <- function(x, con) {
     auto_name(x),
     expr_sql = glue_sql("{`.y`} = {`.x`}", .con = con),
     expr_chr = glue_sql("{`.y`} = EXCLUDED.{`.x`}", .con = con),
-    collapse = ",\n"
+    collapse = ",\n",
+    con = con
   )
 
   glue_sql("DO UPDATE SET {update_clause}", .con = con)

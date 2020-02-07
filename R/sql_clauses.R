@@ -67,15 +67,16 @@ sql_returning <- function(sql, returning, con) {
   }
 }
 
-sql_clause_generator <- function(x, expr_sql, expr_chr, collapse) {
+sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, con = con) {
   r <- purrr::map2(
     x, names2(x),
     ~ {
       if (is_sql(.x)) {
-        eval_tidy(enexpr(expr_sql))
+        e <- enexpr(expr_sql)
       } else {
-        eval_tidy(enexpr(expr_chr))
+        e <- enexpr(expr_chr)
       }
+      eval_tidy(e, data = list(con = con))
     }
   )
 

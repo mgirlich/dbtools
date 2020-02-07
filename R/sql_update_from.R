@@ -35,7 +35,8 @@ sql_update <- function(from,
     auto_name(update),
     expr_sql = glue_sql("{`.y`} = {`.x`}", .con = con),
     expr_chr = glue_sql("{`.y`} = source.{`.x`}", .con = con),
-    collapse = ",\n"
+    collapse = ",\n",
+    con = con
   )
 
   # create where clause
@@ -48,7 +49,8 @@ sql_update <- function(from,
     auto_name(where),
     expr_sql = .x,
     expr_chr = glue_sql("target.{`.y`} = source.{`.x`}", .con = con),
-    collapse = " AND "
+    collapse = " AND ",
+    con = con
   )
 
   # create returning clause

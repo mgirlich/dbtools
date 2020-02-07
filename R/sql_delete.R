@@ -26,7 +26,8 @@ sql_delete <- function(from,
     auto_name(where),
     expr_sql = .x,
     expr_chr = glue_sql("target.{`.y`} = source.{`.x`}", .con = con),
-    collapse = " AND "
+    collapse = " AND ",
+    con = con
   )
 
   # create returning clause
