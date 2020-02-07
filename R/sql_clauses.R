@@ -15,13 +15,16 @@ sql_values <- function(data, con) {
 }
 
 
-sql_from_clause <- function(from, con) {
+sql_from_clause <- function(from, con, cols = NULL) {
   if (is.character(from)) {
     if (length(from) != 1) {
       abort("from must be a table name or a dataframe.")
     }
     DBI::dbQuoteIdentifier(con, from)
   } else if (is.data.frame(from)) {
+    if (!is_null(cols)) {
+      from <- as.data.frame(from)[, cols, drop = FALSE]
+    }
     sql_values(from, con)
   } else {
     abort("type not supported")
