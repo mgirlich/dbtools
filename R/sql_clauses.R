@@ -36,10 +36,6 @@ sql_from_clause <- function(from, con, cols = NULL) {
       abort("from must be a table name or a dataframe.")
     }
 
-    if (!is_null(cols)) {
-      abort("cols must be NULL for a table name")
-    }
-
     DBI::dbQuoteIdentifier(con, from)
   } else if (is.data.frame(from)) {
     if (!is_null(cols)) {
