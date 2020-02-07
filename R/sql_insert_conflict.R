@@ -53,9 +53,9 @@ sql_do_update <- function(conflict_target, updates) {
 #'   insert_cols = c("insert 1", "insert 2"),
 #'   returning = list(`ret 1` = "ret_col", sql("now()"))
 #' )
-sql_conflict_insert <- function(table,
+sql_conflict_insert <- function(from,
+                                table,
                                 con,
-                                from,
                                 conflict,
                                 insert_cols = NULL,
                                 returning = NULL) {
@@ -80,9 +80,9 @@ sql_conflict_insert <- function(table,
 #' SQL for inserting missing values
 #'
 #' @export
-sql_insert_missing <- function(table,
+sql_insert_missing <- function(from,
+                               table,
                                con,
-                               from,
                                insert_cols,
                                conflict_target = NULL,
                                returning = NULL) {
@@ -103,9 +103,9 @@ sql_insert_missing <- function(table,
 #' unique constraint.
 #'
 #' @export
-sql_upsert <- function(table,
+sql_upsert <- function(from,
+                       table,
                        con,
-                       from,
                        insert_cols,
                        updates,
                        conflict_target,

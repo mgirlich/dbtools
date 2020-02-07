@@ -1,3 +1,5 @@
+#' SQL query to delete records
+#'
 #' @export
 #' @examples
 #' sql_delete(
@@ -7,7 +9,11 @@
 #'   where = list("where 1", sql("my_tbl.id > 1")),
 #'   returning = list(`ret 1` = "ret_col", sql("now()"))
 #' )
-sql_delete <- function(table, con, from, where, returning = NULL) {
+sql_delete <- function(from,
+                       table,
+                       con,
+                       where,
+                       returning = NULL) {
   from <- sql_from_clause(from, con)
 
   # create where clause

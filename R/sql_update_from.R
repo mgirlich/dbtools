@@ -17,9 +17,9 @@
 #'
 #' @return An SQL query.
 #' @export
-sql_update <- function(table,
+sql_update <- function(from,
+                       table,
                        con,
-                       from,
                        update,
                        where,
                        returning = NULL) {
