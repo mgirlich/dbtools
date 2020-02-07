@@ -1,3 +1,6 @@
+#' SQL VALUES clause
+#'
+#' @export
 #' sql_values(mtcars[1:3, ], con)
 sql_values <- function(data, con) {
   escaped_data <- sqlData(con, data)
