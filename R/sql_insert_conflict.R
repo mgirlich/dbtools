@@ -63,6 +63,14 @@ sql_conflict_insert <- function(from,
     abort("must specify insert_cols when from is not a dataframe!")
   }
 
+  if (is_null(insert_cols)) {
+    if (is.data.frame(from)) {
+      insert_cols <- colnames(from)
+    } else {
+      abort("must provide insert_cols when table is a database table.")
+    }
+  }
+
   from <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)
   conflict_clause <- to_sql(conflict, con)
 
@@ -83,9 +91,13 @@ sql_conflict_insert <- function(from,
 sql_insert_missing <- function(from,
                                table,
                                con,
-                               insert_cols,
                                conflict_target = NULL,
+                               insert_cols = NULL,
                                returning = NULL) {
+  # NOTE only rows that were succesfully inserted or updated are returned
+  # see https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
+  # --> might want to use this to return all rows
+
   sql_conflict_insert(
     table = table,
     con = con,
@@ -106,9 +118,9 @@ sql_insert_missing <- function(from,
 sql_upsert <- function(from,
                        table,
                        con,
-                       insert_cols,
                        updates,
                        conflict_target,
+                       insert_cols = NULL,
                        returning = NULL) {
   sql_conflict_insert(
     table = table,
