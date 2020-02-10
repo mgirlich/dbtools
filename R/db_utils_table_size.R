@@ -2,7 +2,7 @@
 #'
 #' @export
 db_utils_table_size <- function(con) {
-  tmp <- DBI::dbGetQuery(
+  df <- DBI::dbGetQuery(
     con,
     "SELECT
        t.tablename,
@@ -16,28 +16,31 @@ ORDER BY 3 Desc;"
   ) %>%
     tibble::as_tibble()
 
-  if (is_installed("fs")) {
-    tmp$size_total <- 1024 * fs::fs_bytes(tmp$size_total)
-    tmp$size_table <- 1024 * fs::fs_bytes(tmp$size_table)
-    tmp$size_external <- tmp$size_total - tmp$size_table
-  }
+  df <- convert_cols_to_fs_bytes(df, c("size_total", "size_table"))
+  df$size_external <- df$size_total - df$size_table
 
-  tmp[, c("tablename", "size_total", "size_table", "size_external", "num_rows")]
+  df[, c("tablename", "size_total", "size_table", "size_external", "num_rows")]
 }
 
 #' Get database index infos
 #'
 #' @export
-db_utils_index_infos <- function(con) {
-  tmp <- DBI::dbGetQuery(
+db_utils_index_infos <- function(con, table = NULL) {
+  if (!is_null(table)) {
+    table_filter <- glue_sql("AND t.tablename = {table}", .con = con)
+  } else {
+    table_filter <- SQL('')
+  }
+
+  df <- DBI::dbGetQuery(
     con,
-    "SELECT
+    glue_sql("SELECT
     t.schemaname,
     t.tablename,
     indexname,
     c.reltuples AS num_rows,
-    pg_size_pretty(pg_relation_size(quote_ident(t.schemaname)::text || '.' || quote_ident(t.tablename)::text)) AS table_size,
-    pg_size_pretty(pg_relation_size(quote_ident(t.schemaname)::text || '.' || quote_ident(indexrelname)::text)) AS index_size,
+    pg_relation_size(quote_ident(t.schemaname)::text || '.' || quote_ident(t.tablename)::text) / 1024 AS size_table,
+    pg_relation_size(quote_ident(t.schemaname)::text || '.' || quote_ident(indexrelname)::text) / 1024 AS size_index,
     CASE WHEN indisunique THEN 'Y'
         ELSE 'N'
     END AS UNIQUE,
@@ -63,13 +66,12 @@ LEFT OUTER JOIN (
     JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid
 ) AS foo ON t.tablename = foo.ctablename AND t.schemaname = foo.schemaname
 WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')
-ORDER BY 1,2;"
+    {table_filter}
+ORDER BY 1,2;", .con = con)
   ) %>%
     tibble::as_tibble()
 
-  tmp$size <- fs::as_fs_bytes(tmp$size)
-  tmp$external_size <- fs::as_fs_bytes(tmp$external_size)
-  tmp
+  convert_cols_to_fs_bytes(df, c("size_index", "size_table"))
 }
 
 #' Get running queries
@@ -94,4 +96,12 @@ db_utils_running_queries <- function(con) {
     ORDER BY query_start;"
   ) %>%
     tibble::as_tibble()
+}
+
+
+convert_cols_to_fs_bytes <- function(df, cols) {
+  if (is_installed("fs")) {
+    df[, cols] <- lapply(df[, cols], function(col) 1024 * fs::as_fs_bytes(col))
+  }
+  df
 }
