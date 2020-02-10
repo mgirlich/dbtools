@@ -30,7 +30,7 @@ sql_values <- function(data, con, table_name) {
 }
 
 
-sql_from_clause <- function(from, con, table_name, cols = NULL) {
+sql_clause_from <- function(from, con, table_name, cols = NULL) {
   if (is.character(from)) {
     if (length(from) != 1) {
       abort("from must be a table name or a dataframe.")

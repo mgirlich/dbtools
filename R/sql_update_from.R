@@ -23,7 +23,7 @@ sql_update <- function(from,
                        update,
                        where,
                        returning = NULL) {
-  from <- sql_from_clause(from, con, table_name = "source")
+  from <- sql_clause_from(from, con, table_name = "source")
 
   # create update clause
   # character may be named, sql must be named
