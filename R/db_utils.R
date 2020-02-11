@@ -32,19 +32,17 @@ batch_wise_db <- function(data,
 batch_wise <- function(data, batch_size, .f) {
   .f <- rlang::as_function(.f)
 
-  if (is_null(batch_size)) {
-    .f(data)
+  if (is_null(batch_size) || vec_size(data) == 0) {
+    # wrap in list so that it has the same behaviour as if batched
+    list(.f(data))
   } else {
     row_count <- nrow(data)
     batch_count <- ceiling(row_count / batch_size)
-    ret <- list()
+    ret <- vector("list", batch_count)
     for (i in 1:batch_count) {
       start <- ((i - 1) * batch_size) + 1
-      end <- start + batch_size - 1
-      if (end > row_count) {
-        end <- row_count
-      }
-      ret[[length(ret) + 1]] <- .f(data[start:end,, drop=FALSE])
+      end <- min(start + batch_size - 1, row_count)
+      ret[[i]] <- .f(data[start:end, , drop = FALSE])
     }
 
     ret
