@@ -64,12 +64,11 @@ sql_conflict_insert <- function(from,
                                 conflict,
                                 insert_cols = NULL,
                                 returning = NULL) {
-  stopifnot(is.data.frame(from) || is_bare_character(from, n = 1))
-  stopifnot(is_bare_character(table, n = 1))
+  check_standard_args(from, table, con)
   stopifnot(inherits(conflict, "dbtools_conflict"))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
-  # stopifnot(is_sql_chr_list(returning)) --> check in sql_returning
 
+  # check insert cols
   if (is.data.frame(from)) {
     insert_cols <- insert_cols %||% colnames(from)
     check_has_cols(from, insert_cols)
@@ -81,7 +80,7 @@ sql_conflict_insert <- function(from,
     if (is_null(insert_cols)) {
       abort_dbtools(
         "must provide insert_cols when table is a database table.",
-        "argument"
+        error_type = "argument"
       )
     }
   }
@@ -92,7 +91,7 @@ sql_conflict_insert <- function(from,
   glue_sql("
     INSERT INTO {`table`} AS {`'target'`} ({`insert_cols`*})
     SELECT {`insert_cols`*}
-      FROM {`from_clause`}
+      FROM {from_clause}
         ON CONFLICT {conflict_clause}",
     .con = con
   ) %>%
@@ -137,6 +136,7 @@ sql_upsert <- function(from,
                        conflict_target,
                        insert_cols = NULL,
                        returning = NULL) {
+  # TODO check updates --> same as in sql_update?
   sql_conflict_insert(
     table = table,
     con = con,
