@@ -1,37 +1,30 @@
-df <- iris[1:2, ]
-con <- mr.amsutils::db_con_ams()
+con <- RPostgres::dbConnect(
+  RPostgres::Postgres(),
+  dbname = "postgres"
+)
 
-# setClass("PqConnection",
-#   contains = "DBIConnection",
-#   slots = list(ptr = "externalptr", bigint = "character", typnames = "data.frame")
-# )
-#
-# sqlite_con <- dbConnect(RSQLite::SQLite(), dbname = ":memory:")
-#
-# new(
-#   "PqConnection",
-#   # ptr = structure(list(), "externalptr"),
-#   ptr = structure(list(), "externalptr"),
-#   bigint = "integer64",
-#   typnames = data.frame()
-# )
-#
-# new(
-#   "PqConnection",
-#   ptr = con@ptr,
-#   bigint = "integer64",
-#   typnames = data.frame()
-# )
+lcl_exec <- function(...) {
+  DBI::dbExecute(conn = con, glue::glue_sql(..., .con = con))
+}
+
+
+
+get_tbl <- function() {
+  DBI::dbReadTable(con, test_table, row.names = FALSE)
+}
 
 
 def_returning <- list(
-  "col 1",
-  col2 = "col B",
-  col3 = SQL("now()")
+  "name",
+  id = "id2",
+  time = sql("now()")
 )
-def_update <- def_returning
+def_update <- list(
+  "name",
+  id = "id2"
+)
 def_where <- list(
-  "col 1",
-  col2 = "col B",
+  "name",
+  col2 = "id",
   SQL("now()")
 )
