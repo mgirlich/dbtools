@@ -6,7 +6,7 @@ to_sql.dbtools_conflict_clause <- function(x, con) {
   conflict_action_sql <- to_sql(x$conflict_action, con)
 
   if (!is.null(x$conflict_target)) {
-    if (is_character(x$conflict_target)) {
+    if (!inherits_any(x$conflict_target, c("dbtools_conflict_cols", "dbtools_constraint"))) {
       abort("conflict_target must be generated with sql_conflict_cols() or sql_constraint().")
     }
     paste_sql(to_sql(x$conflict_target, con), conflict_action_sql, sep = " ")
