@@ -14,8 +14,8 @@ sql_values <- function(data, con, table_name) {
       "ARRAY[]::text[]"
     ) %>%
       collapse_sql(", ")
-    inner <- glue_sql("unnest({escaped_data}) AS {`table_name`} ({`colnames(data)`*})", .con = con)
-    glue_sql("(SELECT * FROM {inner})", .con = con)
+    inner <- glue_sql("unnest({escaped_data}) AS t ({`colnames(data)`*})", .con = con)
+    glue_sql("(SELECT * FROM {inner}) AS {`table_name`}", .con = con)
   } else {
     escaped_data <- sqlData(con, data)
 
