@@ -1,3 +1,4 @@
+#' @export
 db_insert_missing_data <- function(data,
                                    table,
                                    con,
@@ -6,6 +7,20 @@ db_insert_missing_data <- function(data,
                                    returning = NULL,
                                    trans = TRUE,
                                    batch_size = 50e3) {
+  if (is_conflict_cols(conflict)) {
+    check_has_cols(from, conflict)
+
+    duplicated_flag <- duplicated(x[, conflict])
+    if (any(duplicated_flag)) {
+      rows <- which(duplicated_flag)
+      head <- paste0("data has duplicates in ", length(rows), " rows:")
+      abort_dbtools(
+        message = c(head, shorten_error(rows)),
+        error_type = "duplicates"
+      )
+    }
+  }
+
   batch_wise_db(
     data,
     con = con,
