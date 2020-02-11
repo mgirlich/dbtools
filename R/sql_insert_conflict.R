@@ -17,7 +17,10 @@ new_conflict_clause <- function(conflict_target, conflict_action) {
 sql_do_nothing <- function(conflict_target = NULL) {
   new_conflict_clause(
     conflict_target,
-    conflict_action = structure(list(), class = "dbtools_conflict_do_nothing")
+    conflict_action = structure(
+      list(),
+      class = c("dbtools_conflict_do_nothing", "dbtools_conflict")
+    )
   )
 }
 
@@ -32,7 +35,10 @@ sql_do_update <- function(conflict_target, updates) {
 
   new_conflict_clause(
     conflict_target,
-    conflict_action = structure(updates, class = "dbtools_conflict_do_update")
+    conflict_action = structure(
+      updates,
+      class = c("dbtools_conflict_do_update", "dbtools_conflict")
+    )
   )
 }
 
@@ -48,8 +54,7 @@ sql_do_update <- function(conflict_target, updates) {
 #'   table = "my_tbl",
 #'   con = con,
 #'   from = "my_value_table",
-#'   conflict_clause = "DO NOTHING",
-#'   conflict_target = c("conf 1", "conf 2"),
+#'   conflict = sql_do_nothing(sql_conflict_cols("conf 1", "conf 2")),
 #'   insert_cols = c("insert 1", "insert 2"),
 #'   returning = list(`ret 1` = "ret_col", sql("now()"))
 #' )
@@ -59,15 +64,25 @@ sql_conflict_insert <- function(from,
                                 conflict,
                                 insert_cols = NULL,
                                 returning = NULL) {
-  if (!is.data.frame(from) && is.null(insert_cols)) {
-    abort("must specify insert_cols when from is not a dataframe!")
-  }
+  stopifnot(is.data.frame(from) || is_bare_character(from, n = 1))
+  stopifnot(is_bare_character(table, n = 1))
+  stopifnot(inherits(conflict, "dbtools_conflict"))
+  stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
+  # stopifnot(is_sql_chr_list(returning)) --> check in sql_returning
 
-  if (is_null(insert_cols)) {
-    if (is.data.frame(from)) {
-      insert_cols <- colnames(from)
-    } else {
-      abort("must provide insert_cols when table is a database table.")
+  if (is.data.frame(from)) {
+    insert_cols <- insert_cols %||% colnames(from)
+    check_has_cols(from, insert_cols)
+
+    if (is_conflict_cols(conflict)) {
+      check_has_cols(from, conflict)
+    }
+  } else {
+    if (is_null(insert_cols)) {
+      abort_dbtools(
+        "must provide insert_cols when table is a database table.",
+        "argument"
+      )
     }
   }
 
@@ -94,9 +109,6 @@ sql_insert_missing <- function(from,
                                conflict_target = NULL,
                                insert_cols = NULL,
                                returning = NULL) {
-  # TODO check if all insert_cols in table
-  # TODO check if all conflict_cols in table
-
   # NOTE only rows that were succesfully inserted or updated are returned
   # see https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
   # --> might want to use this to return all rows
@@ -156,6 +168,10 @@ sql_conflict_cols <- function(...) {
   }
 
   structure(conflict_cols, class = "dbtools_conflict_cols")
+}
+
+is_conflict_cols <- function(x) {
+  inherits(x, "dbtools_conflict_cols")
 }
 
 to_sql.dbtools_conflict_cols <- function(x, con) {
