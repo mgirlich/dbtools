@@ -23,6 +23,7 @@ sql_update <- function(from,
                        update,
                        where,
                        returning = NULL) {
+  check_standard_args(from, table, con)
   from <- sql_clause_from(from, con, table_name = "source")
 
   # create update clause
@@ -61,7 +62,7 @@ sql_update <- function(from,
   }
 
   glue_sql("
-    UPDATE {`table`} AS target
+    UPDATE {`table`} AS {`'target'`}
        SET {update_clause}
       FROM {`from`}
      WHERE {where_clause}

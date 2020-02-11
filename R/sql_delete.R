@@ -14,6 +14,7 @@ sql_delete <- function(from,
                        con,
                        where,
                        returning = NULL) {
+  check_standard_args(from, table, con)
   from <- sql_clause_from(from, con, table_name = "source")
 
   # create where clause
@@ -29,14 +30,6 @@ sql_delete <- function(from,
     collapse = " AND ",
     con = con
   )
-
-  # create returning clause
-  # character may be named, sql may be named
-  if (!is_sql_chr_list(returning, chr_names = NA, sql_names = NA) &&
-      !is.null(returning)) {
-    abort("every element of returning must be a bare character or named bare SQL")
-  }
-
 
   glue_sql("
     DELETE FROM {`table`} AS target
