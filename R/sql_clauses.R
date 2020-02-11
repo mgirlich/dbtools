@@ -48,7 +48,12 @@ sql_clause_from <- function(from, con, table_name, cols = NULL) {
 }
 
 sql_returning <- function(sql, returning, con) {
-  # TODO column name is currently ambigous --> prefix with "target"?
+  # character may be named, sql may be named
+  if (!is_sql_chr_list(returning, chr_names = NA, sql_names = NA) &&
+      !is.null(returning)) {
+    abort("every element of returning must be a bare character or named bare SQL")
+  }
+
   if (is.null(returning)) {
     sql
   } else {
