@@ -71,13 +71,13 @@ sql_conflict_insert <- function(from,
     }
   }
 
-  from <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)
+  from_clause <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)
   conflict_clause <- to_sql(conflict, con)
 
   glue_sql("
-    INSERT INTO {`table`} ({`insert_cols`*})
+    INSERT INTO {`table`} AS {`'target'`} ({`insert_cols`*})
     SELECT {`insert_cols`*}
-      FROM {`from`}
+      FROM {`from_clause`}
         ON CONFLICT {conflict_clause}",
     .con = con
   ) %>%
@@ -94,6 +94,9 @@ sql_insert_missing <- function(from,
                                conflict_target = NULL,
                                insert_cols = NULL,
                                returning = NULL) {
+  # TODO check if all insert_cols in table
+  # TODO check if all conflict_cols in table
+
   # NOTE only rows that were succesfully inserted or updated are returned
   # see https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
   # --> might want to use this to return all rows
