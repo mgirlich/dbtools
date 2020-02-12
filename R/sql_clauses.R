@@ -7,15 +7,14 @@ sql_values <- function(data, con, table_name) {
   if (nrow(data) == 0) {
     # very hacky...
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
+    # ?? OR https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
     casts <- lapply(data, dbQuoteLiteral, conn = con)
-    escaped_data <- ifelse(
-      lengths(casts) > 0,
-      paste0("ARRAY[]", casts, "[]"),
-      "ARRAY[]::text[]"
-    ) %>%
-      collapse_sql(", ")
-    inner <- glue_sql("unnest({escaped_data}) AS t ({`colnames(data)`*})", .con = con)
-    glue_sql("(SELECT * FROM {inner}) AS {`table_name`}", .con = con)
+    casts[lengths(casts) == 0] <- "::text"
+    escaped_data <- collapse_sql(sub("^.*?(::.*)$", "ARRAY[]\\1[]", casts), ", ")
+    glue_sql(
+      "unnest({escaped_data}) AS {`table_name`} ({`colnames(data)`*})",
+      .con = con
+    )
   } else {
     escaped_data <- sqlData(con, data)
 
