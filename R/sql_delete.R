@@ -38,7 +38,6 @@ sql_delete <- function(from,
           FROM {`from`}
          WHERE {where_clause}
     )
-     ", .con = con
-  ) %>%
+     ", .con = con) %>%
     sql_returning(returning, con)
 }

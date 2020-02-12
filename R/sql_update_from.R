@@ -57,7 +57,7 @@ sql_update <- function(from,
   # create returning clause
   # character may be named, sql may be named
   if (!is_sql_chr_list(returning, chr_names = NA, sql_names = NA) &&
-      !is.null(returning)) {
+    !is.null(returning)) {
     abort("every element of returning must be a bare character or named bare SQL")
   }
 
@@ -66,7 +66,6 @@ sql_update <- function(from,
        SET {update_clause}
       FROM {`from`}
      WHERE {where_clause}
-     ", .con = con
-  ) %>%
+     ", .con = con) %>%
     sql_returning(returning, con)
 }

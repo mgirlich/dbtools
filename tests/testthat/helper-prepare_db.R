@@ -29,8 +29,8 @@ prepare_table <- function(value = df) {
     value = value
   )
 
-  lcl_exec('
+  lcl_exec("
     ALTER TABLE {`test_table`}
     ADD CONSTRAINT {`index_name`}
-    UNIQUE ({`columns`*});')
+    UNIQUE ({`columns`*});")
 }
