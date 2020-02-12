@@ -33,8 +33,11 @@ sql_delete <- function(from,
 
   glue_sql("
     DELETE FROM {`table`} AS target
-     USING {`from`}
-     WHERE {where_clause}
+     WHERE EXISTS (
+        SELECT *
+          FROM {`from`}
+         WHERE {where_clause}
+    )
      ", .con = con
   ) %>%
     sql_returning(returning, con)
