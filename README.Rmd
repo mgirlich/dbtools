@@ -1,0 +1,88 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# dbtools
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/dbtools)](https://CRAN.R-project.org/package=dbtools)
+<!-- badges: end -->
+
+The goal of dbtools is to support
+
+* insert all or only new rows
+* update existing rows
+* upsert - i.e. insert new and update existing - rows
+* delete rows
+
+in a database table using data from a dataframe. Further, it provides some
+helpers to get some basic database information
+
+* table and index size
+* running queries
+
+## Installation
+
+<!-- You can install the released version of dbtools from [CRAN](https://CRAN.R-project.org) with: -->
+
+<!-- ``` r -->
+<!-- install.packages("dbtools") -->
+<!-- ``` -->
+
+<!-- ### Development version -->
+<!-- To get a bug fix, or use a feature from the development version, you can install dbtools from GitHub. -->
+
+dbtools is not yet on CRAN and can only be installed from GitHub.
+
+```{r eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("mgirlich/dbtools")
+```
+
+## Example
+
+### Database Operations
+
+The database operations functions are all prefixed with `db_`. They follow the
+idea that the first argument should be data, i.e. they can be piped. They all
+support an optional returning clause, batchwise operations and control whether
+the operation should be atomic (i.e. in a transaction).
+The basic idea is to pass a character vector of column names but one can also
+use plain SQL (generated with `SQL()`) for a deeper control.
+
+* `db_update_data()` updates data as in the dataframe.
+* `db_insert_missing_data()` inserts missing data from the dataframe.
+* `db_upsert_data()` upserts (i.e. inserts new and updates existing data).
+* `db_delete_data()`
+
+* `batch_wise_db()`
+
+### SQL Generators
+
+Each database helper function has a function that generates the underlying SQL.
+These functions (all named `sql_*()`) are also exported in case one needs to
+modify the SQL. In addition there are some other helpers exported:
+
+* `sql_conflict_insert()` is the workhorse for `sql_insert_missing()` and `sql_upsert()`.
+* `sql_do_nothing()` and `sql_do_update()` to generate the conflict clause in
+`sql_conflict_insert()`.
+* `sql_values()` to generate a `VALUES` clause. 
+* `sql_returning()` to add a returning clause if returning is not `NULL`.
+
+### Database Infos
+
+* `db_utils_running_queries()` to get the currently running queries.
+* `db_utils_table_size()` to get size of the database tables.
+* `db_utils_index_infos()` to get information on the indexes.
