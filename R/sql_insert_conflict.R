@@ -19,7 +19,7 @@ sql_do_nothing <- function(conflict_target = NULL) {
     conflict_target,
     conflict_action = structure(
       list(),
-      class = c("dbtools_conflict_do_nothing", "dbtools_conflict")
+      class = c("dbtools_conflict_do_nothing")
     )
   )
 }
@@ -37,7 +37,7 @@ sql_do_update <- function(conflict_target, updates) {
     conflict_target,
     conflict_action = structure(
       updates,
-      class = c("dbtools_conflict_do_update", "dbtools_conflict")
+      class = c("dbtools_conflict_do_update")
     )
   )
 }
@@ -65,7 +65,7 @@ sql_conflict_insert <- function(from,
                                 insert_cols = NULL,
                                 returning = NULL) {
   check_standard_args(from, table, con)
-  stopifnot(inherits(conflict, "dbtools_conflict"))
+  stopifnot(inherits(conflict, "dbtools_conflict_clause"))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
 
   # check insert cols

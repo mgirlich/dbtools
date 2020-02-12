@@ -7,8 +7,8 @@ db_insert_missing_data <- function(data,
                                    returning = NULL,
                                    trans = TRUE,
                                    batch_size = 50e3) {
-  if (is_conflict_cols(conflict)) {
-    check_unique_cols(data, conflict)
+  if (is_conflict_cols(conflict_target)) {
+    check_unique_cols(data, conflict_target)
   }
 
   batch_wise_db(
