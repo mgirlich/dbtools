@@ -8,9 +8,9 @@ sql_upsert(
   from,
   table,
   con,
-  insert_cols,
   updates,
   conflict_target,
+  insert_cols = NULL,
   returning = NULL
 )
 }

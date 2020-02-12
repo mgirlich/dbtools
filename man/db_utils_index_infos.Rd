@@ -4,7 +4,7 @@
 \alias{db_utils_index_infos}
 \title{Get database index infos}
 \usage{
-db_utils_index_infos(con)
+db_utils_index_infos(con, table = NULL)
 }
 \description{
 Get database index infos

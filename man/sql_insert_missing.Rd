@@ -8,8 +8,8 @@ sql_insert_missing(
   from,
   table,
   con,
-  insert_cols,
   conflict_target = NULL,
+  insert_cols = NULL,
   returning = NULL
 )
 }
