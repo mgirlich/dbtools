@@ -6,8 +6,8 @@ check_standard_args <- function(from, table, con) {
 
 
 check_has_cols <- function(x, cols, x_arg = NULL, cols_arg = NULL) {
-  x_arg <- x_arg %||% as_label(ensym(x))
-  cols_arg <- cols_arg %||% as_label(ensym(cols))
+  x_arg <- x_arg %||% as_label(enexpr(x))
+  cols_arg <- cols_arg %||% as_label(enexpr(cols))
 
   if (!all(has_name(x, cols))) {
     abort_missing_cols(
@@ -40,6 +40,14 @@ check_unique_cols <- function(x, cols, x_arg = NULL, cols_arg = NULL) {
 }
 
 
+check_where <- function(where) {
+  # character may be named, sql must not be named
+  if (!is_sql_chr_list(where, chr_names = NA, sql_names = FALSE)) {
+    abort("every element of where must be a bare character or unnamed bare SQL")
+  }
+}
+
+
 shorten_error <- function(x, n = 10) {
   if (length(x) > n) {
     c(x[1:n], "...")
@@ -64,4 +72,11 @@ abort_missing_cols <- function(object_name, cols, from = NULL) {
   }
   # body <- paste0("* ", cols, collapse = "\n")
   abort_dbtools(message = c(head_msg, cols), error_type = "missing_columns")
+}
+
+abort_invalid_input <- function(message) {
+  abort_dbtools(
+    message = message,
+    error_type = "invalid_input"
+  )
 }

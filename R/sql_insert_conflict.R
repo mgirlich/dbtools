@@ -73,8 +73,8 @@ sql_conflict_insert <- function(from,
     insert_cols <- insert_cols %||% colnames(from)
     check_has_cols(from, insert_cols)
 
-    if (is_conflict_cols(conflict)) {
-      check_has_cols(from, conflict)
+    if (is_conflict_cols(conflict$conflict_target)) {
+      check_has_cols(from, conflict$conflict_target)
     }
   } else {
     if (is_null(insert_cols)) {
@@ -147,10 +147,10 @@ sql_upsert <- function(from,
   )
 }
 
-
+#' @export
 sql_constraint <- function(constraint) {
   if (!is_scalar_character(constraint)) {
-    abort("constraint must be a scalar character.")
+    abort_invalid_input("constraint must be a scalar non-NA character.")
   }
 
   structure(constraint, class = "dbtools_constraint")
@@ -161,10 +161,12 @@ to_sql.dbtools_constraint <- function(x, con) {
   paste_sql("ON CONSTRAINT ", constraint)
 }
 
+#' @export
 sql_conflict_cols <- function(...) {
   conflict_cols <- c(...)
-  if (is_empty(conflict_cols) || !is.character(conflict_cols)) {
-    abort("conflict_cols must be a non-empty character vector.")
+  if (is_empty(conflict_cols) || !is.character(conflict_cols) ||
+      any(is.na(conflict_cols))) {
+    abort_invalid_input("... must be a non-empty non-NA character vector.")
   }
 
   structure(conflict_cols, class = "dbtools_conflict_cols")
