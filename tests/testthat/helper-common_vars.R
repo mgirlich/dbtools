@@ -13,6 +13,18 @@ get_tbl <- function() {
   DBI::dbReadTable(con, test_table, row.names = FALSE)
 }
 
+ref_file <- function(...) {
+  base <- ref_dir()
+  if (!dir.exists(base)) {
+    dir.create(base)
+  }
+  file.path(base, ...)
+}
+
+ref_dir <- function() {
+  test_path("references")
+}
+
 
 def_returning <- list(
   "name",
