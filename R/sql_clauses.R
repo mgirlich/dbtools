@@ -11,10 +11,7 @@ sql_values <- function(data, con, table_name) {
     casts <- lapply(data, dbQuoteLiteral, conn = con)
     casts[lengths(casts) == 0] <- "::text"
     escaped_data <- collapse_sql(sub("^.*?(::.*)$", "ARRAY[]\\1[]", casts), ", ")
-    glue_sql(
-      "unnest({escaped_data}) AS {`table_name`} ({`colnames(data)`*})",
-      .con = con
-    )
+    from <- glue_sql("unnest({escaped_data})", .con = con)
   } else {
     escaped_data <- sqlData(con, data)
 
@@ -23,9 +20,10 @@ sql_values <- function(data, con, table_name) {
       ~ paste0("(", paste(..., sep = ", "), ")")
     ) %>%
       collapse_sql(",\n")
-
-    glue_sql("(VALUES {vals}) AS {`table_name`} ({`colnames(data)`*})", .con = con)
+    from <- glue_sql("(VALUES {vals})", .con = con)
   }
+
+  glue_sql("SELECT * FROM {from} AS {`table_name`} ({`colnames(data)`*})", .con = con)
 }
 
 
