@@ -24,31 +24,10 @@ sql_update <- function(from,
                        where,
                        returning = NULL) {
   check_standard_args(from, table, con)
-  from <- sql_clause_from(from, con, table_name = "source")
+  from_clause <- sql_clause_from(from, con, table_name = "source")
 
   # create update clause
-  # character may be named, sql must be named
-  if (!is_sql_chr_list(update, chr_names = NA, sql_names = TRUE)) {
-    abort("every element of update must be a bare character or named bare SQL")
-  }
-
-  update_clause <- sql_clause_generator(
-    auto_name(update),
-    expr_sql = glue_sql("{`.y`} = {`.x`}", .con = con),
-    expr_chr = glue_sql("{`.y`} = source.{`.x`}", .con = con),
-    collapse = ",\n",
-    con = con
-  )
-
-  # create where clause
-  check_where(where)
-  where_clause <- sql_clause_generator(
-    auto_name(where),
-    expr_sql = .x,
-    expr_chr = glue_sql("target.{`.y`} = source.{`.x`}", .con = con),
-    collapse = " AND ",
-    con = con
-  )
+  update_clause <- sql_clause_update(update, "source", con)
 
   # create returning clause
   # character may be named, sql may be named
@@ -60,8 +39,8 @@ sql_update <- function(from,
   glue_sql("
     UPDATE {`table`} AS {`'target'`}
        SET {update_clause}
-      FROM {`from`}
-     WHERE {where_clause}
+      FROM {from_clause}
+     WHERE {sql_clause_where(where, con)}
      ", .con = con) %>%
-    sql_returning(returning, con)
+    add_sql_returning(returning, con)
 }

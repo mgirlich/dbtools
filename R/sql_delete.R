@@ -15,25 +15,15 @@ sql_delete <- function(from,
                        where,
                        returning = NULL) {
   check_standard_args(from, table, con)
-  from <- sql_clause_from(from, con, table_name = "source")
-
-  # create where clause
-  check_where(where)
-  where_clause <- sql_clause_generator(
-    auto_name(where),
-    expr_sql = .x,
-    expr_chr = glue_sql("target.{`.y`} = source.{`.x`}", .con = con),
-    collapse = " AND ",
-    con = con
-  )
+  from_clause <- sql_clause_from(from, con, table_name = "source")
 
   glue_sql("
     DELETE FROM {`table`} AS target
      WHERE EXISTS (
         SELECT *
-          FROM {`from`}
-         WHERE {where_clause}
+          FROM ({`from_clause`}) AS source
+         WHERE {sql_clause_where(where, con)}
     )
      ", .con = con) %>%
-    sql_returning(returning, con)
+    add_sql_returning(returning, con)
 }
