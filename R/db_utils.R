@@ -59,7 +59,7 @@ get_or_execute <- function(con, sql, returning) {
   }
 }
 
-
+# nocov start
 with_trans <- function(con, code) {
   ## needs to be a closure, because it accesses conn
   rollback_because <- function(e) {
@@ -106,3 +106,4 @@ abort2 <- function(e, message = NULL) {
     trace = e$trace
   )
 }
+# nocov end

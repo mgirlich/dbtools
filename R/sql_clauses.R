@@ -91,6 +91,7 @@ sql_clause_update <- function(update, table_name, con) {
   )
 }
 
+#' @export
 add_sql_returning <- function(sql, returning, con) {
   if (is.null(returning)) {
     sql

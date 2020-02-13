@@ -8,8 +8,8 @@ sql_upsert(
   from,
   table,
   con,
-  updates,
   conflict_target,
+  updates,
   insert_cols = NULL,
   returning = NULL
 )

@@ -10,9 +10,27 @@ sql_insert_missing(
   con,
   conflict_target = NULL,
   insert_cols = NULL,
-  returning = NULL
+  returning = NULL,
+  return_all = FALSE
 )
 }
 \description{
 SQL for inserting missing values
+}
+\examples{
+DBI::dbWriteTable(con, "dbtools_mtcars", mtcars[1, ], overwrite = TRUE)
+DBI::dbExecute(
+  con,
+  'ALTER TABLE dbtools_mtcars
+  ADD CONSTRAINT unique_const
+  UNIQUE ("mpg", "cyl");'
+)
+sql_insert_missing(
+  from = mtcars[c(1, 3), ],
+  table = "dbtools_mtcars",
+  con = con,
+  conflict_target = sql_conflict_cols("mpg", "cyl"),
+  returning = sql("*"),
+  return_all = TRUE
+)
 }

@@ -75,12 +75,12 @@ underlying SQL. These functions (all named `sql_*()`) are also exported
 in case one needs to modify the SQL. In addition there are some other
 helpers exported:
 
-  - `sql_conflict_insert()` is the workhorse for `sql_insert_missing()`
-    and `sql_upsert()`.
+  - `sql_insert()` is the workhorse for `sql_insert_missing()` and
+    `sql_upsert()`.
   - `sql_do_nothing()` and `sql_do_update()` to generate the conflict
     clause in `sql_conflict_insert()`.
   - `sql_values()` to generate a `VALUES` clause.
-  - `sql_returning()` to add a returning clause if returning is not
+  - `add_sql_returning()` to add a returning clause if returning is not
     `NULL`.
 
 ### Database Infos

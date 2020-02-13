@@ -4,6 +4,7 @@
 #' `sql_do_nothing()`
 #' @param insert_cols Columns from table `from` to insert.
 #'
+#' @export
 #' @examples
 #' sql_conflict_insert(
 #'   from = "my_value_table",
