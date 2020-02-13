@@ -101,6 +101,7 @@ add_sql_returning <- function(sql, returning, con) {
 }
 
 sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, ...) {
+  data <- list(...)
   r <- purrr::map2(
     x, names2(x),
     ~ {
@@ -109,7 +110,7 @@ sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, ...) {
       } else {
         e <- enexpr(expr_chr)
       }
-      eval_tidy(e, data = list(...))
+      eval_tidy(e, data = data)
     }
   )
 
