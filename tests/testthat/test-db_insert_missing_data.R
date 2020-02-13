@@ -3,18 +3,25 @@ test_db_insert_missing_data <- function(data,
                                         expected_state,
                                         conflict_target = sql_conflict_cols("id1", "id2"),
                                         insert_cols = NULL,
-                                        returning = sql("*")) {
-  expect_equal(
-    db_insert_missing_data(
-      data,
-      table = test_table,
-      con = con,
-      conflict_target = conflict_target,
-      insert_cols = insert_cols,
-      returning = returning
-    ),
-    expected_returned
+                                        returning = sql("*"),
+                                        return_all = FALSE,
+                                        ignore_order = FALSE) {
+  ret <- db_insert_missing_data(
+    data,
+    table = test_table,
+    con = con,
+    conflict_target = conflict_target,
+    insert_cols = insert_cols,
+    returning = returning,
+    return_all = return_all
   )
+
+  if (ignore_order) {
+    ret <- ret[do.call(order, ret), ]
+    expected_returned <- expected_returned[do.call(order, expected_returned), ]
+  }
+
+  expect_equivalent(ret, expected_returned)
 
   expect_equal(
     get_tbl(),
@@ -97,5 +104,22 @@ test_that("conflict_target works", {
     expected_returned = new_row,
     expected_state = state_new,
     conflict_target = sql_constraint(index_name)
+  )
+})
+
+test_that("return_all works", {
+  state_before <- get_tbl()
+
+  new_row <- create_new_row(state_before)
+  state_new <- rbind(state_before[1:3, ], new_row)
+
+  cols <- c("id1", "id2")
+  test_db_insert_missing_data(
+    data = state_new,
+    expected_returned = state_new[, c("id1", "id2")],
+    expected_state = rbind(state_before, new_row),
+    returning = cols,
+    return_all = TRUE,
+    ignore_order = TRUE
   )
 })
