@@ -2,19 +2,23 @@ test_db_insert_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
-                                returning = sql("*")) {
+                                returning = sql("*"),
+                                trans = TRUE,
+                                batch_size = 50e3) {
   expect_equal(
     db_insert_data(
       data,
       table = test_table,
       con = con,
       insert_cols = insert_cols,
-      returning = returning
+      returning = returning,
+      trans = trans,
+      batch_size = batch_size
     ),
     expected_returned
   )
 
-  expect_equal(
+  expect_equivalent(
     get_tbl(),
     expected_state
   )
@@ -67,5 +71,18 @@ test_that("insert cols work", {
     expected_returned = new_row,
     expected_state = state_new,
     insert_cols = c("id1", "id2", "value1")
+  )
+})
+
+test_that("trans and batch_size work", {
+  prepare_table(df[0, ])
+
+  test_db_insert_data(
+    data = df[1:2, ],
+    expected_returned = 2,
+    expected_state = df[1:2, ],
+    returning = NULL,
+    trans = FALSE,
+    batch_size = 1
   )
 })

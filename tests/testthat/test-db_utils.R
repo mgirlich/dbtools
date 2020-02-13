@@ -12,6 +12,11 @@ test_that("db_utils_index_infos", {
     db_utils_index_infos(con),
     ref_file("db_utils_index_infos.rds")
   )
+
+  expect_equal(
+    db_utils_index_infos(con, "dbtools_test")$tablename,
+    "dbtools_test"
+  )
 })
 
 test_that("db_utils_running_queries", {

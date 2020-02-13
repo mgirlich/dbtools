@@ -42,6 +42,8 @@ create_new_row <- function(state_before, value2 = NULL) {
   new_row
 }
 
+prepare_table()
+
 
 test_that("empty data work", {
   state_before <- get_tbl()
@@ -121,5 +123,30 @@ test_that("return_all works", {
     returning = cols,
     return_all = TRUE,
     ignore_order = TRUE
+  )
+})
+
+test_that("return_all errors for invalid input", {
+  f <- function(conflict_target = sql_conflict_cols("id1", "id2"),
+                returning = sql("*")) {
+    db_insert_missing_data(
+      data = df,
+      table = test_table,
+      con = con,
+      conflict_target = conflict_target,
+      insert_cols = NULL,
+      returning = returning,
+      return_all = TRUE
+    )
+  }
+
+  expect_error(
+    f(conflict_target = NULL),
+    class = "dbtools_error_invalid_input"
+  )
+
+  expect_error(
+    f(returning = NULL),
+    class = "dbtools_error_invalid_input"
   )
 })
