@@ -18,7 +18,8 @@ sql_insert <- function(from,
                        con,
                        conflict = NULL,
                        insert_cols = NULL,
-                       returning = NULL) {
+                       returning = NULL,
+                       return_all = FALSE) {
   check_standard_args(from, table, con)
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
@@ -40,19 +41,90 @@ sql_insert <- function(from,
     }
   }
 
+  if (is_true(return_all) &&
+      (
+        is_null(conflict) ||
+        is_null(returning) ||
+        !is_conflict_cols(conflict$conflict_target)
+      )
+  ) {
+    abort_invalid_input("`return_all` only works when `conflict` and `returning` are provided")
+  }
+
   from_clause <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)
   if (!is_null(conflict)) {
-    conflict_clause <- paste0("\nON CONFLICT ", to_sql(conflict, con))
+    conflict_clause <- paste_sql("ON CONFLICT ", to_sql(conflict, con))
   } else {
     conflict_clause <- NULL
   }
+
+  insert_sql <- sql_insert_from(
+    from = "source",
+    table = table,
+    con = con,
+    conflict = conflict,
+    insert_cols = insert_cols,
+    returning = returning
+  )
+
+  if (is_true(return_all)) {
+    # idea from
+    # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
+    # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
+    glue_sql("
+      WITH source AS (
+        {from_clause}
+      ), ins_result AS (
+        {insert_sql}
+      )
+      SELECT *
+        FROM ins_result
+      UNION
+      SELECT {sql_clause_select(returning, con)}
+        FROM {`table`} AS {`'target'`}
+       WHERE EXISTS (
+         SELECT 1
+           FROM source
+          WHERE {sql_clause_where(conflict$conflict_target, con)}
+       )
+    ", .con = con)
+  } else {
+    glue_sql("
+      WITH source AS (
+        {from_clause}
+      )
+      {insert_sql}
+    ", .con = con)
+  }
+}
+
+
+sql_insert_from <- function(from,
+                            table,
+                            con,
+                            conflict = NULL,
+                            insert_cols = NULL,
+                            returning = NULL) {
+  check_standard_args(from, table, con)
+  stopifnot(is_bare_character(from, n = 1))
+  stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
+  stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
+
+  from_clause <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)
 
   glue_sql("
     INSERT INTO {`table`} AS {`'target'`} ({`insert_cols`*})
     SELECT {`insert_cols`*}
       FROM {from_clause}
-    ", .con = con
-  ) %>%
-    paste_sql(conflict_clause) %>%
-    sql_returning(returning, con)
+    ", .con = con) %>%
+    add_sql_conflict(conflict, con) %>%
+    add_sql_returning(returning, con)
+}
+
+add_sql_conflict <- function(sql, conflict, con) {
+  if (is_null(conflict)) {
+    sql
+  } else {
+    paste_sql(sql, "\nON CONFLICT ", to_sql(conflict, con))
+  }
 }

@@ -7,7 +7,8 @@
 #'   con,
 #'   'ALTER TABLE dbtools_mtcars
 #'   ADD CONSTRAINT unique_const
-#'   UNIQUE ("mpg", "cyl");')
+#'   UNIQUE ("mpg", "cyl");'
+#' )
 #' sql_insert_missing(
 #'   from = mtcars[c(1, 3), ],
 #'   table = "dbtools_mtcars",
@@ -23,16 +24,14 @@ sql_insert_missing <- function(from,
                                insert_cols = NULL,
                                returning = NULL,
                                return_all = FALSE) {
-  # NOTE only rows that were succesfully inserted or updated are returned
-  # see https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
-  # --> might want to use this to return all rows
   sql_insert(
     from = from,
     table = table,
     con = con,
     conflict = sql_do_nothing(conflict_target),
     insert_cols = insert_cols,
-    returning = returning
+    returning = returning,
+    return_all = return_all
   )
 }
 
@@ -50,7 +49,6 @@ sql_upsert <- function(from,
                        updates,
                        insert_cols = NULL,
                        returning = NULL) {
-  # TODO check updates --> same as in sql_update?
   sql_insert(
     table = table,
     con = con,
