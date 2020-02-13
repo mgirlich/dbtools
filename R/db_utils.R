@@ -5,19 +5,21 @@ batch_wise_db <- function(data,
                           returning = NULL,
                           batch_size = 50e3) {
   .f <- rlang::as_function(.f)
+  f_chunk <- function(chunk) {
+    sql <- .f(chunk)
+    get_or_execute(con, sql, returning = returning)
+  }
+
   e <- expr(
     batch_wise(
       data,
       batch_size,
-      function(chunk) {
-        sql <- .f(chunk)
-        get_or_execute(con, sql, returning = returning)
-      }
+      f_chunk
     )
   )
 
   if (is_true(trans)) {
-    ret <- dbWithTransaction(con, eval(e))
+    ret <- with_trans(con, eval(e))
   } else {
     ret <- eval(e)
   }
@@ -49,10 +51,58 @@ batch_wise <- function(data, batch_size, .f) {
   }
 }
 
-get_or_execute <- function(conn, sql, returning) {
+get_or_execute <- function(con, sql, returning) {
   if (is_null(returning)) {
     dbExecute(con, sql)
   } else {
-    dbGetQuery(conn, sql)
+    dbGetQuery(con, sql)
   }
+}
+
+
+with_trans <- function(con, code) {
+  ## needs to be a closure, because it accesses conn
+  rollback_because <- function(e) {
+    call <- dbRollback(con)
+    if (identical(call, FALSE)) {
+      abort2(
+        e,
+        paste(
+          "Failed to rollback transaction.",
+          "Tried to roll back because an error",
+          "occurred:", conditionMessage(e)
+        )
+      )
+    }
+    if (inherits(e, "error")) {
+      abort2(e)
+    }
+  }
+
+  ## check if each operation is successful
+  call <- dbBegin(con)
+  if (identical(call, FALSE)) {
+    abort("Failed to begin transaction")
+  }
+  tryCatch(
+    {
+      res <- force(code)
+      call <- dbCommit(con)
+      if (identical(call, FALSE)) {
+        abort("Failed to commit transaction")
+      }
+      res
+    },
+    dbi_abort = rollback_because,
+    error = rollback_because
+  )
+}
+
+abort2 <- function(e, message = NULL) {
+  abort(
+    message %||% conditionMessage(e) %||% "",
+    class = class(e),
+    error = e,
+    trace = e$trace
+  )
 }

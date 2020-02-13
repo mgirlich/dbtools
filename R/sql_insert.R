@@ -34,21 +34,20 @@ sql_insert <- function(from,
     }
   } else {
     if (is_null(insert_cols)) {
-      abort_dbtools(
-        "must provide insert_cols when table is a database table.",
-        error_type = "argument"
-      )
+      abort_invalid_input("must provide `insert_cols` when `table` is a database table.")
     }
   }
 
   if (is_true(return_all) &&
       (
-        is_null(conflict) ||
         is_null(returning) ||
         !is_conflict_cols(conflict$conflict_target)
       )
   ) {
-    abort_invalid_input("`return_all` only works when `conflict` and `returning` are provided")
+    abort_invalid_input(paste0(
+      "`return_all` only works with `returning` not NULL",
+      " and `conflict` generated with `sql_conflict_cols()`"
+    ))
   }
 
   from_clause <- sql_clause_from(from, con, table_name = "source", cols = insert_cols)

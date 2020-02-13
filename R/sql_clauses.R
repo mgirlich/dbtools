@@ -86,7 +86,8 @@ sql_clause_update <- function(update, table_name, con) {
     expr_sql = glue_sql("{`.y`} = {`.x`}", .con = con),
     expr_chr = glue_sql("{`.y`} = {`table_name`}.{`.x`}", .con = con),
     collapse = ",\n",
-    con = con
+    con = con,
+    table_name = table_name
   )
 }
 
@@ -99,7 +100,7 @@ add_sql_returning <- function(sql, returning, con) {
   }
 }
 
-sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, con = con) {
+sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, ...) {
   r <- purrr::map2(
     x, names2(x),
     ~ {
@@ -108,7 +109,7 @@ sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, con = con) {
       } else {
         e <- enexpr(expr_chr)
       }
-      eval_tidy(e, data = list(con = con))
+      eval_tidy(e, data = list(...))
     }
   )
 

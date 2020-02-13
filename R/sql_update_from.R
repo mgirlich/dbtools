@@ -29,13 +29,6 @@ sql_update <- function(from,
   # create update clause
   update_clause <- sql_clause_update(update, "source", con)
 
-  # create returning clause
-  # character may be named, sql may be named
-  if (!is_sql_chr_list(returning, chr_names = NA, sql_names = NA) &&
-    !is.null(returning)) {
-    abort("every element of returning must be a bare character or named bare SQL")
-  }
-
   glue_sql("
     UPDATE {`table`} AS {`'target'`}
        SET {update_clause}

@@ -20,7 +20,7 @@ sql_do_nothing <- function(conflict_target = NULL) {
 #' a character vector of column names with a unique index.
 sql_do_update <- function(conflict_target, updates) {
   if (is_empty(conflict_target)) {
-    abort("conflict_target must not be empty!")
+    abort_invalid_input("`conflict_target` must not be empty!")
   }
 
   new_conflict_clause(
