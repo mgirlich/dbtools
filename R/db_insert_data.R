@@ -15,7 +15,7 @@ db_insert_data <- function(data,
     data = data,
     con = con,
     .f = ~ sql_insert(
-      from = .x,
+      data = .x,
       table = table,
       con = con,
       insert_cols = insert_cols,

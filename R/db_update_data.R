@@ -26,7 +26,7 @@ db_update_data <- function(data,
     con = con,
     .f = ~ {
       sql_update(
-        from = .x,
+        data = .x,
         table = table,
         con = con,
         update = update,

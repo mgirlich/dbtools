@@ -15,7 +15,7 @@ sql_delete <- function(from,
                        where,
                        returning = NULL) {
   check_standard_args(from, table, con)
-  from_clause <- sql_clause_from(from, con, table_name = "source")
+  from_clause <- sql_clause_from(from, con, table = "source")
 
   glue_sql("
     WITH {from_clause}

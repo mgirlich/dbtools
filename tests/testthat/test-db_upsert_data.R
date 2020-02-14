@@ -1,5 +1,5 @@
 test_db_upsert_data <- function(data,
-                                updates,
+                                update,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
@@ -9,7 +9,7 @@ test_db_upsert_data <- function(data,
       data = data,
       table = test_table,
       con = con,
-      updates = updates,
+      update = update,
       conflict_target = sql_conflict_cols("id1", "id2"),
       insert_cols = insert_cols,
       returning = returning
@@ -30,7 +30,7 @@ test_that("errors for invalid conflict target", {
       table = test_table,
       con = con,
       conflict_target = conflict_target,
-      updates = "value1"
+      update = "value1"
     )
   }
 
@@ -47,7 +47,7 @@ test_that("update works", {
 
   test_db_upsert_data(
     data = state_new[-1, ],
-    updates = c("value1", "value2"),
+    update = c("value1", "value2"),
     expected_returned = state_new[-1, ],
     expected_state = state_new
   )

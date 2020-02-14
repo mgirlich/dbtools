@@ -14,7 +14,7 @@
 db_upsert_data <- function(data,
                            table,
                            con,
-                           updates,
+                           update,
                            conflict_target,
                            insert_cols = NULL,
                            returning = NULL,
@@ -25,10 +25,10 @@ db_upsert_data <- function(data,
     con = con,
     .f = ~ {
       sql_upsert(
-        from = .x,
+        data = .x,
         table = table,
         con = con,
-        updates = updates,
+        update = update,
         conflict_target = conflict_target,
         insert_cols = insert_cols,
         returning = returning

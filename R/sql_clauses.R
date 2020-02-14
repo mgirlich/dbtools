@@ -3,13 +3,13 @@
 #' @export
 #' @examples
 #' sql_values(mtcars[1:3, ], con)
-sql_values <- function(data, con, table_name) {
+sql_values <- function(data, con) {
   if (nrow(data) == 0) {
     # very hacky...
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
     # ?? OR https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
     if (is_postgres(con)) {
-      casts <- lapply(data, dbQuoteLiteral, conn = con)
+      casts <- lapply(data, DBI::dbQuoteLiteral, conn = con)
       casts[lengths(casts) == 0] <- "::text"
       escaped_data <- collapse_sql(sub("^.*?(::.*)$", "NULL\\1", casts), ", ")
     } else if (is_sqlite(con)) {
@@ -31,21 +31,21 @@ sql_values <- function(data, con, table_name) {
 }
 
 
-sql_clause_from <- function(from, con, table_name, cols = NULL) {
-  if (is.character(from)) {
-    if (length(from) != 1) {
-      abort("from must be a table name or a dataframe.")
+sql_clause_from <- function(data, con, table, cols = NULL) {
+  if (is.character(data)) {
+    if (length(data) != 1) {
+      abort("`data` must be a table name or a dataframe.")
     }
 
     # TODO support for cols?
-    glue_sql("{`from`} AS {`table_name`}", .con = con)
-  } else if (is.data.frame(from)) {
+    glue_sql("{`data`} AS {`table`}", .con = con)
+  } else if (is.data.frame(data)) {
     if (!is_null(cols)) {
-      from <- as.data.frame(from)[, cols, drop = FALSE]
+      data <- as.data.frame(data)[, cols, drop = FALSE]
     }
-    values_clause <- sql_values(from, con, table_name)
+    values_clause <- sql_values(data, con)
     glue_sql("
-      {`table_name`}({`colnames(from)`*}) AS (
+      {`table`}({`colnames(data)`*}) AS (
         {values_clause}
       )
     ", .con = con)
@@ -100,6 +100,11 @@ sql_clause_update <- function(update, table_name, con) {
   )
 }
 
+#' Add a returning clause
+#'
+#' @param sql An SQL clause.
+#' @inheritParams sql_insert
+#'
 #' @export
 add_sql_returning <- function(sql, returning, con) {
   if (is.null(returning)) {

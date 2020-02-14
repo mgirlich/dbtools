@@ -17,7 +17,7 @@ db_insert_missing_data <- function(data,
     con = con,
     .f = ~ {
       sql_insert_missing(
-        from = .x,
+        data = .x,
         table = table,
         con = con,
         conflict_target = conflict_target,

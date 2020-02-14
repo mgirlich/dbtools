@@ -18,7 +18,7 @@ sql_do_nothing <- function(conflict_target = NULL) {
 #'
 #' @param conflict_target A constraint name given with `sql_constraint()` or
 #' a character vector of column names with a unique index.
-sql_do_update <- function(conflict_target, updates) {
+sql_do_update <- function(conflict_target, update) {
   if (is_empty(conflict_target)) {
     abort_invalid_input("`conflict_target` must not be empty!")
   }
@@ -26,7 +26,7 @@ sql_do_update <- function(conflict_target, updates) {
   new_conflict_clause(
     conflict_target,
     conflict_action = structure(
-      updates,
+      update,
       class = c("dbtools_conflict_do_update")
     )
   )
