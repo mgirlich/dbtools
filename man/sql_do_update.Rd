@@ -4,7 +4,7 @@
 \alias{sql_do_update}
 \title{On conflict DO UPDATE object}
 \usage{
-sql_do_update(conflict_target, updates)
+sql_do_update(conflict_target, update)
 }
 \arguments{
 \item{conflict_target}{A constraint name given with \code{sql_constraint()} or

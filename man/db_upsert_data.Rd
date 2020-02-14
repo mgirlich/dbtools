@@ -8,7 +8,7 @@ db_upsert_data(
   data,
   table,
   con,
-  updates,
+  update,
   conflict_target,
   insert_cols = NULL,
   returning = NULL,

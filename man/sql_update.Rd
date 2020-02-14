@@ -4,15 +4,14 @@
 \alias{sql_update}
 \title{SQL query to update records}
 \usage{
-sql_update(from, table, con, update, where, returning = NULL)
+sql_update(data, table, con, update, where, returning = NULL)
 }
 \arguments{
-\item{from}{Either the name of a database table (a scalar character) or
-a dataframe to use for updating.}
+\item{data}{A data.frame.}
 
 \item{table}{Name of the table to update.}
 
-\item{con}{A DBIConnection object.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
 \item{update}{Specifies which columns to update how.}
 
@@ -24,12 +23,9 @@ will match \code{from.a} to \code{table.b}.
 \item sql: must be unnamed
 }}
 
-\item{returning}{Expressions to return.
-\itemize{
-\item character: column to return
-\item sql: expression to return
-\item names: name of column in returned result.
-}}
+\item{returning}{An \href{sql-expression-list}{SQL expression list} that specifies
+which columns to return. Names are optional and used as column names in
+the returned table. For the default \code{NULL} no rows are returned.}
 }
 \value{
 An SQL query.
