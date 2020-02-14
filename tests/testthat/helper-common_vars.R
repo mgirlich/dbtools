@@ -32,7 +32,7 @@ ref_dir <- function() {
 def_returning <- list(
   "name",
   id = "id2",
-  time = sql("now()")
+  time = SQL("now()")
 )
 def_update <- list(
   "name",

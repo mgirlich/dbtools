@@ -1,5 +1,5 @@
 paste_sql <- function(..., sep = "", collapse = NULL) {
-  sql(paste(..., sep = sep, collapse = collapse))
+  SQL(paste(..., sep = sep, collapse = collapse))
 }
 
 collapse_sql <- function(x, collapse) {
@@ -15,7 +15,7 @@ is_scalar_sql <- function(x) {
 }
 
 is_sql_star <- function(x) {
-  identical(x, sql("*")) && is_scalar_sql(x)
+  identical(x, SQL("*")) && is_scalar_sql(x)
 }
 
 is_sql_chr_list <- function(x, chr_names, sql_names) {

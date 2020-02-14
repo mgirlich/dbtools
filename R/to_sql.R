@@ -16,11 +16,11 @@ to_sql.dbtools_conflict_clause <- function(x, con) {
 }
 
 to_sql.dbtools_conflict_do_nothing <- function(x, con) {
-  sql("DO NOTHING")
+  SQL("DO NOTHING")
 }
 
 to_sql.dbtools_conflict_do_update <- function(x, con) {
-  update_clause <- sql_clause_update(x, sql("EXCLUDED"), con)
+  update_clause <- sql_clause_update(x, SQL("EXCLUDED"), con)
 
   glue_sql("DO UPDATE SET {update_clause}", .con = con)
 }

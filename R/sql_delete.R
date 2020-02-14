@@ -6,8 +6,8 @@
 #'   table = "my_tbl",
 #'   con = con,
 #'   from = "my_value_table",
-#'   where = list("where 1", sql("my_tbl.id > 1")),
-#'   returning = list(`ret 1` = "ret_col", sql("now()"))
+#'   where = list("where 1", SQL("my_tbl.id > 1")),
+#'   returning = list(`ret 1` = "ret_col", SQL("now()"))
 #' )
 sql_delete <- function(from,
                        table,

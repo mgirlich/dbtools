@@ -3,7 +3,7 @@ test_db_upsert_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
-                                returning = sql("*")) {
+                                returning = SQL("*")) {
   expect_equivalent(
     db_upsert_data(
       data = data,

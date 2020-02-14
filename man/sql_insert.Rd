@@ -30,6 +30,6 @@ sql_conflict_insert(
   con = con,
   conflict = sql_do_nothing(sql_conflict_cols("conf 1", "conf 2")),
   insert_cols = c("insert 1", "insert 2"),
-  returning = list(`ret 1` = "ret_col", sql("now()"))
+  returning = list(`ret 1` = "ret_col", SQL("now()"))
 )
 }

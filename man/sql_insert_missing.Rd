@@ -30,7 +30,7 @@ sql_insert_missing(
   table = "dbtools_mtcars",
   con = con,
   conflict_target = sql_conflict_cols("mpg", "cyl"),
-  returning = sql("*"),
+  returning = SQL("*"),
   return_all = TRUE
 )
 }
