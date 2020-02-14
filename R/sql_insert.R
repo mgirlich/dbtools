@@ -72,9 +72,8 @@ sql_insert <- function(from,
     # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
     # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
     glue_sql("
-      WITH source AS (
-        {from_clause}
-      ), ins_result AS (
+      WITH {from_clause}
+      , ins_result AS (
         {insert_sql}
       )
       SELECT *
@@ -90,9 +89,7 @@ sql_insert <- function(from,
     ", .con = con)
   } else {
     glue_sql("
-      WITH source AS (
-        {from_clause}
-      )
+      WITH {from_clause}
       {insert_sql}
     ", .con = con)
   }
@@ -105,6 +102,10 @@ sql_insert_from <- function(from,
                             conflict = NULL,
                             insert_cols = NULL,
                             returning = NULL) {
+  # SQLite has problems with `FROM source ON`
+  # --> workaround: add `WHERE true` before
+  # see https://modern-sql.com/blog/2019-01/sqlite-in-2018
+
   check_standard_args(from, table, con)
   stopifnot(is_bare_character(from, n = 1))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))

@@ -3,35 +3,16 @@ test_db_delete_data <- function(data,
                                 expected_state,
                                 where = c("id1", "id2"),
                                 returning = sql("*")) {
-  expect_equivalent(
-    db_delete_data(
-      data = data,
-      table = test_table,
-      con = con,
-      where = where,
-      returning = returning
-    ),
-    expected_returned
-  )
-
-  expect_equivalent(
-    get_tbl(),
-    expected_state
+  test_db_f(
+    f = db_delete_data,
+    data = data,
+    expected_returned = expected_returned,
+    expected_state = expected_state,
+    where = where,
+    returning = returning
   )
 }
 
-
-create_new_row <- function(state_before, value2 = NULL) {
-  new_row <- state_before[1, ]
-  new_row$id1 <- max(state_before$id1) + 100
-  new_row$value1 <- max(state_before$value1) + 100
-
-  if (!is.null(value2)) {
-    new_row$value2 <- value2
-  }
-
-  new_row
-}
 
 prepare_table()
 

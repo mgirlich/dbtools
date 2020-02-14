@@ -23,17 +23,38 @@ sql_update <- function(from,
                        update,
                        where,
                        returning = NULL) {
+  # SQLite doesn't support an update from like syntax
+  # --> have to use a subquery
+  # see
+  # https://stackoverflow.com/a/54323688/7529482
+  # https://stackoverflow.com/questions/48690718/sqlite-update-column-from-column-in-another-table
   check_standard_args(from, table, con)
   from_clause <- sql_clause_from(from, con, table_name = "source")
 
   # create update clause
   update_clause <- sql_clause_update(update, "source", con)
-
-  glue_sql("
+  update_query <- glue_sql("
     UPDATE {`table`} AS {`'target'`}
        SET {update_clause}
-      FROM {from_clause}
+      FROM source
      WHERE {sql_clause_where(where, con)}
-     ", .con = con) %>%
-    add_sql_returning(returning, con)
+     ", .con = con)
+
+  if (is_null(returning)) {
+    glue_sql("
+      WITH {from_clause}
+      {update_query}
+    ", .con = con)
+  } else {
+    select_clause <- sql_clause_select(returning, con)
+    glue_sql("
+      WITH {from_clause}
+      , ups AS (
+        {update_query}
+        RETURNING target.*
+      )
+      SELECT {select_clause}
+        FROM ups
+    ", .con = con)
+  }
 }

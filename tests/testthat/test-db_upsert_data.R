@@ -39,6 +39,7 @@ test_that("errors for invalid conflict target", {
 })
 
 test_that("update works", {
+  skip_if(is_sqlite(con))
   prepare_table(df[1:2, ])
   state_new <- df
   state_new$value1[2] <- state_new$value1[2] + 5

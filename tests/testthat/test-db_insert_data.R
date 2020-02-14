@@ -5,37 +5,18 @@ test_db_insert_data <- function(data,
                                 returning = sql("*"),
                                 trans = TRUE,
                                 batch_size = 50e3) {
-  expect_equal(
-    db_insert_data(
-      data,
-      table = test_table,
-      con = con,
-      insert_cols = insert_cols,
-      returning = returning,
-      trans = trans,
-      batch_size = batch_size
-    ),
-    expected_returned
-  )
-
-  expect_equivalent(
-    get_tbl(),
-    expected_state
+  test_db_f(
+    f = db_insert_data,
+    data = data,
+    expected_returned = expected_returned,
+    expected_state = expected_state,
+    insert_cols = insert_cols,
+    returning = returning,
+    trans = trans,
+    batch_size = batch_size
   )
 }
 
-
-create_new_row <- function(state_before, value2 = NULL) {
-  new_row <- state_before[1, ]
-  new_row$id1 <- max(state_before$id1) + 100
-  new_row$value1 <- max(state_before$value1) + 100
-
-  if (!is.null(value2)) {
-    new_row$value2 <- value2
-  }
-
-  new_row
-}
 
 prepare_table()
 

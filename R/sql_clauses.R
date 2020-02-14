@@ -8,10 +8,15 @@ sql_values <- function(data, con, table_name) {
     # very hacky...
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
     # ?? OR https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
-    casts <- lapply(data, dbQuoteLiteral, conn = con)
-    casts[lengths(casts) == 0] <- "::text"
-    escaped_data <- collapse_sql(sub("^.*?(::.*)$", "ARRAY[]\\1[]", casts), ", ")
-    from <- glue_sql("unnest({escaped_data})", .con = con)
+    if (is_postgres(con)) {
+      casts <- lapply(data, dbQuoteLiteral, conn = con)
+      casts[lengths(casts) == 0] <- "::text"
+      escaped_data <- collapse_sql(sub("^.*?(::.*)$", "NULL\\1", casts), ", ")
+    } else if (is_sqlite(con)) {
+      escaped_data <- collapse_sql(rep_along(data, "NULL"), ", ")
+    }
+
+    glue_sql("SELECT {escaped_data} WHERE FALSE", .con = con)
   } else {
     escaped_data <- sqlData(con, data)
 
@@ -20,10 +25,9 @@ sql_values <- function(data, con, table_name) {
       ~ paste0("(", paste(..., sep = ", "), ")")
     ) %>%
       collapse_sql(",\n")
-    from <- glue_sql("(VALUES {vals})", .con = con)
-  }
 
-  glue_sql("SELECT * FROM {from} AS {`table_name`} ({`colnames(data)`*})", .con = con)
+    glue_sql("VALUES {vals}", .con = con)
+  }
 }
 
 
@@ -39,7 +43,12 @@ sql_clause_from <- function(from, con, table_name, cols = NULL) {
     if (!is_null(cols)) {
       from <- as.data.frame(from)[, cols, drop = FALSE]
     }
-    sql_values(from, con, table_name)
+    values_clause <- sql_values(from, con, table_name)
+    glue_sql("
+      {`table_name`}({`colnames(from)`*}) AS (
+        {values_clause}
+      )
+    ", .con = con)
   } else {
     abort("type not supported")
   }

@@ -18,10 +18,11 @@ sql_delete <- function(from,
   from_clause <- sql_clause_from(from, con, table_name = "source")
 
   glue_sql("
+    WITH {from_clause}
     DELETE FROM {`table`} AS target
      WHERE EXISTS (
         SELECT *
-          FROM ({`from_clause`}) AS source
+          FROM source
          WHERE {sql_clause_where(where, con)}
     )
      ", .con = con) %>%

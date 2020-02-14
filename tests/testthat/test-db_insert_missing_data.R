@@ -6,44 +6,21 @@ test_db_insert_missing_data <- function(data,
                                         returning = sql("*"),
                                         return_all = FALSE,
                                         ignore_order = FALSE) {
-  ret <- db_insert_missing_data(
-    data,
-    table = test_table,
-    con = con,
+  test_db_f(
+    f = db_insert_missing_data,
+    data = data,
+    expected_returned = expected_returned,
+    expected_state = expected_state,
     conflict_target = conflict_target,
     insert_cols = insert_cols,
     returning = returning,
-    return_all = return_all
-  )
-
-  if (ignore_order) {
-    ret <- ret[do.call(order, ret), ]
-    expected_returned <- expected_returned[do.call(order, expected_returned), ]
-  }
-
-  expect_equivalent(ret, expected_returned)
-
-  expect_equal(
-    get_tbl(),
-    expected_state
+    return_all = return_all,
+    ignore_order = ignore_order
   )
 }
 
-
-create_new_row <- function(state_before, value2 = NULL) {
-  new_row <- state_before[1, ]
-  new_row$id1 <- max(state_before$id1) + 100
-  new_row$value1 <- max(state_before$value1) + 100
-
-  if (!is.null(value2)) {
-    new_row$value2 <- value2
-  }
-
-  new_row
-}
 
 prepare_table()
-
 
 test_that("empty data work", {
   state_before <- get_tbl()
@@ -95,7 +72,8 @@ test_that("insert cols work", {
   )
 })
 
-test_that("conflict_target works", {
+test_that("constraint works", {
+  skip_if(is_sqlite(con))
   state_before <- get_tbl()
 
   new_row <- create_new_row(state_before)

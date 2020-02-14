@@ -17,3 +17,14 @@ auto_name <- function(x) {
 
 
 sql <- DBI::SQL
+
+
+is_postgres <- function(conn) {
+  inherits(conn, "PostgreSQLConnection") ||
+    inherits(conn, "PqConnection") ||
+    inherits(conn, "PostgreSQL")
+}
+
+is_sqlite <- function(conn) {
+  inherits(conn, "SQLiteConnection")
+}

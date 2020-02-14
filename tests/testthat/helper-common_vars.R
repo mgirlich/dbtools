@@ -2,9 +2,12 @@ con <- RPostgres::dbConnect(
   RPostgres::Postgres(),
   dbname = "postgres"
 )
+# tmp <- tempfile()
+# con <- DBI::dbConnect(RSQLite::SQLite(), tmp)
 
 lcl_exec <- function(...) {
-  DBI::dbExecute(conn = con, glue::glue_sql(..., .con = con))
+  sql <- glue::glue_sql(..., .con = con, .envir = parent.frame())
+  DBI::dbExecute(conn = con, sql)
 }
 
 

@@ -1,38 +1,40 @@
-test_db_update_data <- function(data = df_local,
-                                update = c("id", "chr"),
-                                where = c("name", "id" = "id2"),
+test_db_update_data <- function(data,
+                                expected_returned,
+                                expected_state,
+                                update = c("value1", "value2"),
+                                where = c("id1", "id2" = "id_2"),
                                 returning = NULL) {
-  db_update_data(
+  test_db_f(
+    f = db_update_data,
     data = data,
-    table = test_table,
-    con = con,
+    expected_returned = expected_returned,
+    expected_state = expected_state,
     update = update,
     where = where,
     returning = returning
   )
 }
 
-update <- list("value1", value2 = "value_2", value3 = sql("now()"))
-where <- list("id1", id2 = "id_2", sql("id2 > 1"))
-returning <- list("id1", value = "value1", time = sql("now()"))
+test_that("db_update_data works", {
+  skip_if(is_sqlite(con))
 
-test_that("update, where and returning work", {
-  skip("not yet implemented")
   prepare_table()
-  expect_equal(test_db_update_data(update = def_update), 2)
+  state_new <- df
+  state_new$value1[1:3] <- state_new$value1[1:3] + 10
+  input <- state_new
+  colnames(input)[2] <- "id_2"
 
-  expect_equal(
-    get_tbl(),
-    df[1:2, ] %>%
-      dplyr::transmute(
-        name,
-        id = id2,
-        chr = chr_upper
-      )
+  test_db_update_data(
+    input,
+    expected_returned = 4,
+    expected_state = state_new
   )
-})
 
-
-test_that("from with dataframe works", {
-  skip("not yet implemented")
+  prepare_table()
+  test_db_update_data(
+    input,
+    expected_returned = input,
+    expected_state = state_new,
+    returning = sql("*")
+  )
 })

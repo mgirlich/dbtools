@@ -1,4 +1,15 @@
-prepare_table()
+prep_table <- function(x, value) {
+  if (DBI::dbExistsTable(con, x)) {
+    DBI::dbRemoveTable(con, x)
+  }
+  DBI::dbCreateTable(con, x, fields = value)
+  DBI::dbAppendTable(con, x, value = value)
+}
+
+test_table2 <- paste0(test_table, "2")
+prep_table(test_table, mtcars)
+iris$Species <- as.character(iris$Species)
+prep_table(test_table2, iris)
 
 test_that("db_utils_table_size", {
   expect_known_value(
@@ -8,14 +19,15 @@ test_that("db_utils_table_size", {
 })
 
 test_that("db_utils_index_infos", {
+  index_infos <- db_utils_index_infos(con)
   expect_known_value(
-    db_utils_index_infos(con),
+    index_infos,
     ref_file("db_utils_index_infos.rds")
   )
 
   expect_equal(
-    db_utils_index_infos(con, "dbtools_test")$tablename,
-    "dbtools_test"
+    db_utils_index_infos(con, test_table),
+    index_infos[index_infos$tablename == test_table, ]
   )
 })
 
