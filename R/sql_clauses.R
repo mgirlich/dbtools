@@ -70,7 +70,10 @@ sql_clause_select <- function(x, con, table = "target") {
   if (!is_null(table)) {
     table <- dbQuoteIdentifier(con, table)
     flag_sql <- purrr::map_lgl(x, is_sql)
-    x[!flag_sql] <- paste_sql(table, ".", x[!flag_sql])
+    x[!flag_sql] <- paste_sql(
+      table, ".",
+      dbQuoteIdentifier(con, unlist(x[!flag_sql]))
+    )
   }
 
   # add names
