@@ -3,24 +3,22 @@ test_db_upsert_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
-                                returning = SQL("*")) {
-  expect_equivalent(
-    db_upsert_data(
+                                returning = SQL("*"),
+                                mode = c("new", "old")) {
+  for (m in mode) {
+    test_db_f(
+      db_upsert_data,
       data = data,
-      table = test_table,
-      con = con,
+      expected_returned = expected_returned,
+      expected_state = expected_state,
       update = update,
       conflict_target = sql_unique_cols("id1", "id2"),
       insert_cols = insert_cols,
       returning = returning
-    ),
-    expected_returned
-  )
+    )
 
-  expect_equivalent(
-    get_tbl(),
-    expected_state
-  )
+    prepare_table()
+  }
 }
 
 test_that("errors for invalid conflict target", {
@@ -52,4 +50,3 @@ test_that("update works", {
     expected_state = state_new
   )
 })
-

@@ -5,20 +5,25 @@ test_db_insert_missing_data <- function(data,
                                         insert_cols = NULL,
                                         returning = SQL("*"),
                                         return_all = FALSE,
-                                        ignore_order = FALSE) {
-  test_db_f(
-    f = db_insert_missing_data,
-    data = data,
-    expected_returned = expected_returned,
-    expected_state = expected_state,
-    conflict_target = conflict_target,
-    insert_cols = insert_cols,
-    returning = returning,
-    return_all = return_all,
-    ignore_order = ignore_order
-  )
-}
+                                        ignore_order = FALSE,
+                                        mode = c("new", "old")) {
+  for (m in mode) {
+    test_db_f(
+      f = db_insert_missing_data,
+      data = data,
+      expected_returned = expected_returned,
+      expected_state = expected_state,
+      conflict_target = conflict_target,
+      insert_cols = insert_cols,
+      returning = returning,
+      return_all = return_all,
+      ignore_order = ignore_order,
+      mode = m
+    )
 
+    prepare_table()
+  }
+}
 
 prepare_table()
 
@@ -83,7 +88,8 @@ test_that("constraint works", {
     data = state_new,
     expected_returned = new_row,
     expected_state = state_new,
-    conflict_target = sql_constraint(index_name)
+    conflict_target = sql_constraint(index_name),
+    mode = "new"
   )
 })
 
