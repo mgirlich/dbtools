@@ -128,7 +128,7 @@ sql_insert_c <- function(data,
       )
       SELECT *
         FROM ins_result
-      UNION
+      UNION ALL
       SELECT {sql_clause_select(returning, con)}
         FROM {`table`} AS {`'target'`}
        WHERE EXISTS (

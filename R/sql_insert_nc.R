@@ -56,10 +56,32 @@ sql_insert_nc <- function(data,
   if (is_null(conflict) ||
       inherits(conflict$conflict_action, "dbtools_conflict_do_nothing")) {
     # TODO support return_all = TRUE
-    glue_sql("
-      WITH {from_clause}
-      {insert_sql}
-    ", .con = con)
+    if (is_true(return_all)) {
+      # idea from
+      # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
+      # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
+      glue_sql("
+        WITH {from_clause}
+        , ins_result AS (
+          {insert_sql}
+        )
+        SELECT *
+          FROM ins_result
+        UNION ALL
+        SELECT {sql_clause_select(returning, con)}
+          FROM {`table`} AS {`'target'`}
+         WHERE EXISTS (
+           SELECT 1
+             FROM source
+            WHERE {sql_clause_where(conflict$conflict_target, con)}
+         )
+      ", .con = con)
+    } else {
+      glue_sql("
+        WITH {from_clause}
+        {insert_sql}
+      ", .con = con)
+    }
   } else {
     update_clause <- sql_update(
       data = "source",
