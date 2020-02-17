@@ -112,11 +112,11 @@ sql_insert_c <- function(data,
     table = table,
     con = con,
     conflict = conflict,
-    insert_cols = names(insert_cols),
+    insert_cols = insert_cols,
     returning = returning
   )
 
-  from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
+  from_clause <- sql_clause_from(data, con, table = "source")
   add_sql_return_all(
     insert_sql = insert_sql,
     from_clause = from_clause,
@@ -145,7 +145,7 @@ sql_insert_from <- function(data,
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
   stopifnot(!is_empty(insert_cols))
 
-  from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
+  from_clause <- sql_clause_from(data, con, table = "source")
 
   glue_sql("
     INSERT INTO {`table`} AS {`'target'`} ({`insert_cols`*})

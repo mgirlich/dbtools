@@ -39,7 +39,7 @@ sql_insert_nc <- function(data,
     abort_invalid_input('cannot use constraint here for `mode = "old"`')
   }
 
-  from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
+  from_clause <- sql_clause_from(data, con, table = "source")
 
   insert_cols <- auto_name(insert_cols)
   insert_sql <- sql_insert_from(

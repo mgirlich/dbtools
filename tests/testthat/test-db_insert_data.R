@@ -48,10 +48,10 @@ test_that("insert cols work", {
   state_new <- rbind(state_before, new_row)
 
   test_db_insert_data(
-    data = setNames(new_row, c("id1", "id2", "renamed_col", "value2")),
+    data = new_row,
     expected_returned = new_row,
     expected_state = state_new,
-    insert_cols = c("id1", "id2", "value1" = "renamed_col")
+    insert_cols = c("id1", "id2", "value1")
   )
 })
 
