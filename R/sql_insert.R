@@ -81,13 +81,6 @@ sql_insert <- function(data,
     ))
   }
 
-  from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
-  if (!is_null(conflict)) {
-    conflict_clause <- paste_sql("ON CONFLICT ", to_sql(conflict, con))
-  } else {
-    conflict_clause <- NULL
-  }
-
   insert_cols <- auto_name(insert_cols)
   insert_sql <- sql_insert_from(
     data = "source",
@@ -98,6 +91,7 @@ sql_insert <- function(data,
     returning = returning
   )
 
+  from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
   if (is_true(return_all)) {
     # idea from
     # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
