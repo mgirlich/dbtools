@@ -19,7 +19,8 @@ db_upsert_data <- function(data,
                            insert_cols = NULL,
                            returning = NULL,
                            trans = TRUE,
-                           batch_size = 50e3) {
+                           batch_size = 50e3,
+                           mode = "new") {
   batch_wise_db(
     data,
     con = con,
@@ -31,7 +32,8 @@ db_upsert_data <- function(data,
         update = update,
         conflict_target = conflict_target,
         insert_cols = insert_cols,
-        returning = returning
+        returning = returning,
+        mode = mode
       )
     },
     trans = trans,

@@ -19,7 +19,7 @@
 #' @name sql-expression-list
 NULL
 
-#' SQL query to insert missing records
+#' SQL insert query
 #'
 #' @param data A data.frame.
 #' @param table Name of the database table to insert to.
@@ -50,7 +50,8 @@ sql_insert <- function(data,
                        conflict = NULL,
                        insert_cols = NULL,
                        returning = NULL,
-                       return_all = FALSE) {
+                       return_all = FALSE,
+                       mode = "new") {
   check_standard_args(data, table, con)
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
@@ -69,6 +70,30 @@ sql_insert <- function(data,
     }
   }
 
+  f_insert <- switch(
+    mode,
+    new = sql_insert_c,
+    old = sql_insert_nc
+  )
+
+  f_insert(
+    data = data,
+    table = table,
+    con = con,
+    conflict = conflict,
+    insert_cols = insert_cols,
+    returning = returning,
+    return_all = return_all
+  )
+}
+
+sql_insert_c <- function(data,
+                         table,
+                         con,
+                         conflict = NULL,
+                         insert_cols = NULL,
+                         returning = NULL,
+                         return_all = FALSE) {
   if (is_true(return_all) &&
       (
         is_null(returning) ||
@@ -125,7 +150,7 @@ sql_insert_from <- function(data,
                             table,
                             con,
                             conflict = NULL,
-                            insert_cols = NULL,
+                            insert_cols,
                             returning = NULL) {
   # SQLite has problems with `FROM source ON`
   # --> workaround: add `WHERE true` before
@@ -135,6 +160,7 @@ sql_insert_from <- function(data,
   stopifnot(is_bare_character(data, n = 1))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
+  stopifnot(!is_empty(insert_cols))
 
   from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
 

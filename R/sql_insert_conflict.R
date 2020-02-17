@@ -29,7 +29,8 @@ sql_insert_missing <- function(data,
                                conflict_target = NULL,
                                insert_cols = NULL,
                                returning = NULL,
-                               return_all = FALSE) {
+                               return_all = FALSE,
+                               mode = "new") {
   sql_insert(
     data = data,
     table = table,
@@ -37,7 +38,8 @@ sql_insert_missing <- function(data,
     conflict = sql_do_nothing(conflict_target),
     insert_cols = insert_cols,
     returning = returning,
-    return_all = return_all
+    return_all = return_all,
+    mode = mode
   )
 }
 
@@ -54,13 +56,15 @@ sql_upsert <- function(data,
                        conflict_target,
                        update,
                        insert_cols = NULL,
-                       returning = NULL) {
+                       returning = NULL,
+                       mode = "new") {
   sql_insert(
     data = data,
     table = table,
     con = con,
     conflict = sql_do_update(conflict_target, update),
     insert_cols = insert_cols,
-    returning = returning
+    returning = returning,
+    mode = mode
   )
 }

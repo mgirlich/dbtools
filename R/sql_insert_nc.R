@@ -28,30 +28,15 @@ sql_insert_nc <- function(data,
                           insert_cols = NULL,
                           returning = NULL,
                           return_all = FALSE) {
-  check_standard_args(data, table, con)
-  stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
-  stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
-
-  # check insert cols + conflict cols
-  if (is.data.frame(data)) {
-    insert_cols <- insert_cols %||% colnames(data)
-    check_has_cols(data, insert_cols)
-
-    if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
-      abort_invalid_input("cannot use constraint here")
-    }
-    check_has_cols(data, conflict$conflict_target)
-  } else {
-    if (is_null(insert_cols)) {
-      abort_invalid_input("must provide `insert_cols` when `table` is a database table.")
-    }
-  }
-
   if (is_true(return_all) && is_null(returning)) {
     abort_invalid_input(paste0(
       "`return_all` only works with `returning` not NULL",
       " and `conflict` generated with `sql_unique_cols()`"
     ))
+  }
+
+  if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
+    abort_invalid_input("cannot use constraint here")
   }
 
   from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
@@ -84,7 +69,6 @@ sql_insert_nc <- function(data,
       where = conflict$conflict_target
     )
 
-    # create update clause
     update_clause <- sql_clause_update(conflict$conflict_action, "source", con)
     update_query <- glue_sql("
       UPDATE {`table`} AS {`'target'`}
@@ -135,4 +119,11 @@ add_sql_conflict_nc <- function(sql, conflict, table, con) {
     conflict_sql <- sql_clause_do_nothing_nc(conflict$conflict_target, table, con)
     paste_sql(sql, "\n", conflict_sql)
   }
+}
+
+sql_insert_mode <- function(mode) {
+  switch (mode,
+    "new" = sql_insert,
+    "old" = sql_insert_nc
+  )
 }

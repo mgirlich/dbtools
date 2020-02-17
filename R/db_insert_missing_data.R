@@ -7,7 +7,8 @@ db_insert_missing_data <- function(data,
                                    returning = NULL,
                                    return_all = FALSE,
                                    trans = TRUE,
-                                   batch_size = 50e3) {
+                                   batch_size = 50e3,
+                                   mode = "new") {
   if (is_unique_cols(conflict_target)) {
     check_unique_cols(data, conflict_target)
   }
@@ -23,7 +24,8 @@ db_insert_missing_data <- function(data,
         conflict_target = conflict_target,
         insert_cols = insert_cols,
         returning = returning,
-        return_all = return_all
+        return_all = return_all,
+        mode = mode
       )
     },
     trans = trans,
