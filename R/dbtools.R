@@ -11,6 +11,7 @@ glue::glue_sql
 #' @export
 DBI::SQL
 
+# nocov start
 #' @importClassesFrom RPostgres PqConnection
 #' @importMethodsFrom DBI dbQuoteIdentifier
 setMethod("dbQuoteIdentifier", c("PqConnection", "sql"), function(conn, x, ...) {
@@ -21,3 +22,4 @@ setMethod("dbQuoteIdentifier", c("PqConnection", "sql"), function(conn, x, ...) 
 setMethod("dbQuoteIdentifier", c("SQLiteConnection", "sql"), function(conn, x, ...) {
   x
 })
+# nocov end

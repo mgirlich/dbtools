@@ -45,7 +45,7 @@ sql_clause_from <- function(data, con, table, cols = NULL) {
     }
     values_clause <- sql_values(data, con)
     glue_sql("
-      {`table`}({`colnames(data)`*}) AS (
+      {`table`} ({`colnames(data)`*}) AS (
         {values_clause}
       )
     ", .con = con)
