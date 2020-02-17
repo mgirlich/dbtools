@@ -4,7 +4,7 @@
 \alias{sql_values}
 \title{SQL VALUES clause}
 \usage{
-sql_values(data, con, table_name)
+sql_values(data, con)
 }
 \description{
 SQL VALUES clause

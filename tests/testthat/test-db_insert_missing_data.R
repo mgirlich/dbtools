@@ -1,7 +1,7 @@
 test_db_insert_missing_data <- function(data,
                                         expected_returned,
                                         expected_state,
-                                        conflict_target = sql_conflict_cols("id1", "id2"),
+                                        conflict_target = sql_unique_cols("id1", "id2"),
                                         insert_cols = NULL,
                                         returning = SQL("*"),
                                         return_all = FALSE,
@@ -105,7 +105,7 @@ test_that("return_all works", {
 })
 
 test_that("return_all errors for invalid input", {
-  f <- function(conflict_target = sql_conflict_cols("id1", "id2"),
+  f <- function(conflict_target = sql_unique_cols("id1", "id2"),
                 returning = SQL("*")) {
     db_insert_missing_data(
       data = df,

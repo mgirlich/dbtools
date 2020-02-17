@@ -40,7 +40,7 @@ NULL
 #'   data = iris[1:2, ],
 #'   table = "iris_tbl",
 #'   con = con,
-#'   conflict = sql_do_nothing(sql_conflict_cols("Species")),
+#'   conflict = sql_do_nothing(sql_unique_cols("Species")),
 #'   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
 #'   returning = list(`widht_plus_one` = "Sepal.Width + 1", time = SQL("now()"))
 #' )
@@ -60,7 +60,7 @@ sql_insert <- function(data,
     insert_cols <- insert_cols %||% colnames(data)
     check_has_cols(data, insert_cols)
 
-    if (is_conflict_cols(conflict$conflict_target)) {
+    if (is_unique_cols(conflict$conflict_target)) {
       check_has_cols(data, conflict$conflict_target)
     }
   } else {
@@ -72,12 +72,12 @@ sql_insert <- function(data,
   if (is_true(return_all) &&
       (
         is_null(returning) ||
-        !is_conflict_cols(conflict$conflict_target)
+        !is_unique_cols(conflict$conflict_target)
       )
   ) {
     abort_invalid_input(paste0(
       "`return_all` only works with `returning` not NULL",
-      " and `conflict` generated with `sql_conflict_cols()`"
+      " and `conflict` generated with `sql_unique_cols()`"
     ))
   }
 

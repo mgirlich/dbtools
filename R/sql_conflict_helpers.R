@@ -57,22 +57,22 @@ to_sql.dbtools_constraint <- function(x, con) {
 }
 
 #' @export
-sql_conflict_cols <- function(...) {
-  conflict_cols <- c(...)
-  if (is_empty(conflict_cols) || !is.character(conflict_cols) ||
-      any(is.na(conflict_cols))) {
+sql_unique_cols <- function(...) {
+  unique_cols <- c(...)
+  if (is_empty(unique_cols) || !is.character(unique_cols) ||
+      any(is.na(unique_cols))) {
     abort_invalid_input("... must be a non-empty non-NA character vector.")
   }
 
-  structure(conflict_cols, class = "dbtools_conflict_cols")
+  structure(unique_cols, class = "dbtools_unique_cols")
 }
 
-is_conflict_cols <- function(x) {
-  inherits(x, "dbtools_conflict_cols")
+is_unique_cols <- function(x) {
+  inherits(x, "dbtools_unique_cols")
 }
 
-to_sql.dbtools_conflict_cols <- function(x, con) {
-  conflict_cols <- DBI::dbQuoteIdentifier(con, x)
-  conflict_cols_vec <- paste0(conflict_cols, collapse = ", ")
-  paste_sql("(", conflict_cols_vec, ")")
+to_sql.dbtools_unique_cols <- function(x, con) {
+  unique_cols <- DBI::dbQuoteIdentifier(con, x)
+  unique_cols_vec <- paste0(unique_cols, collapse = ", ")
+  paste_sql("(", unique_cols_vec, ")")
 }

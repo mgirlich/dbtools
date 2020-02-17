@@ -10,7 +10,7 @@ test_db_upsert_data <- function(data,
       table = test_table,
       con = con,
       update = update,
-      conflict_target = sql_conflict_cols("id1", "id2"),
+      conflict_target = sql_unique_cols("id1", "id2"),
       insert_cols = insert_cols,
       returning = returning
     ),

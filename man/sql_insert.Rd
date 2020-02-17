@@ -44,7 +44,7 @@ sql_insert(
   data = iris[1:2, ],
   table = "iris_tbl",
   con = con,
-  conflict = sql_do_nothing(sql_conflict_cols("Species")),
+  conflict = sql_do_nothing(sql_unique_cols("Species")),
   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
   returning = list(`widht_plus_one` = "Sepal.Width + 1", time = SQL("now()"))
 )
