@@ -51,11 +51,6 @@ sql_constraint <- function(constraint) {
   structure(constraint, class = "dbtools_constraint")
 }
 
-to_sql.dbtools_constraint <- function(x, con) {
-  constraint <- DBI::dbQuoteIdentifier(con, x)
-  paste_sql("ON CONSTRAINT ", constraint)
-}
-
 #' @export
 sql_unique_cols <- function(...) {
   unique_cols <- c(...)
@@ -69,10 +64,4 @@ sql_unique_cols <- function(...) {
 
 is_unique_cols <- function(x) {
   inherits(x, "dbtools_unique_cols")
-}
-
-to_sql.dbtools_unique_cols <- function(x, con) {
-  unique_cols <- DBI::dbQuoteIdentifier(con, x)
-  unique_cols_vec <- paste0(unique_cols, collapse = ", ")
-  paste_sql("(", unique_cols_vec, ")")
 }
