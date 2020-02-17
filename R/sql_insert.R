@@ -117,32 +117,15 @@ sql_insert_c <- function(data,
   )
 
   from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
-  if (is_true(return_all)) {
-    # idea from
-    # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
-    # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
-    glue_sql("
-      WITH {from_clause}
-      , ins_result AS (
-        {insert_sql}
-      )
-      SELECT *
-        FROM ins_result
-      UNION ALL
-      SELECT {sql_clause_select(returning, con)}
-        FROM {`table`} AS {`'target'`}
-       WHERE EXISTS (
-         SELECT 1
-           FROM source
-          WHERE {sql_clause_where(conflict$conflict_target, con)}
-       )
-    ", .con = con)
-  } else {
-    glue_sql("
-      WITH {from_clause}
-      {insert_sql}
-    ", .con = con)
-  }
+  add_sql_return_all(
+    insert_sql = insert_sql,
+    from_clause = from_clause,
+    table = table,
+    return_all = return_all,
+    returning = returning,
+    conflict = conflict,
+    con = con
+  )
 }
 
 
@@ -178,5 +161,35 @@ add_sql_conflict <- function(sql, conflict, con) {
     sql
   } else {
     paste_sql(sql, "\nON CONFLICT ", to_sql(conflict, con))
+  }
+}
+
+add_sql_return_all <- function(insert_sql, from_clause, table,
+                               return_all, returning, conflict, con) {
+  if (is_true(return_all)) {
+    # idea from
+    # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
+    # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
+    glue_sql("
+      WITH {from_clause}
+      , ins_result AS (
+        {insert_sql}
+      )
+      SELECT *
+        FROM ins_result
+      UNION ALL
+      SELECT {sql_clause_select(returning, con)}
+        FROM {`table`} AS {`'target'`}
+       WHERE EXISTS (
+         SELECT 1
+           FROM source
+          WHERE {sql_clause_where(conflict$conflict_target, con)}
+       )
+    ", .con = con)
+  } else {
+    glue_sql("
+      WITH {from_clause}
+      {insert_sql}
+    ", .con = con)
   }
 }
