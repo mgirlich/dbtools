@@ -36,7 +36,7 @@ sql_insert_nc <- function(data,
   }
 
   if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
-    abort_invalid_input("cannot use constraint here")
+    abort_invalid_input('cannot use constraint here for `mode = "old"`')
   }
 
   from_clause <- sql_clause_from(data, con, table = "source", cols = insert_cols)
@@ -55,7 +55,6 @@ sql_insert_nc <- function(data,
 
   if (is_null(conflict) ||
       inherits(conflict$conflict_action, "dbtools_conflict_do_nothing")) {
-    # TODO support return_all = TRUE
     add_sql_return_all(
       insert_sql = insert_sql,
       from_clause = from_clause,

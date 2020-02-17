@@ -160,7 +160,7 @@ add_sql_conflict <- function(sql, conflict, con) {
   if (is_null(conflict)) {
     sql
   } else {
-    paste_sql(sql, "\nON CONFLICT ", to_sql(conflict, con))
+    paste_sql(sql, "\nWHERE true\nON CONFLICT ", to_sql(conflict, con))
   }
 }
 

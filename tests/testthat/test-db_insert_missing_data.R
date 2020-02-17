@@ -94,6 +94,7 @@ test_that("constraint works", {
 })
 
 test_that("return_all works", {
+  skip_if(is_sqlite(con))
   state_before <- get_tbl()
 
   new_row <- create_new_row(state_before)

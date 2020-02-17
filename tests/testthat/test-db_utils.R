@@ -12,6 +12,8 @@ iris$Species <- as.character(iris$Species)
 prep_table(test_table2, iris)
 
 test_that("db_utils_table_size", {
+  skip_if_not(is_postgres(con))
+
   expect_known_value(
     db_utils_table_size(con),
     ref_file("db_utils_table_size.rds")
@@ -19,6 +21,8 @@ test_that("db_utils_table_size", {
 })
 
 test_that("db_utils_index_infos", {
+  skip_if_not(is_postgres(con))
+
   index_infos <- db_utils_index_infos(con)
   expect_known_value(
     index_infos,
@@ -32,6 +36,8 @@ test_that("db_utils_index_infos", {
 })
 
 test_that("db_utils_running_queries", {
+  skip_if_not(is_postgres(con))
+
   expect_known_value(
     db_utils_running_queries(con)[0, ],
     ref_file("db_utils_running_queries.rds")

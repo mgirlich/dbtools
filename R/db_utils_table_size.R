@@ -2,6 +2,10 @@
 #'
 #' @export
 db_utils_table_size <- function(con) {
+  if (!is_postgres(con)) {
+    abort_invalid_input("db_utils_table_size only works with PostgreSQL.")
+  }
+
   df <- DBI::dbGetQuery(
     con,
     "SELECT
@@ -26,6 +30,10 @@ ORDER BY 3 Desc;"
 #'
 #' @export
 db_utils_index_infos <- function(con, table = NULL) {
+  if (!is_postgres(con)) {
+    abort_invalid_input("db_utils_index_infos only works with PostgreSQL.")
+  }
+
   if (!is_null(table)) {
     table_filter <- glue_sql("AND t.tablename = {table}", .con = con)
   } else {
@@ -78,6 +86,10 @@ ORDER BY 1,2;", .con = con)
 #'
 #' @export
 db_utils_running_queries <- function(con) {
+  if (!is_postgres(con)) {
+    abort_invalid_input("db_utils_running_queries only works with PostgreSQL.")
+  }
+
   DBI::dbGetQuery(
     con,
     "SELECT
