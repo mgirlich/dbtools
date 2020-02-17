@@ -41,7 +41,7 @@ sql_clause_from <- function(data, con, table, cols = NULL) {
     glue_sql("{`data`} AS {`table`}", .con = con)
   } else if (is.data.frame(data)) {
     if (!is_null(cols)) {
-      data <- as.data.frame(data)[, cols, drop = FALSE]
+      data <- select(data, cols)
     }
     values_clause <- sql_values(data, con)
     glue_sql("
@@ -52,6 +52,13 @@ sql_clause_from <- function(data, con, table, cols = NULL) {
   } else {
     abort("type not supported")
   }
+}
+
+select <- function(.x, cols) {
+  check_has_cols(.x, cols)
+  cols <- auto_name(cols)
+  .x <- as.data.frame(.x)[, cols, drop = FALSE]
+  set_names(.x, names(cols))
 }
 
 sql_clause_select <- function(x, con, table = "target") {

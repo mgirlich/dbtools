@@ -88,12 +88,13 @@ sql_insert <- function(data,
     conflict_clause <- NULL
   }
 
+  insert_cols <- auto_name(insert_cols)
   insert_sql <- sql_insert_from(
     data = "source",
     table = table,
     con = con,
     conflict = conflict,
-    insert_cols = insert_cols,
+    insert_cols = names(insert_cols),
     returning = returning
   )
 
