@@ -42,7 +42,7 @@ NULL
 #'   con = con,
 #'   conflict = sql_do_nothing(sql_unique_cols("Species")),
 #'   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
-#'   returning = list(`widht_plus_one` = "Sepal.Width + 1", time = SQL("now()"))
+#'   returning = list(`widht` = "Sepal.Width", time = SQL("now()"))
 #' )
 sql_insert <- function(data,
                        table,
