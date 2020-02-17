@@ -2,7 +2,7 @@
 #'
 #' @export
 #' @examples
-#' sql_values(mtcars[1:3, ], con)
+#' sql_values(mtcars[1:3, c(1:3)], con)
 sql_values <- function(data, con) {
   if (nrow(data) == 0) {
     # very hacky...
@@ -16,7 +16,7 @@ sql_values <- function(data, con) {
       escaped_data <- collapse_sql(rep_along(data, "NULL"), ", ")
     }
 
-    glue_sql("SELECT {escaped_data} WHERE FALSE", .con = con)
+    paste_sql("SELECT ", escaped_data, " WHERE FALSE")
   } else {
     escaped_data <- sqlData(con, data)
 
@@ -24,9 +24,9 @@ sql_values <- function(data, con) {
       escaped_data,
       ~ paste0("(", paste(..., sep = ", "), ")")
     ) %>%
-      collapse_sql(",\n")
+      collapse_sql(",\n  ")
 
-    glue_sql("VALUES {vals}", .con = con)
+    paste_sql("VALUES\n", "  ", vals)
   }
 }
 
@@ -47,8 +47,7 @@ sql_clause_from <- function(data, con, table, cols = NULL) {
     glue_sql("
       {`table`} ({`colnames(data)`*}) AS (
         {values_clause}
-      )
-    ", .con = con)
+      )", .con = con)
   } else {
     abort("type not supported")
   }
