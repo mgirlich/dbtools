@@ -1,7 +1,7 @@
 test_db_insert_missing_data <- function(data,
                                         expected_returned,
                                         expected_state,
-                                        conflict_target = sql_unique_cols("id1", "id2"),
+                                        conflict_target = c("id1", "id2"),
                                         insert_cols = NULL,
                                         returning = SQL("*"),
                                         return_all = FALSE,
