@@ -99,8 +99,8 @@ sql_insert_on_conflict <- function(data,
     data = "source",
     table = table,
     con = con,
-    conflict = conflict,
     insert_cols = insert_cols,
+    conflict = conflict,
     returning = returning
   )
 
@@ -120,8 +120,8 @@ sql_insert_on_conflict <- function(data,
 sql_insert_from <- function(data,
                             table,
                             con,
-                            conflict = NULL,
                             insert_cols,
+                            conflict = NULL,
                             returning = NULL) {
   check_standard_args(data, table, con)
   stopifnot(is_bare_character(data, n = 1))

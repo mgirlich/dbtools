@@ -33,7 +33,6 @@ test_that("errors for invalid conflict target", {
   }
 
   expect_error(f_invalid(NULL), class = "dbtools_error_invalid_input")
-  expect_error(f_invalid("id1"), class = "dbtools_error_invalid_input")
 })
 
 test_that("update works", {

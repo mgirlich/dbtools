@@ -33,6 +33,14 @@ sql_do_update <- function(conflict_target, update) {
 }
 
 new_conflict_clause <- function(conflict_target, conflict_action) {
+  if (!is_conflict_target(conflict_target)) {
+    if (is_bare_character(conflict_target)) {
+      conflict_target <- sql_unique_cols(conflict_target)
+    } else {
+      abort_invalid_input("must provide a valid conflict target")
+    }
+  }
+
   structure(
     list(
       conflict_target = conflict_target,
@@ -48,7 +56,7 @@ sql_constraint <- function(constraint) {
     abort_invalid_input("constraint must be a scalar non-NA character.")
   }
 
-  structure(constraint, class = "dbtools_constraint")
+  new_conflict_target(constraint, class = "dbtools_constraint")
 }
 
 #' @export
@@ -59,9 +67,17 @@ sql_unique_cols <- function(...) {
     abort_invalid_input("... must be a non-empty non-NA character vector.")
   }
 
-  structure(unique_cols, class = "dbtools_unique_cols")
+  new_conflict_target(unique_cols, class = "dbtools_unique_cols")
 }
 
 is_unique_cols <- function(x) {
   inherits(x, "dbtools_unique_cols")
+}
+
+new_conflict_target <- function(x, class) {
+  structure(x, class = c(class, "dbtools_conflict_target"))
+}
+
+is_conflict_target <- function(x) {
+  inherits(x, "dbtools_conflict_target")
 }
