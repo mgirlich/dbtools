@@ -26,7 +26,7 @@
 sql_insert_missing <- function(data,
                                table,
                                con,
-                               conflict_target = NULL,
+                               conflict_target,
                                insert_cols = NULL,
                                returning = NULL,
                                return_all = FALSE,

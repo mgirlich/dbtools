@@ -1,10 +1,8 @@
 #' On conflict DO NOTHING object
 #'
-#' @param conflict_target If `NULL` (the default) conflicts with all usable
-#' constraints and unique indexes are handled. Otherwise a constraint name
-#' given with `sql_constraint()` or a character vector of column names with
-#' a unique index.
-sql_do_nothing <- function(conflict_target = NULL) {
+#' @param conflict_target Otherwise a constraint name given with
+#' `sql_constraint()` or a character vector of column names with a unique index.
+sql_do_nothing <- function(conflict_target) {
   new_conflict_clause(
     conflict_target,
     conflict_action = structure(
@@ -19,10 +17,6 @@ sql_do_nothing <- function(conflict_target = NULL) {
 #' @param conflict_target A constraint name given with `sql_constraint()` or
 #' a character vector of column names with a unique index.
 sql_do_update <- function(conflict_target, update) {
-  if (is_empty(conflict_target)) {
-    abort_invalid_input("`conflict_target` must not be empty!")
-  }
-
   new_conflict_clause(
     conflict_target,
     conflict_action = structure(
