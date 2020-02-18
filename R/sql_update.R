@@ -22,7 +22,7 @@ sql_update <- function(data,
   # see
   # https://stackoverflow.com/a/54323688/7529482
   # https://stackoverflow.com/questions/48690718/sqlite-update-column-from-column-in-another-table
-  check_standard_args(data, table, con)
+  check_standard_args(data, table, con, from_table = TRUE)
   from_clause <- sql_clause_from(data, con, table = "source")
 
   # create update clause

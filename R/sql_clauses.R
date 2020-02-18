@@ -31,21 +31,20 @@ sql_values <- function(data, con) {
 }
 
 sql_clause_from <- function(data, con, table) {
-  if (is.character(data)) {
-    if (length(data) != 1) {
-      abort("`data` must be a table name or a dataframe.")
-    }
+  UseMethod("sql_clause_from", data)
+}
 
-    glue_sql("{`data`} AS {`table`}", .con = con)
-  } else if (is.data.frame(data)) {
-    values_clause <- sql_values(data, con)
-    glue_sql("
-      {`table`} ({`colnames(data)`*}) AS (
-        {values_clause}
-      )", .con = con)
-  } else {
-    abort("type not supported")
-  }
+sql_clause_from.data.frame <- function(data, con, table) {
+  values_clause <- sql_values(data, con)
+  glue_sql("
+    {`table`} ({`colnames(data)`*}) AS (
+      {values_clause}
+    )", .con = con)
+}
+
+sql_clause_from.character <- function(data, con, table) {
+  stopifnot(length(data) == 1)
+  glue_sql("{`data`} AS {`table`}", .con = con)
 }
 
 sql_clause_select <- function(x, con, table = "target") {
@@ -84,7 +83,7 @@ sql_clause_where <- function(where, con) {
 sql_clause_update <- function(update, table_name, con) {
   # character may be named, sql must be named
   if (!is_sql_chr_list(update, chr_names = NA, sql_names = TRUE)) {
-    abort("every element of update must be a bare character or named bare SQL")
+    abort_invalid_input("every element of update must be a bare character or named bare SQL")
   }
 
   sql_clause_generator(

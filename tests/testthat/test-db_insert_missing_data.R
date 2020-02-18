@@ -131,6 +131,11 @@ test_that("return_all errors for invalid input", {
   )
 
   expect_error(
+    f(conflict_target = sql_constraint("my_constraint")),
+    class = "dbtools_error_invalid_input"
+  )
+
+  expect_error(
     f(returning = NULL),
     class = "dbtools_error_invalid_input"
   )

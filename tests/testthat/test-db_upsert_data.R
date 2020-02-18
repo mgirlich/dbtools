@@ -14,7 +14,8 @@ test_db_upsert_data <- function(data,
       update = update,
       conflict_target = sql_unique_cols("id1", "id2"),
       insert_cols = insert_cols,
-      returning = returning
+      returning = returning,
+      mode = m
     )
 
     prepare_table()
@@ -47,5 +48,14 @@ test_that("update works", {
     update = c("value1", "value2"),
     expected_returned = state_new[-1, ],
     expected_state = state_new
+  )
+
+  prepare_table(df[1:2, ])
+  test_db_upsert_data(
+    data = state_new[-1, ],
+    update = c("value1", "value2"),
+    expected_returned = 3,
+    expected_state = state_new,
+    returning = NULL
   )
 })
