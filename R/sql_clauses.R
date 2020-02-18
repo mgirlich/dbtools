@@ -36,7 +36,6 @@ sql_clause_from <- function(data, con, table) {
       abort("`data` must be a table name or a dataframe.")
     }
 
-    # TODO support for cols?
     glue_sql("{`data`} AS {`table`}", .con = con)
   } else if (is.data.frame(data)) {
     values_clause <- sql_values(data, con)

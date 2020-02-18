@@ -1,5 +1,5 @@
 check_standard_args <- function(from, table, con) {
-  stopifnot(is.data.frame(from) || is_bare_character(from, n = 1))
+  stopifnot(is.data.frame(from))
   stopifnot(is_bare_character(table, n = 1))
   stopifnot(inherits(con, "DBIConnection"))
 }

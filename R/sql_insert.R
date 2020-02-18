@@ -57,17 +57,11 @@ sql_insert <- function(data,
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
 
   # check insert cols + conflict cols
-  if (is.data.frame(data)) {
-    insert_cols <- insert_cols %||% colnames(data)
-    check_has_cols(data, insert_cols)
+  insert_cols <- insert_cols %||% colnames(data)
+  check_has_cols(data, insert_cols)
 
-    if (is_unique_cols(conflict$conflict_target)) {
-      check_has_cols(data, conflict$conflict_target)
-    }
-  } else {
-    if (is_null(insert_cols)) {
-      abort_invalid_input("must provide `insert_cols` when `table` is a database table.")
-    }
+  if (is_unique_cols(conflict$conflict_target)) {
+    check_has_cols(data, conflict$conflict_target)
   }
 
   f_insert <- switch(
@@ -123,7 +117,6 @@ sql_insert_from <- function(data,
                             insert_cols,
                             conflict = NULL,
                             returning = NULL) {
-  check_standard_args(data, table, con)
   stopifnot(is_bare_character(data, n = 1))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
   stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
