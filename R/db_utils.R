@@ -10,19 +10,15 @@ batch_wise_db <- function(data,
     get_or_execute(con, sql, returning = returning)
   }
 
-  e <- expr(
+  ret <- maybe_trans(
+    con,
     batch_wise(
       data,
       batch_size,
       f_chunk
-    )
+    ),
+    trans = trans
   )
-
-  if (is_true(trans)) {
-    ret <- with_trans(con, eval(e))
-  } else {
-    ret <- eval(e)
-  }
 
   if (is_null(returning)) {
     sum(unlist(ret))
@@ -32,8 +28,6 @@ batch_wise_db <- function(data,
 }
 
 batch_wise <- function(data, batch_size, .f) {
-  .f <- rlang::as_function(.f)
-
   if (is_null(batch_size) || vec_size(data) == 0) {
     # wrap in list so that it has the same behaviour as if batched
     list(.f(data))
@@ -60,7 +54,15 @@ get_or_execute <- function(con, sql, returning) {
 }
 
 # nocov start
-with_trans <- function(con, code) {
+maybe_trans <- function(con, code, trans) {
+  if (is_true(trans)) {
+    return(code)
+  }
+
+  # the following code is mostly copied from DBI::dbWithTransaction()
+  # the rollback_because function is adapted so that the original error
+  # is kept
+
   ## needs to be a closure, because it accesses conn
   rollback_because <- function(e) {
     call <- dbRollback(con)
