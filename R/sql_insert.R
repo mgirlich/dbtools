@@ -42,7 +42,7 @@ NULL
 #'   con = con,
 #'   conflict = sql_do_nothing(sql_unique_cols("Species")),
 #'   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
-#'   returning = list(`widht` = "Sepal.Width", time = SQL("now()"))
+#'   returning = list(`width` = "Sepal.Width", time = SQL("now()"))
 #' )
 sql_insert <- function(data,
                        table,
@@ -72,7 +72,7 @@ sql_insert <- function(data,
 
   f_insert <- switch(
     mode,
-    new = sql_insert_c,
+    new = sql_insert_on_conflict,
     old = sql_insert_nc
   )
 
@@ -87,25 +87,13 @@ sql_insert <- function(data,
   )
 }
 
-sql_insert_c <- function(data,
-                         table,
-                         con,
-                         conflict = NULL,
-                         insert_cols = NULL,
-                         returning = NULL,
-                         return_all = FALSE) {
-  if (is_true(return_all) &&
-      (
-        is_null(returning) ||
-        !is_unique_cols(conflict$conflict_target)
-      )
-  ) {
-    abort_invalid_input(paste0(
-      "`return_all` only works with `returning` not NULL",
-      " and `conflict` generated with `sql_unique_cols()`"
-    ))
-  }
-
+sql_insert_on_conflict <- function(data,
+                                   table,
+                                   con,
+                                   conflict = NULL,
+                                   insert_cols = NULL,
+                                   returning = NULL,
+                                   return_all = FALSE) {
   insert_cols <- auto_name(insert_cols)
   insert_sql <- sql_insert_from(
     data = "source",
@@ -135,10 +123,6 @@ sql_insert_from <- function(data,
                             conflict = NULL,
                             insert_cols,
                             returning = NULL) {
-  # SQLite has problems with `FROM source ON`
-  # --> workaround: add `WHERE true` before
-  # see https://modern-sql.com/blog/2019-01/sqlite-in-2018
-
   check_standard_args(data, table, con)
   stopifnot(is_bare_character(data, n = 1))
   stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
@@ -160,6 +144,8 @@ add_sql_conflict <- function(sql, conflict, con) {
   if (is_null(conflict)) {
     sql
   } else {
+    # `WHERE true` is needed for SQLite
+    # see: https://modern-sql.com/blog/2019-01/sqlite-in-2018#upsert
     paste_sql(sql, "\nWHERE true\nON CONFLICT ", to_sql(conflict, con))
   }
 }
@@ -167,6 +153,22 @@ add_sql_conflict <- function(sql, conflict, con) {
 add_sql_return_all <- function(insert_sql, from_clause, table,
                                return_all, returning, conflict, con) {
   if (is_true(return_all)) {
+    if (is_null(returning)) {
+      message <- c(
+        "`return_all` is `TRUE` but not specified what to return",
+        "specify what to return with `returning` argument"
+      )
+      abort_invalid_input(message)
+    }
+
+    if (!is_unique_cols(conflict$conflict_target)) {
+      message <- c(
+        "`return_all` is `TRUE` but a constraint is used",
+        "use unique columns instead"
+      )
+      abort_invalid_input(message)
+    }
+
     # idea from
     # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
     # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746

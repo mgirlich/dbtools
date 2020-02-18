@@ -28,13 +28,6 @@ sql_insert_nc <- function(data,
                           insert_cols = NULL,
                           returning = NULL,
                           return_all = FALSE) {
-  if (is_true(return_all) && is_null(returning)) {
-    abort_invalid_input(paste0(
-      "`return_all` only works with `returning` not NULL",
-      " and `conflict` generated with `sql_unique_cols()`"
-    ))
-  }
-
   if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
     abort_invalid_input('cannot use constraint here for `mode = "old"`')
   }
