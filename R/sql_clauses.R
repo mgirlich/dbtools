@@ -48,10 +48,7 @@ sql_clause_from.character <- function(data, con, table) {
 }
 
 sql_clause_select <- function(x, con, table = "target") {
-  # character may be named, sql may be named
-  if (!is_sql_chr_list(x, chr_names = NA, sql_names = NA) || is_null(x)) {
-    abort_invalid_input("every element of returning must be a bare character or named bare SQL")
-  }
+  check_sql_chr_list(x, "returning")
 
   if (!is_null(table)) {
     table <- dbQuoteIdentifier(con, table)
@@ -70,7 +67,10 @@ sql_clause_select <- function(x, con, table = "target") {
 }
 
 sql_clause_where <- function(where, con) {
-  check_where(where)
+  .x <- NULL
+  check_sql_chr_list(where, "where")
+  check_sql_names(where, FALSE, "where")
+
   sql_clause_generator(
     auto_name(where),
     expr_sql = .x,
@@ -81,10 +81,8 @@ sql_clause_where <- function(where, con) {
 }
 
 sql_clause_update <- function(update, table_name, con) {
-  # character may be named, sql must be named
-  if (!is_sql_chr_list(update, chr_names = NA, sql_names = TRUE)) {
-    abort_invalid_input("every element of update must be a bare character or named bare SQL")
-  }
+  check_sql_chr_list(update)
+  check_sql_names(update, TRUE, "update")
 
   sql_clause_generator(
     auto_name(update),
