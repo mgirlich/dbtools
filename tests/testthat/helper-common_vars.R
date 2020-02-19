@@ -1,4 +1,4 @@
-con <- RPostgres::dbConnect(
+con <- DBI::dbConnect(
   RPostgres::Postgres(),
   dbname = "postgres"
 )

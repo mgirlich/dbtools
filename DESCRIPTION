@@ -9,7 +9,10 @@ Authors@R:
 Description: Provides helpers for insert, update and upsert operations in databases.
 License: GPL-3
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    tibble,
+    fs,
+    RPostgres
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -18,4 +21,6 @@ Imports:
     DBI,
     vctrs,
     rlang,
-    purrr
+    purrr,
+    glue,
+    magrittr

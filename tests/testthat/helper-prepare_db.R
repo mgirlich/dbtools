@@ -1,12 +1,10 @@
-df <- tibble::tribble(
-  ~ id1, ~ id2, ~ value1, ~ value2,
-      1,   "a",       10,       "A",
-      1,   "b",       20,       "AA",
-      2,   "b",       11,       "B",
-      3,   "c",       11,       "B",
+df <- data.frame(
+  id1 = c(1, 1, 2, 3),
+  id2 = c("a", "b", "b", "c"),
+  value1 = c(10, 20, 11, 11),
+  value2 = c("A", "AA", "B", "B"),
+  stringsAsFactors = FALSE
 )
-
-df <- as.data.frame(df)
 
 test_table <- "dbtools_test"
 columns <- c("id1", "id2")

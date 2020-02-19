@@ -1,9 +1,12 @@
 #' Auto name a list or character vector
 #'
+#' @noRd
 #' @examples
+#' \dontrun{
 #' auto_name(list("body"))
 #' list("body", left = "right", SQL("unnamed_sql"), left = SQL("named_sql")) %>%
 #'   auto_name()
+#' }
 auto_name <- function(x) {
   # only auto name character
   chr_flag <- purrr::map_lgl(x, is_bare_character)
@@ -24,4 +27,12 @@ is_postgres <- function(conn) {
 
 is_sqlite <- function(conn) {
   inherits(conn, "SQLiteConnection")
+}
+
+maybe_as_tibble <- function(x) {
+  if (is_installed("tibble")) {
+    tibble::as_tibble(x)
+  } else {
+    x
+  }
 }

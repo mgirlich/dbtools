@@ -47,9 +47,9 @@ batch_wise <- function(data, batch_size, .f) {
 
 get_or_execute <- function(con, sql, returning) {
   if (is_null(returning)) {
-    dbExecute(con, sql)
+    DBI::dbExecute(con, sql)
   } else {
-    dbGetQuery(con, sql)
+    DBI::dbGetQuery(con, sql)
   }
 }
 
@@ -65,7 +65,7 @@ maybe_trans <- function(con, code, trans) {
 
   ## needs to be a closure, because it accesses conn
   rollback_because <- function(e) {
-    call <- dbRollback(con)
+    call <- DBI::dbRollback(con)
     if (identical(call, FALSE)) {
       abort2(
         e,
@@ -82,14 +82,14 @@ maybe_trans <- function(con, code, trans) {
   }
 
   ## check if each operation is successful
-  call <- dbBegin(con)
+  call <- DBI::dbBegin(con)
   if (identical(call, FALSE)) {
     abort("Failed to begin transaction")
   }
   tryCatch(
     {
       res <- force(code)
-      call <- dbCommit(con)
+      call <- DBI::dbCommit(con)
       if (identical(call, FALSE)) {
         abort("Failed to commit transaction")
       }
