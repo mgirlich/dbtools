@@ -1,7 +1,8 @@
 #' Update a database table
 #'
-#' @return If `returning` is `NULL` the number of rows updated; Otherwise a
-#' tibble of the updated rows and the columns as specified in `returning`..
+#' @inheritParams sql_update
+#' @inheritParams db_insert_data
+#'
 #' @export
 db_update_data <- function(data,
                            table,

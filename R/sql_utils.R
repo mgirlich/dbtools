@@ -13,7 +13,3 @@ is_sql <- function(x) {
 is_scalar_sql <- function(x) {
   is_sql(x) && (length(x) == 1)
 }
-
-is_sql_star <- function(x) {
-  identical(x, SQL("*")) && is_scalar_sql(x)
-}

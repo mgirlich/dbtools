@@ -6,6 +6,9 @@
 \usage{
 db_utils_table_size(con)
 }
+\arguments{
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+}
 \description{
 Get database table sizes
 }

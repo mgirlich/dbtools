@@ -15,9 +15,61 @@ db_update_data(
   batch_size = 50000
 )
 }
-\value{
-If \code{returning} is \code{NULL} the number of rows updated; Otherwise a
-tibble of the updated rows and the columns as specified in \code{returning}..
+\arguments{
+\item{data}{a data.frame.}
+
+\item{table}{name of the database table.}
+
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+
+\item{update}{specifies the columns of \code{table} to update and its new values.
+This can be one of the following:
+\itemize{
+\item a character vector of column names, e.g. \code{c("a")} to update the
+column a of \code{table} with the values of the column a \code{data}.
+Names can be used to update a column with values from a column with a
+different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
+with the column \code{y} of \code{data}.
+\item a named list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}. In the SQL code the
+database table is named \code{target} and the input data is named \code{source}.
+The name specifies the column to update. For example
+\code{update = list(update_counter = SQL("target.update_counter + 1"))}
+will increase the column update_counter by one.
+\item a mixture of these two: a list of scalar SQL and scalar character.
+}}
+
+\item{where}{specifies how to join \code{table} and \code{data}. This can be one of
+the following:
+\itemize{
+\item a character vector of column names to join on equal values of the
+corresponding columns. To join by different variables on \code{table} and \code{data}
+use a named vector. For example \code{where = c("a", x = "b")} will match
+\code{table.a} to \code{data.a} and \code{table.x} to \code{table.b}
+\item an unnamed list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). In the SQL code the
+database table is named \code{target} and the input data is named \code{source}.
+\item a mixture of these two. For example, when using
+\code{where = list("name", SQL("target.country = 'de'"))}
+all rows will be updated where name matches in \code{table} and \code{data} and
+the column country of \code{table} is equal to \code{"de"}.
+}}
+
+\item{returning}{specifies the columns to return. If \code{NULL} (the default)
+the number of updated/inserted rows are returned.
+This can be one of the following:
+\itemize{
+\item a character vector of column names.
+\item a list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). Note that only the
+columns from \code{table} are visible, not the ones from \code{source}.
+\item a mixture of these two.
+Names are used as the names of the returned columns. For example
+\code{returning = list("id", time = SQL("now()"))}
+will return a data.frame (or tibble if installed) with the columns
+id and time.
+}}
+
+\item{trans}{perform operation in a transaction?}
+
+\item{batch_size}{number of rows to process in a single statement.}
 }
 \description{
 Update a database table

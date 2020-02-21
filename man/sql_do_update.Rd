@@ -7,8 +7,30 @@
 sql_do_update(conflict_target, update)
 }
 \arguments{
-\item{conflict_target}{A constraint name given with \code{sql_constraint()} or
-a character vector of column names with a unique index.}
+\item{conflict_target}{specifies the conflict target. This can be one of
+the following:
+\itemize{
+\item a character vector of column names that should be unique.
+When using this together with mode "new" there must be a unique constraint
+on these columns.
+\item a constraint name specified by \code{\link[=sql_constraint]{sql_constraint()}}.
+}}
+
+\item{update}{specifies the columns of \code{table} to update and its new values.
+This can be one of the following:
+\itemize{
+\item a character vector of column names, e.g. \code{c("a")} to update the
+column a of \code{table} with the values of the column a \code{data}.
+Names can be used to update a column with values from a column with a
+different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
+with the column \code{y} of \code{data}.
+\item a named list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}. In the SQL code the
+database table is named \code{target} and the input data is named \code{source}.
+The name specifies the column to update. For example
+\code{update = list(update_counter = SQL("target.update_counter + 1"))}
+will increase the column update_counter by one.
+\item a mixture of these two: a list of scalar SQL and scalar character.
+}}
 }
 \description{
 On conflict DO UPDATE object

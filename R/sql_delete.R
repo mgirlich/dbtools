@@ -1,21 +1,24 @@
 #' SQL query to delete records
 #'
+#' @inheritParams sql_update
+#'
 #' @export
 #' @examples
+#' con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 #' sql_delete(
+#'   data = df,
 #'   table = "my_tbl",
 #'   con = con,
-#'   from = "my_value_table",
-#'   where = list("where 1", SQL("my_tbl.id > 1")),
-#'   returning = list(`ret 1` = "ret_col", SQL("now()"))
+#'   where = list("id1", SQL("my_tbl.value1 > 1")),
+#'   returning = list(id = "id1", time = SQL("now()"))
 #' )
-sql_delete <- function(from,
+sql_delete <- function(data,
                        table,
                        con,
                        where,
                        returning = NULL) {
-  check_standard_args(from, table, con)
-  from_clause <- sql_clause_from(from, con, table = "source")
+  check_standard_args(data, table, con)
+  from_clause <- sql_clause_from(data, con, table = "source")
 
   glue_sql("
     WITH {from_clause}
@@ -26,5 +29,5 @@ sql_delete <- function(from,
          WHERE {sql_clause_where(where, con)}
     )
      ", .con = con) %>%
-    add_sql_returning(returning, con)
+    sql_add_returning(returning, con)
 }

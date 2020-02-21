@@ -1,3 +1,9 @@
+#' Insert data to a database table
+#'
+#' @inheritParams sql_insert
+#' @param trans perform operation in a transaction?
+#' @param batch_size number of rows to process in a single statement.
+#'
 #' @export
 db_insert_data <- function(data,
                            table,

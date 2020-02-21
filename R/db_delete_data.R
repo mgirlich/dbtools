@@ -1,3 +1,8 @@
+#' Delete data from a database table
+#'
+#' @inheritParams sql_delete
+#' @inheritParams db_insert_data
+#'
 #' @export
 db_delete_data <- function(data,
                            table,
@@ -11,7 +16,7 @@ db_delete_data <- function(data,
     con = con,
     .f = ~ {
       sql_delete(
-        from = .x,
+        data = .x,
         table = table,
         con = con,
         where = where,

@@ -1,3 +1,8 @@
+#' Insert new data to a database table
+#'
+#' @inheritParams sql_insert_missing
+#' @inheritParams db_insert_data
+#'
 #' @export
 db_insert_missing_data <- function(data,
                                    table,

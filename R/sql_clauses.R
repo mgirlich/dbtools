@@ -1,13 +1,28 @@
-#' SQL VALUES clause
+#' Generate an SQL VALUES clause
+#'
+#' `sql_values()` translates a data.frame to an SQL VALUES clause.
+#'
+#' @details
+#' Because a `VALUES` clause must have at least one row a `data.frame` with
+#' zero rows is translated as a `SELECT` clause that returns zero rows.
+#'
+#' @inheritParams default-args
+#'
+#' @return An SQL clause (a scalar object of class SQL).
 #'
 #' @export
 #' @examples
+#' con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 #' sql_values(mtcars[1:3, c(1:3)], con)
+#' sql_values(mtcars[0, c(1:3)], con)
 sql_values <- function(data, con) {
+  stopifnot(is.data.frame(data))
+  stopifnot(inherits(con, "DBIConnection"))
+
   if (nrow(data) == 0) {
     # very hacky...
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
-    # ?? OR https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
+    # https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
     if (is_postgres(con)) {
       casts <- lapply(data, DBI::dbQuoteLiteral, conn = con)
       casts[lengths(casts) == 0] <- "::text"
@@ -31,10 +46,12 @@ sql_values <- function(data, con) {
 }
 
 sql_clause_from <- function(data, con, table) {
+  check_standard_args(data, table, con, from_table = TRUE)
   UseMethod("sql_clause_from", data)
 }
 
 sql_clause_from.data.frame <- function(data, con, table) {
+  # TODO this is actually not a from clause but more like a with clause...
   values_clause <- sql_values(data, con)
   glue_sql("
     {`table`} ({`colnames(data)`*}) AS (
@@ -94,13 +111,20 @@ sql_clause_update <- function(update, table_name, con) {
   )
 }
 
-#' Add a returning clause
+#' Add a RETURNING clause
+#'
+#' `sql_add_returning()` adds a `RETURNING` clause to an existing SQL clause.
 #'
 #' @param sql An SQL clause.
 #' @inheritParams sql_insert
 #'
+#' @return An SQL clause (a scalar object of class SQL). If `returning` is
+#' `NULL` then `sql` is returned as is.
+#'
 #' @export
-add_sql_returning <- function(sql, returning, con) {
+sql_add_returning <- function(sql, returning, con) {
+  stopifnot(is_sql(sql))
+
   if (is.null(returning)) {
     sql
   } else {
@@ -111,13 +135,15 @@ add_sql_returning <- function(sql, returning, con) {
 
 sql_clause_generator <- function(x, expr_sql, expr_chr, collapse, ...) {
   data <- list(...)
+  expr_sql <- enexpr(expr_sql)
+  expr_chr <- enexpr(expr_chr)
   r <- purrr::map2(
     x, names2(x),
     ~ {
       if (is_sql(.x)) {
-        e <- enexpr(expr_sql)
+        e <- expr_sql
       } else {
-        e <- enexpr(expr_chr)
+        e <- expr_chr
       }
       eval_tidy(e, data = data)
     }

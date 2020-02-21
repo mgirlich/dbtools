@@ -80,7 +80,7 @@ helpers exported:
   - `sql_do_nothing()` and `sql_do_update()` to generate the conflict
     clause in `sql_conflict_insert()`.
   - `sql_values()` to generate a `VALUES` clause.
-  - `add_sql_returning()` to add a returning clause if returning is not
+  - `sql_add_returning()` to add a returning clause if returning is not
     `NULL`.
 
 ### Database Infos

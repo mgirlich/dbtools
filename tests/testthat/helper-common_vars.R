@@ -3,7 +3,7 @@ con <- DBI::dbConnect(
   dbname = "postgres"
 )
 # tmp <- tempfile()
-# con <- DBI::dbConnect(RSQLite::SQLite(), tmp)
+# con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 
 lcl_exec <- function(...) {
   sql <- glue::glue_sql(..., .con = con, .envir = parent.frame())

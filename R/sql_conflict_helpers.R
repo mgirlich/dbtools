@@ -1,7 +1,12 @@
 #' On conflict DO NOTHING object
 #'
-#' @param conflict_target Otherwise a constraint name given with
-#' `sql_constraint()` or a character vector of column names with a unique index.
+#' @param conflict_target specifies the conflict target. This can be one of
+#' the following:
+#' * a character vector of column names that should be unique.
+#' When using this together with mode "new" there must be a unique constraint
+#' on these columns.
+#' * a constraint name specified by [sql_constraint()].
+#' @export
 sql_do_nothing <- function(conflict_target) {
   new_conflict_clause(
     conflict_target,
@@ -14,8 +19,8 @@ sql_do_nothing <- function(conflict_target) {
 
 #' On conflict DO UPDATE object
 #'
-#' @param conflict_target A constraint name given with `sql_constraint()` or
-#' a character vector of column names with a unique index.
+#' @inheritParams sql_do_nothing
+#' @inheritParams sql_update
 sql_do_update <- function(conflict_target, update) {
   new_conflict_clause(
     conflict_target,
@@ -44,6 +49,13 @@ new_conflict_clause <- function(conflict_target, conflict_action) {
   )
 }
 
+#' SQL conflict target
+#'
+#' @param constraint The name of a constraint (a scalar character). The
+#' constraint must be allowed to in use in the `ON CONFLICT ON CONSTRAINT`
+#' clause.
+#'
+#' @name conflict-target
 #' @export
 sql_constraint <- function(constraint) {
   if (!is_scalar_character(constraint)) {
@@ -53,6 +65,9 @@ sql_constraint <- function(constraint) {
   new_conflict_target(constraint, class = "dbtools_constraint")
 }
 
+#' @param ... A character vector of the names of the unique columns.
+#'
+#' @name conflict-target
 #' @export
 sql_unique_cols <- function(...) {
   unique_cols <- c(...)

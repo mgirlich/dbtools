@@ -6,6 +6,9 @@
 \usage{
 db_utils_running_queries(con)
 }
+\arguments{
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+}
 \description{
 Get running queries
 }

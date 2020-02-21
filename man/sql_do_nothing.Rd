@@ -4,13 +4,17 @@
 \alias{sql_do_nothing}
 \title{On conflict DO NOTHING object}
 \usage{
-sql_do_nothing(conflict_target = NULL)
+sql_do_nothing(conflict_target)
 }
 \arguments{
-\item{conflict_target}{If \code{NULL} (the default) conflicts with all usable
-constraints and unique indexes are handled. Otherwise a constraint name
-given with \code{sql_constraint()} or a character vector of column names with
-a unique index.}
+\item{conflict_target}{specifies the conflict target. This can be one of
+the following:
+\itemize{
+\item a character vector of column names that should be unique.
+When using this together with mode "new" there must be a unique constraint
+on these columns.
+\item a constraint name specified by \code{\link[=sql_constraint]{sql_constraint()}}.
+}}
 }
 \description{
 On conflict DO NOTHING object

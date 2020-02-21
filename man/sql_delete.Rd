@@ -4,17 +4,54 @@
 \alias{sql_delete}
 \title{SQL query to delete records}
 \usage{
-sql_delete(from, table, con, where, returning = NULL)
+sql_delete(data, table, con, where, returning = NULL)
+}
+\arguments{
+\item{data}{a data.frame.}
+
+\item{table}{name of the database table.}
+
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+
+\item{where}{specifies how to join \code{table} and \code{data}. This can be one of
+the following:
+\itemize{
+\item a character vector of column names to join on equal values of the
+corresponding columns. To join by different variables on \code{table} and \code{data}
+use a named vector. For example \code{where = c("a", x = "b")} will match
+\code{table.a} to \code{data.a} and \code{table.x} to \code{table.b}
+\item an unnamed list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). In the SQL code the
+database table is named \code{target} and the input data is named \code{source}.
+\item a mixture of these two. For example, when using
+\code{where = list("name", SQL("target.country = 'de'"))}
+all rows will be updated where name matches in \code{table} and \code{data} and
+the column country of \code{table} is equal to \code{"de"}.
+}}
+
+\item{returning}{specifies the columns to return. If \code{NULL} (the default)
+the number of updated/inserted rows are returned.
+This can be one of the following:
+\itemize{
+\item a character vector of column names.
+\item a list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). Note that only the
+columns from \code{table} are visible, not the ones from \code{source}.
+\item a mixture of these two.
+Names are used as the names of the returned columns. For example
+\code{returning = list("id", time = SQL("now()"))}
+will return a data.frame (or tibble if installed) with the columns
+id and time.
+}}
 }
 \description{
 SQL query to delete records
 }
 \examples{
+con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 sql_delete(
+  data = df,
   table = "my_tbl",
   con = con,
-  from = "my_value_table",
-  where = list("where 1", SQL("my_tbl.id > 1")),
-  returning = list(`ret 1` = "ret_col", SQL("now()"))
+  where = list("id1", SQL("my_tbl.value1 > 1")),
+  returning = list(id = "id1", time = SQL("now()"))
 )
 }

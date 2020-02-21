@@ -6,6 +6,11 @@
 \usage{
 db_utils_index_infos(con, table = NULL)
 }
+\arguments{
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+
+\item{table}{name of the database table.}
+}
 \description{
 Get database index infos
 }

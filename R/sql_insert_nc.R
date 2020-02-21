@@ -1,5 +1,6 @@
 #' SQL insert query
 #'
+#' @noRd
 #' @examples
 #' f <- function(...) {
 #'   sql_insert_nc(df, "dbtools_test", con, ...)
@@ -44,7 +45,7 @@ sql_insert_nc <- function(data,
     returning = NULL
   )%>%
     add_sql_conflict_nc(conflict, table, con) %>%
-    add_sql_returning(returning, con)
+    sql_add_returning(returning, con)
 
   if (is_null(conflict) ||
       inherits(conflict$conflict_action, "dbtools_conflict_do_nothing")) {

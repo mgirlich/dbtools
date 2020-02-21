@@ -1,5 +1,8 @@
 #' Update a database table
 #'
+#' @inheritParams sql_upsert
+#' @inheritParams db_insert_data
+#'
 #' @section Unnecessary Updates:
 #' Be careful when doing updates very frequently on a table. On an update
 #' operation Postgres writes a new version of a row even when nothing has

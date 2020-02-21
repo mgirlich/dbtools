@@ -13,8 +13,67 @@ db_upsert_data(
   insert_cols = NULL,
   returning = NULL,
   trans = TRUE,
-  batch_size = 50000
+  batch_size = 50000,
+  mode = "new"
 )
+}
+\arguments{
+\item{data}{a data.frame.}
+
+\item{table}{name of the database table.}
+
+\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+
+\item{update}{specifies the columns of \code{table} to update and its new values.
+This can be one of the following:
+\itemize{
+\item a character vector of column names, e.g. \code{c("a")} to update the
+column a of \code{table} with the values of the column a \code{data}.
+Names can be used to update a column with values from a column with a
+different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
+with the column \code{y} of \code{data}.
+\item a named list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}. In the SQL code the
+database table is named \code{target} and the input data is named \code{source}.
+The name specifies the column to update. For example
+\code{update = list(update_counter = SQL("target.update_counter + 1"))}
+will increase the column update_counter by one.
+\item a mixture of these two: a list of scalar SQL and scalar character.
+}}
+
+\item{conflict_target}{specifies the conflict target. This can be one of
+the following:
+\itemize{
+\item a character vector of column names that should be unique.
+When using this together with mode "new" there must be a unique constraint
+on these columns.
+\item a constraint name specified by \code{\link[=sql_constraint]{sql_constraint()}}.
+}}
+
+\item{insert_cols}{columns from \code{data} to insert.}
+
+\item{returning}{specifies the columns to return. If \code{NULL} (the default)
+the number of updated/inserted rows are returned.
+This can be one of the following:
+\itemize{
+\item a character vector of column names.
+\item a list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). Note that only the
+columns from \code{table} are visible, not the ones from \code{source}.
+\item a mixture of these two.
+Names are used as the names of the returned columns. For example
+\code{returning = list("id", time = SQL("now()"))}
+will return a data.frame (or tibble if installed) with the columns
+id and time.
+}}
+
+\item{trans}{perform operation in a transaction?}
+
+\item{batch_size}{number of rows to process in a single statement.}
+
+\item{mode}{specify how to check for a conflict:
+\itemize{
+\item "new": use the SQL "ON CONFLICT" clause.
+\item "old": do not use the "ON CONFLICT" clause but an anti-join.
+}}
 }
 \value{
 If \code{returning} is \code{NULL} the number of rows updated; Otherwise a

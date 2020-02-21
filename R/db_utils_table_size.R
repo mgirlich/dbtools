@@ -1,5 +1,7 @@
 #' Get database table sizes
 #'
+#' @inheritParams db_insert_data
+#'
 #' @export
 db_utils_table_size <- function(con) {
   if (!is_postgres(con)) {
@@ -18,7 +20,7 @@ LEFT OUTER JOIN pg_class c ON t.tablename = c.relname
 WHERE t.schemaname = 'public'
 ORDER BY 3 Desc;"
   ) %>%
-    tibble::as_tibble()
+    maybe_as_tibble()
 
   df <- convert_cols_to_fs_bytes(df, c("size_total", "size_table"))
   df$size_external <- df$size_total - df$size_table
@@ -27,6 +29,8 @@ ORDER BY 3 Desc;"
 }
 
 #' Get database index infos
+#'
+#' @inheritParams db_insert_data
 #'
 #' @export
 db_utils_index_infos <- function(con, table = NULL) {
@@ -77,12 +81,14 @@ WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')
     {table_filter}
 ORDER BY 1,2;", .con = con)
   ) %>%
-    tibble::as_tibble()
+    maybe_as_tibble()
 
   convert_cols_to_fs_bytes(df, c("size_index", "size_table"))
 }
 
 #' Get running queries
+#'
+#' @inheritParams db_insert_data
 #'
 #' @export
 db_utils_running_queries <- function(con) {
@@ -107,7 +113,7 @@ db_utils_running_queries <- function(con) {
     WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%'
     ORDER BY query_start;"
   ) %>%
-    tibble::as_tibble()
+    maybe_as_tibble()
 }
 
 
