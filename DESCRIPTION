@@ -12,7 +12,8 @@ Suggests:
     testthat (>= 2.1.0),
     tibble,
     fs,
-    RPostgres
+    RPostgres,
+    RSQLite
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
