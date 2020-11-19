@@ -36,6 +36,11 @@ maybe_as_tibble <- function(x) {
     x
   }
 }
+
+indent <- function(x) {
+  stringi::stri_paste("  ", stringr::str_replace_all(x, "\\n", "\n  "))
+}
+
 src_memdb2 <- function() {
   dbplyr::src_memdb()$con
 }
