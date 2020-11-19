@@ -64,3 +64,12 @@ An SQL query. The returned rows are the ones that were updated.
 \description{
 SQL query to update records
 }
+\examples{
+sql_update(
+  data = mtcars,
+  table = "target_table",
+  con = src_memdb2(),
+  update = list("value2", value1 = SQL("target.value1 + 1")),
+  where = c("id1", "id2")
+)
+}
