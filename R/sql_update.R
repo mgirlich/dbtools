@@ -40,44 +40,71 @@
 #'
 #' @return An SQL query. The returned rows are the ones that were updated.
 #' @export
+#' @examples
+#' sql_update(
+#'   data = mtcars,
+#'   table = "target_table",
+#'   con = src_memdb2(),
+#'   update = list("value2", value1 = SQL("target.value1 + 1")),
+#'   where = c("id1", "id2")
+#' )
 sql_update <- function(data,
                        table,
                        con,
                        update,
                        where,
                        returning = NULL) {
+  if (!is_null(returning) & inherits(con, "SQLiteConnection")) {
+    abort_invalid_input("`returning` doesn't work for SQLite")
+  }
+
+  # TODO why is `returning` handled so complicated in `sql_update_old()`?
+  # see below:
+  #
+  # WITH {from_clause}
+  # , ups AS (
+  #   {update_query}
+  #   RETURNING target.*
+  # )
+  # SELECT {select_clause}
+  #   FROM ups
+
   # SQLite doesn't support an update from like syntax
   # --> have to use a subquery
   # see
   # https://stackoverflow.com/a/54323688/7529482
   # https://stackoverflow.com/questions/48690718/sqlite-update-column-from-column-in-another-table
   check_standard_args(data, table, con, from_table = TRUE)
-  from_clause <- sql_clause_from(data, con, table = "source")
 
-  # create update clause
-  update_clause <- sql_clause_update(update, "source", con)
-  update_query <- glue_sql("
-    UPDATE {`table`} AS {`'target'`}
-       SET {update_clause}
-      FROM source
-     WHERE {sql_clause_where(where, con)}
-     ", .con = con)
+  # TODO should `source_tbl` and `target_tbl` be arguments?
+  source_tbl <- "source"
 
-  if (is_null(returning)) {
-    glue_sql("
-      WITH {from_clause}
-      {update_query}
-    ", .con = con)
+  if (is.data.frame(data)) {
+    source_sql <- sql_clause_cte_table(
+      con,
+      ident(source_tbl),
+      sql_values(data, con),
+      columns = ident(colnames(data))
+    )
   } else {
-    select_clause <- sql_clause_select(returning, con)
-    glue_sql("
-      WITH {from_clause}
-      , ups AS (
-        {update_query}
-        RETURNING target.*
-      )
-      SELECT {select_clause}
-        FROM ups
-    ", .con = con)
+    source_sql <- NULL
   }
+
+  update_clauses <- translate_update(con, update)
+  where_clauses <- translate_where(con, where)
+
+  update_clause <- sql_update_clauses(
+    con,
+    update = sql_clause_update(con, c(target = ident(table))),
+    set = sql_clause_set(con, update_clauses),
+    from = sql_clause_from(con, ident(source_tbl)),
+    where = sql_clause_where(con, where_clauses),
+    returning = sql_clause_returning(con, returning)
+  )
+
+  sql_with_clauses(
+    con,
+    if (length(source_sql)) source_sql,
+    update_clause
+  )
 }
