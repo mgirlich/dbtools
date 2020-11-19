@@ -45,12 +45,13 @@ sql_values <- function(data, con) {
   }
 }
 
-sql_clause_from <- function(data, con, table) {
+sql_clause_from_old <- function(data, con, table) {
   check_standard_args(data, table, con, from_table = TRUE)
-  UseMethod("sql_clause_from", data)
+  UseMethod("sql_clause_from_old", data)
 }
 
-sql_clause_from.data.frame <- function(data, con, table) {
+#' @export
+sql_clause_from_old.data.frame <- function(data, con, table) {
   # TODO this is actually not a from clause but more like a with clause...
   values_clause <- sql_values(data, con)
   glue_sql("
@@ -59,12 +60,13 @@ sql_clause_from.data.frame <- function(data, con, table) {
     )", .con = con)
 }
 
-sql_clause_from.character <- function(data, con, table) {
+#' @export
+sql_clause_from_old.character <- function(data, con, table) {
   stopifnot(length(data) == 1)
   glue_sql("{`data`} AS {`table`}", .con = con)
 }
 
-sql_clause_select <- function(x, con, table = "target") {
+sql_clause_select_old <- function(x, con, table = "target") {
   check_sql_chr_list(x, "returning")
 
   if (!is_null(table)) {
@@ -83,7 +85,7 @@ sql_clause_select <- function(x, con, table = "target") {
   collapse_sql(x, collapse = ",\n")
 }
 
-sql_clause_where <- function(where, con) {
+sql_clause_where_old <- function(where, con) {
   .x <- NULL
   check_sql_chr_list(where, "where")
   check_sql_names(where, FALSE, "where")
@@ -97,7 +99,7 @@ sql_clause_where <- function(where, con) {
   )
 }
 
-sql_clause_update <- function(update, table_name, con) {
+sql_clause_update_old <- function(update, table_name, con) {
   check_sql_chr_list(update)
   check_sql_names(update, TRUE, "update")
 
@@ -128,7 +130,7 @@ sql_add_returning <- function(sql, returning, con) {
   if (is.null(returning)) {
     sql
   } else {
-    returning_clause <- sql_clause_select(returning, con)
+    returning_clause <- sql_clause_select_old(returning, con)
     glue_sql("{sql}\nRETURNING {returning_clause}", .con = con)
   }
 }
