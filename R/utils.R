@@ -9,7 +9,8 @@
 #' }
 auto_name <- function(x) {
   # only auto name character
-  chr_flag <- purrr::map_lgl(x, is_bare_character)
+  chr_flag <- purrr::map_lgl(x, is_bare_character) &
+    purrr::map_lgl(x, ~ !is_sql(.x)) & !is_sql(x)
   nms_flag <- names2(x) != ""
   update_flag <- !nms_flag & chr_flag
 
