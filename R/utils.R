@@ -36,3 +36,13 @@ maybe_as_tibble <- function(x) {
     x
   }
 }
+src_memdb2 <- function() {
+  dbplyr::src_memdb()$con
+}
+
+memdb_frame2 <- function(..., .name) {
+  if (DBI::dbExistsTable(src_memdb2(), .name)) {
+    DBI::dbRemoveTable(src_memdb2(), .name)
+  }
+  dbplyr::memdb_frame(..., .name = .name)
+}
