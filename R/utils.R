@@ -7,18 +7,14 @@
 #' list("body", left = "right", SQL("unnamed_sql"), left = SQL("named_sql")) %>%
 #'   auto_name()
 #' }
-auto_name <- function(x) {
-  # only auto name character
-  chr_flag <- purrr::map_lgl(x, is_bare_character) &
-    purrr::map_lgl(x, ~ !is_sql(.x)) & !is_sql(x)
-  nms_flag <- names2(x) != ""
-  update_flag <- !nms_flag & chr_flag
+auto_name_chr <- function(x) {
+  chr_flag <- purrr::map_lgl(x, vec_is, character())
+  update_flag <- !have_name(x) & chr_flag
 
-  auto_names <- purrr::map_chr(x[update_flag], as_name)
-  names(x)[update_flag] <- auto_names
-  x
+  nms <- names2(x)
+  nms[update_flag] <- purrr::map_chr(x[update_flag], as_name)
+  set_names(x, nms)
 }
-
 
 is_postgres <- function(conn) {
   inherits(conn, "PostgreSQLConnection") ||
@@ -51,4 +47,8 @@ memdb_frame2 <- function(..., .name) {
     DBI::dbRemoveTable(src_memdb2(), .name)
   }
   dbplyr::memdb_frame(..., .name = .name)
+}
+
+is_named2 <- function(x) {
+  is_empty(x) || is_named(x)
 }

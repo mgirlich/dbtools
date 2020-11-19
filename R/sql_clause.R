@@ -73,6 +73,7 @@ sql_statements <- function(con, ...) {
 
 # SQL clauses -------------------------------------------------------------
 
+#' @noRd
 #' @examples
 #' sql_clause_cte_table(
 #'   con,
@@ -126,6 +127,7 @@ sql_clause_where_not_exists <- function(con, table, where_clause) {
   )
 }
 
+#' @noRd
 #' @examples
 #' sql_clause_insert_into(
 #'   con,
@@ -142,6 +144,10 @@ sql_clause_insert_into <- function(con, table, columns) {
 }
 
 sql_clause_set <- function(con, updates) {
+  if (!is_named(updates)) {
+    abort_invalid_input("`updates` must be named.")
+  }
+
   # compare to `sql_clause_where()`
   updates_esc <- purrr::imap(updates, ~ build_sql(ident(.y), " = ", .x, con = con))
   updates_esc <- unname(updates_esc)

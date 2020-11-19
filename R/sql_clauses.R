@@ -91,7 +91,7 @@ sql_clause_where_old <- function(where, con) {
   check_sql_names(where, FALSE, "where")
 
   sql_clause_generator(
-    auto_name(where),
+    auto_name_chr(where),
     expr_sql = .x,
     expr_chr = glue_sql("target.{`.y`} = source.{`.x`}", .con = con),
     collapse = " AND ",
@@ -104,7 +104,7 @@ sql_clause_update_old <- function(update, table_name, con) {
   check_sql_names(update, TRUE, "update")
 
   sql_clause_generator(
-    auto_name(update),
+    auto_name_chr(update),
     expr_sql = glue_sql("{`.y`} = {`.x`}", .con = con),
     expr_chr = glue_sql("{`.y`} = {`table_name`}.{`.x`}", .con = con),
     collapse = ",\n",

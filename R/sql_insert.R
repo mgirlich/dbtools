@@ -96,7 +96,7 @@ sql_insert_on_conflict <- function(data,
                                    insert_cols = NULL,
                                    returning = NULL,
                                    return_all = FALSE) {
-  insert_cols <- auto_name(insert_cols)
+  insert_cols <- auto_name_chr(insert_cols)
   insert_sql <- sql_insert_from(
     data = "source",
     table = table,
