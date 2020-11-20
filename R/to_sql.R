@@ -19,7 +19,7 @@ to_sql.dbtools_conflict_do_update <- function(x, con) {
   # glue_sql("UPDATE SET {update_clause}", .con = con)
   update_clauses <- translate_update(con, x, source_tbl = "EXCLUDED")
   build_sql(
-    "UPDATE SET ", sql_clause_set(con, update_clauses),
+    "UPDATE ", sql_clause_set(con, update_clauses),
     con = con
   )
 }
