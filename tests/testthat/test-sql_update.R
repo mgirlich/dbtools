@@ -106,19 +106,3 @@ test_that("sql_update can use returning", {
     )
   )
 })
-
-test_that("sql_update checks `where`", {
-  skip("not yet implemented")
-  f_update(
-    update = c("value1", "value2"),
-    where = sql(target_col = "data_col")
-  )
-})
-
-test_that("sql_update checks `update`", {
-  skip("not yet implemented")
-  f_update(
-    update = sql("value1"),
-    where = c("id1")
-  )
-})

@@ -163,12 +163,12 @@ add_sql_return_all <- function(insert_sql, from_clause, table,
       SELECT *
         FROM ins_result
       UNION ALL
-      SELECT {sql_clause_select(returning, con)}
+      SELECT {sql_clause_select_old(returning, con)}
         FROM {`table`} AS {`'target'`}
        WHERE EXISTS (
          SELECT 1
            FROM source
-          WHERE {sql_clause_where(conflict$conflict_target, con)}
+          WHERE {sql_clause_where_old(conflict$conflict_target, con)}
        )
     ", .con = con)
   } else {

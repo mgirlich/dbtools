@@ -66,7 +66,7 @@
       WHERE NOT EXISTS (
         SELECT 1
           FROM `dbtools_test` AS `target`
-         WHERE target.`id1` = source.`id1` AND target.`id2` = source.`id2`
+         WHERE ((`target`.`id1` = `source`.`id1`) AND (my_tbl.value1 > 1))
       )
       RETURNING *
 
@@ -90,7 +90,7 @@
         WHERE NOT EXISTS (
           SELECT 1
             FROM `dbtools_test` AS `target`
-           WHERE target.`id1` = source.`id1` AND target.`id2` = source.`id2`
+           WHERE ((`target`.`id1` = `source`.`id1`) AND (my_tbl.value1 > 1))
         )
         RETURNING *
       )
