@@ -21,6 +21,7 @@ sql_do_nothing <- function(conflict_target) {
 #'
 #' @inheritParams sql_do_nothing
 #' @inheritParams sql_update
+#' @export
 sql_do_update <- function(conflict_target, update) {
   new_conflict_clause(
     conflict_target,

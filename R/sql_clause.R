@@ -148,7 +148,7 @@ sql_clause_where_not_exists <- function(con, table, where_clause) {
     "WHERE NOT EXISTS (\n",
     "  SELECT 1\n",
     "    FROM ", table, "\n",
-    "   WHERE ", where_clause, "\n",
+    "   ", where_clause, "\n",
     ")",
     con = con
   )
@@ -224,6 +224,14 @@ sql_clause_returning <- function(con, returning) {
   build_sql(
     "RETURNING ",
     escape(returning, collapse = ", ", con = con),
+    con = con
+  )
+}
+
+sql_clause_on_conflict <- function(con, conflict_target, conflict_action) {
+  build_sql(
+    "ON ", conflict_target, "\n",
+    "DO ", conflict_action,
     con = con
   )
 }
