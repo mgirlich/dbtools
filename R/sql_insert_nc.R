@@ -78,7 +78,7 @@ sql_insert_nc <- function(data,
 }
 
 sql_clause_do_nothing_nc <- function(conflict_target, table, con) {
-  where_clause <- sql_clause_where(con, translate_where(con, where))
+  where_clause <- sql_clause_where(con, translate_where(con, conflict_target))
   sql_clause_where_not_exists(con, table, where_clause)
 }
 
