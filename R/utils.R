@@ -52,3 +52,13 @@ memdb_frame2 <- function(..., .name) {
 is_named2 <- function(x) {
   is_empty(x) || is_named(x)
 }
+
+#' @export
+`[.sql` <- function(x, i, ...) {
+  sql(NextMethod("["))
+}
+
+#' @export
+`[[.sql` <- function(x, i, ...) {
+  sql(NextMethod("[["))
+}
