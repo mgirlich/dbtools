@@ -19,18 +19,20 @@ sql_delete <- function(data,
                        returning = NULL) {
   check_standard_args(data, table, con)
 
-  where_clause <- sql_clause_where_old(where, con)
+  source_tbl <- "source"
+
+  where_clause <- sql_clause_where(con, translate_where(con, where))
 
   delete_sql <- sql_statements(
     con = con,
     sql_clause_delete(con, ident(target = table)),
-    sql_clause_where_not_exists(con, ident("source"), where_clause),
+    sql_clause_where_not_exists(con, ident(source_tbl), where_clause),
     if (length(returning)) sql_clause_returning(con, returning)
   )
 
   sql_with_clauses(
     con = con,
-    if (is.data.frame(data)) sql_clause_from_old(data, con, table = "source"),
+    sql_clause_data(con, data, source_tbl),
     delete_sql
   )
 }

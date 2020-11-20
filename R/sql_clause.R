@@ -51,16 +51,16 @@ sql_insert_from_clauses <- function(con,
                                     insert,
                                     select,
                                     from,
-                                    withs = NULL,
                                     where = NULL,
+                                    on_conflict = NULL,
                                     returning = NULL) {
   sql_statements(
     con,
-    withs,
     insert,
     select,
     from,
     where,
+    on_conflict,
     returning
   )
 }
@@ -72,6 +72,33 @@ sql_statements <- function(con, ...) {
 }
 
 # SQL clauses -------------------------------------------------------------
+
+sql_clause_data <- function(con, data, table) {
+  check_standard_args(data, table, con, from_table = TRUE)
+  UseMethod("sql_clause_data", data)
+}
+
+#' @export
+sql_clause_data.data.frame <- function(con, data, table) {
+  values_clause <- sql_values(data, con)
+  sql_clause_cte_table(
+    con,
+    ident(table),
+    values_clause,
+    columns = ident(colnames(data))
+  )
+  # glue_sql("
+  #   {`table`} ({`colnames(data)`*}) AS (
+  #     {values_clause}
+  #   )", .con = con)
+}
+
+#' @export
+sql_clause_data.character <- function(con, data, table) {
+  stopifnot(length(data) == 1)
+  # glue_sql("{`data`} AS {`table`}", .con = con)
+  NULL
+}
 
 #' @noRd
 #' @examples

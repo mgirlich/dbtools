@@ -96,59 +96,41 @@ sql_insert_on_conflict <- function(data,
                                    insert_cols = NULL,
                                    returning = NULL,
                                    return_all = FALSE) {
-  insert_cols <- auto_name_chr(insert_cols)
-  insert_sql <- sql_insert_from(
-    data = "source",
-    table = table,
+  # TODO return_all
+  source_tbl <- "source"
+  target_tbl <- "target"
+
+  # `WHERE true` is needed for SQLite
+  # see: https://modern-sql.com/blog/2019-01/sqlite-in-2018#upsert
+  insert_clause <- sql_insert_from_clauses(
     con = con,
-    insert_cols = insert_cols,
-    conflict = conflict,
-    returning = returning
+    insert = sql_clause_insert_into(
+      con,
+      set_names(ident(table), target_tbl),
+      ident(insert_cols)
+    ),
+    select = sql_clause_select(con, ident(insert_cols)),
+    from = sql_clause_from(con, ident(source_tbl)),
+    where = if (length(conflict)) sql_clause_where(con, sql("true")),
+    on_conflict = if (length(conflict)) translate_conflict(con, conflict),
+    returning = sql_clause_returning(con, returning)
   )
 
-  from_clause <- sql_clause_from(data, con, table = "source")
-  add_sql_return_all(
-    insert_sql = insert_sql,
-    from_clause = from_clause,
-    table = table,
-    return_all = return_all,
-    returning = returning,
-    conflict = conflict,
-    con = con
+  sql_with_clauses(
+    con = con,
+    sql_clause_data(con, data, source_tbl),
+    insert_clause
   )
-}
 
-
-sql_insert_from <- function(data,
-                            table,
-                            con,
-                            insert_cols,
-                            conflict = NULL,
-                            returning = NULL) {
-  stopifnot(is_bare_character(data, n = 1))
-  stopifnot(is_bare_character(insert_cols) || is_null(insert_cols))
-  stopifnot(is_null(conflict) || inherits(conflict, "dbtools_conflict_clause"))
-  stopifnot(!is_empty(insert_cols))
-
-  from_clause <- sql_clause_from(data, con, table = "source")
-
-  glue_sql("
-    INSERT INTO {`table`} AS {`'target'`} ({`insert_cols`*})
-    SELECT {`insert_cols`*}
-      FROM {from_clause}
-    ", .con = con) %>%
-    add_sql_conflict(conflict, con) %>%
-    sql_add_returning(returning, con)
-}
-
-add_sql_conflict <- function(sql, conflict, con) {
-  if (is_null(conflict)) {
-    sql
-  } else {
-    # `WHERE true` is needed for SQLite
-    # see: https://modern-sql.com/blog/2019-01/sqlite-in-2018#upsert
-    paste_sql(sql, "\nWHERE true\nON CONFLICT ", to_sql(conflict, con))
-  }
+  # add_sql_return_all(
+  #   insert_sql = insert_sql,
+  #   from_clause = from_clause,
+  #   table = table,
+  #   return_all = return_all,
+  #   returning = returning,
+  #   conflict = conflict,
+  #   con = con
+  # )
 }
 
 add_sql_return_all <- function(insert_sql, from_clause, table,

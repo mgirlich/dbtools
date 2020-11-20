@@ -79,17 +79,6 @@ sql_update <- function(data,
   # TODO should `source_tbl` and `target_tbl` be arguments?
   source_tbl <- "source"
 
-  if (is.data.frame(data)) {
-    source_sql <- sql_clause_cte_table(
-      con,
-      ident(source_tbl),
-      sql_values(data, con),
-      columns = ident(colnames(data))
-    )
-  } else {
-    source_sql <- NULL
-  }
-
   update_clauses <- translate_update(con, update)
   where_clauses <- translate_where(con, where)
 
@@ -104,7 +93,7 @@ sql_update <- function(data,
 
   sql_with_clauses(
     con,
-    if (length(source_sql)) source_sql,
+    sql_clause_data(con, data, source_tbl),
     update_clause
   )
 }

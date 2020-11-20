@@ -36,21 +36,18 @@ sql_insert_nc <- function(data,
 
   insert_cols <- insert_cols %||% colnames(data)
 
-  source_sql <- sql_clause_cte_table(
-    con,
-    ident(source_tbl),
-    sql_values(data, con),
-    columns = ident(colnames(data))
-  )
-
   insert_clause <- sql_insert_from_clauses(
     con = con,
-    insert = sql_clause_insert_into(con, ident(target = table), ident(insert_cols)),
+    insert = sql_clause_insert_into(
+      con,
+      set_names(ident(table), target_tbl),
+      ident(insert_cols)
+    ),
     select = sql_clause_select(con, ident(insert_cols)),
     from = sql_clause_from(con, ident(source_tbl)),
     where = if (length(conflict)) sql_clause_do_nothing_nc(
       conflict$conflict_target,
-      ident(target = table),
+      set_names(ident(table), target_tbl),
       con
     ),
     returning = sql_clause_returning(con, returning)
@@ -58,7 +55,7 @@ sql_insert_nc <- function(data,
 
   if (inherits(conflict$conflict_action, "dbtools_conflict_do_update")) {
     update_clause <- sql_update(
-      data = "source",
+      data = source_tbl,
       table = "dbtools_test",
       con = con,
       where = conflict$conflict_target,
@@ -67,14 +64,14 @@ sql_insert_nc <- function(data,
 
     sql_with_clauses(
       con = con,
-      source_sql,
+      sql_clause_data(con, data, source_tbl),
       sql_clause_cte_table(con, ident("insert_action"), insert_clause),
       update_clause
     )
   } else {
     sql_with_clauses(
       con = con,
-      source_sql,
+      sql_clause_data(con, data, source_tbl),
       insert_clause
     )
   }
@@ -159,8 +156,7 @@ sql_insert_nc_old <- function(data,
 }
 
 sql_clause_do_nothing_nc <- function(conflict_target, table, con) {
-  # TODO use new `sql_clause_where()`
-  where_clause <- sql_clause_where_old(conflict_target, con = con)
+  where_clause <- sql_clause_where(con, translate_where(con, where))
   sql_clause_where_not_exists(con, table, where_clause)
 }
 
