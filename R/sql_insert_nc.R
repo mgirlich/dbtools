@@ -30,7 +30,12 @@ sql_insert_nc <- function(data,
                           returning = NULL,
                           return_all = FALSE
                           ) {
-  # TODO support `return_all`?
+  if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
+    abort_invalid_input('cannot use constraint here for `mode = "old"`')
+  }
+
+  # TODO support `return_all` for `do_nothing` or conflict = NULL?
+  # add_sql_return_all
   source_tbl <- "source"
   target_tbl <- "target"
 
@@ -66,8 +71,14 @@ sql_insert_nc <- function(data,
       con = con,
       sql_clause_data(con, data, source_tbl),
       sql_clause_cte_table(con, ident("insert_action"), insert_clause),
+      # sql_clause_cte_table(con, ident("update_action"), update_clause),
       update_clause
     )
+
+    # SELECT * FROM insert_action
+    # UNION ALL
+    # SELECT {sql_clause_select_old(returning, con)} FROM update_action
+
   } else {
     sql_with_clauses(
       con = con,
