@@ -9,8 +9,8 @@
 #'   data = df,
 #'   table = "my_tbl",
 #'   con = con,
-#'   where = list("id1", SQL("my_tbl.value1 > 1")),
-#'   returning = list(id = "id1", time = SQL("now()"))
+#'   where = list("id1", sql("my_tbl.value1 > 1")),
+#'   returning = list(id = "id1", time = sql("now()"))
 #' )
 sql_delete <- function(data,
                        table,

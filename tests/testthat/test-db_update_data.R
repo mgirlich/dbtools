@@ -35,6 +35,6 @@ test_that("db_update_data works", {
     input,
     expected_returned = input,
     expected_state = state_new,
-    returning = SQL("*")
+    returning = sql("*")
   )
 })

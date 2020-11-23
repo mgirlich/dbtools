@@ -2,7 +2,7 @@ test_db_insert_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
-                                returning = SQL("*"),
+                                returning = sql("*"),
                                 trans = TRUE,
                                 batch_size = 50e3) {
   test_db_f(

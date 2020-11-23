@@ -5,7 +5,7 @@ test_that("check_sql_chr_list works", {
 })
 
 test_that("check_sql_chr_list works", {
-  x <- SQL("a")
+  x <- sql("a")
   expect_error(
     check_sql_names(list(x), TRUE, "where"),
     class = "dbtools_error_invalid_input"

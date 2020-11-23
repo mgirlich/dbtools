@@ -3,7 +3,7 @@ test_db_upsert_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 insert_cols = NULL,
-                                returning = SQL("*"),
+                                returning = sql("*"),
                                 mode = c("new", "old")) {
   for (m in mode) {
     test_db_f(

@@ -15,7 +15,7 @@ prepare_table <- function(value = df) {
     DBI::dbRemoveTable(con, test_table)
   }
 
-  table <- DBI::dbQuoteIdentifier(con, test_table)
+  # table <- DBI::dbQuoteIdentifier(con, test_table)
 
   fields <- vapply(value, function(x) DBI::dbDataType(con, x), character(1))
   field_names <- DBI::dbQuoteIdentifier(con, names(fields))
@@ -23,7 +23,7 @@ prepare_table <- function(value = df) {
   fields <- SQL(paste0(field_names, " ", field_types))
 
   lcl_exec("
-    CREATE TABLE {`table`} (
+    CREATE TABLE {`test_table`} (
       {fields*},
       UNIQUE({`columns`*})
     );")

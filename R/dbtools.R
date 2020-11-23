@@ -7,9 +7,9 @@
 #' @export
 glue::glue_sql
 
-#' @importFrom DBI SQL
+#' @importFrom dbplyr sql
 #' @export
-DBI::SQL
+dbplyr::sql
 
 #' @importFrom dbplyr sql sql_vector escape build_sql ident
 #' @importFrom assertthat assert_that

@@ -8,7 +8,7 @@
 #' An SQL expression list is either a character vector e.g. `c("id", "name")`.
 #' Or it can be a list where each element is
 #' * a scalar character, i.e. a character of length 1 which must not be `NA`.
-#' * a SQL class generated with [DBI::SQL()] or [glue::glue_sql()].
+#' * a SQL class generated with [dbplyr::sql()] or [glue::glue_sql()].
 #'
 #' A scalar character refers to a column in the dataframe and of the database
 #' table. If the element is named then the name is used for the database.
@@ -50,7 +50,7 @@ NULL
 #'   con = con,
 #'   conflict = sql_do_nothing("Species"),
 #'   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
-#'   returning = list(width = "Sepal.Width", time = SQL("now()"))
+#'   returning = list(width = "Sepal.Width", time = sql("now()"))
 #' )
 sql_insert <- function(data,
                        table,

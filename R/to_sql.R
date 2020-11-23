@@ -10,7 +10,7 @@ to_sql.dbtools_conflict_clause <- function(x, con) {
 
 #' @export
 to_sql.dbtools_conflict_do_nothing <- function(x, con) {
-  SQL("NOTHING")
+  sql("NOTHING")
 }
 
 #' @export

@@ -1,9 +1,12 @@
-con <- DBI::dbConnect(
+con_pg <- DBI::dbConnect(
   RPostgres::Postgres(),
   dbname = "postgres"
 )
 # tmp <- tempfile()
-# con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
+con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+
+mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
 
 lcl_exec <- function(...) {
   sql <- glue::glue_sql(..., .con = con, .envir = parent.frame())
@@ -32,7 +35,7 @@ ref_dir <- function() {
 def_returning <- list(
   "name",
   id = "id2",
-  time = SQL("now()")
+  time = sql("now()")
 )
 def_update <- list(
   "name",
@@ -41,5 +44,5 @@ def_update <- list(
 def_where <- list(
   "name",
   col2 = "id",
-  SQL("now()")
+  sql("now()")
 )

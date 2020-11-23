@@ -4,7 +4,7 @@
 #' @examples
 #' \dontrun{
 #' auto_name(list("body"))
-#' list("body", left = "right", SQL("unnamed_sql"), left = SQL("named_sql")) %>%
+#' list("body", left = "right", sql("unnamed_sql"), left = sql("named_sql")) %>%
 #'   auto_name()
 #' }
 auto_name_chr <- function(x) {

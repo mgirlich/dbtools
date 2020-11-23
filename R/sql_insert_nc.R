@@ -6,7 +6,7 @@
 #'   sql_insert_nc(df, "dbtools_test", con, ...)
 #' }
 #'
-#' f(returning = SQL("*"))
+#' f(returning = sql("*"))
 #'
 #' f(conflict = sql_do_nothing(sql_unique_cols("id1", "id2")))
 #'
@@ -18,7 +18,7 @@
 #' f(
 #'   conflict = sql_do_update(
 #'     sql_unique_cols("id1", "id2"),
-#'     update = list("value2", value1 = SQL("target.value1 + 1"))
+#'     update = list("value2", value1 = sql("target.value1 + 1"))
 #'   ),
 #'   returning = c("id1")
 #' )

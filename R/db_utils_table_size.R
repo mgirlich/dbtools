@@ -41,7 +41,7 @@ db_utils_index_infos <- function(con, table = NULL) {
   if (!is_null(table)) {
     table_filter <- glue_sql("AND t.tablename = {table}", .con = con)
   } else {
-    table_filter <- SQL("")
+    table_filter <- sql("")
   }
 
   df <- DBI::dbGetQuery(

@@ -60,11 +60,6 @@ as.list.sql <- function(x, ...) {
   purrr::map(x, sql)
 }
 
-#' @export
-as.list.SQL <- function(x, ...) {
-  purrr::map(x, SQL)
-}
-
 flatten_sql <- function(x, names) {
   x_out <- sql(purrr::flatten_chr(x))
   if (is_true(names)) {

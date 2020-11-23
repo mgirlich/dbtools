@@ -1,5 +1,4 @@
 paste_sql <- function(..., sep = "", collapse = NULL) {
-  # SQL(paste(..., sep = sep, collapse = collapse))
   sql(paste(..., sep = sep, collapse = collapse))
 }
 
@@ -8,7 +7,7 @@ collapse_sql <- function(x, collapse) {
 }
 
 is_sql <- function(x) {
-  inherits(x, "SQL") || inherits(x, "sql")
+  inherits(x, "sql")
 }
 
 are_sql <- function(x) {

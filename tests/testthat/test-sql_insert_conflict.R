@@ -22,7 +22,7 @@ test_that("`sql_insert_missing()` works in new mode", {
     table = "sql_insert_missing_1",
     con = src_memdb2(),
     conflict_target = c("rowname"),
-    # returning = SQL("*"),
+    # returning = sql("*"),
     return_all = TRUE,
     mode = "new"
   )
@@ -50,7 +50,7 @@ test_that("`sql_insert_missing()` works in old mode", {
     table = "sql_insert_missing_2",
     con = src_memdb2(),
     conflict_target = c("rowname"),
-    # returning = SQL("*"),
+    # returning = sql("*"),
     return_all = TRUE,
     mode = "old"
   )

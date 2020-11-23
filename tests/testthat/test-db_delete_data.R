@@ -2,7 +2,7 @@ test_db_delete_data <- function(data,
                                 expected_returned,
                                 expected_state,
                                 where = c("id1", "id2"),
-                                returning = SQL("*")) {
+                                returning = sql("*")) {
   test_db_f(
     f = db_delete_data,
     data = data,
@@ -49,7 +49,7 @@ test_that("where works", {
 
   test_db_delete_data(
     data = state_new,
-    where = list("id1", id2 = "id_2", SQL("target.id1 > 1")),
+    where = list("id1", id2 = "id_2", sql("target.id1 > 1")),
     expected_returned = state_before[3, ],
     expected_state = state_before[-3, ]
   )
