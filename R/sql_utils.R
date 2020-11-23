@@ -22,10 +22,17 @@ maybe_ident <- function(x) {
   UseMethod("maybe_ident")
 }
 
+#' @export
 maybe_ident.character <- function(x) {
   ident(x)
 }
 
+#' @export
 maybe_ident.ident <- function(x) {
   x
+}
+
+#' @export
+maybe_ident.sql <- function(x) {
+  x # nocov
 }

@@ -3,12 +3,6 @@ to_sql <- function(x, con) {
 }
 
 #' @export
-to_sql.dbtools_conflict_clause <- function(x, con) {
-  conflict_action_sql <- to_sql(x$conflict_action, con)
-  paste_sql(to_sql(x$conflict_target, con), conflict_action_sql, sep = " ")
-}
-
-#' @export
 to_sql.dbtools_conflict_do_nothing <- function(x, con) {
   sql("NOTHING")
 }

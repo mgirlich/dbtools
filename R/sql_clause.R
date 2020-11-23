@@ -123,9 +123,11 @@ sql_values <- function(con, data) {
     # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
     # https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
     if (is_postgres(con)) {
+      # nocov start
       casts <- lapply(data, DBI::dbQuoteLiteral, conn = con)
       casts[lengths(casts) == 0] <- "::text"
       escaped_data <- collapse_sql(sub("^.*?(::.*)$", "NULL\\1", casts), ", ")
+      # nocov end
     } else if (is_sqlite(con)) {
       escaped_data <- collapse_sql(rep_along(data, "NULL"), ", ")
     }

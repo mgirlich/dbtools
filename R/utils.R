@@ -49,6 +49,13 @@ memdb_frame2 <- function(..., .name) {
   dbplyr::memdb_frame(..., .name = .name)
 }
 
+pg_frame2 <- function(..., .name) {
+  if (DBI::dbExistsTable(con_pg, .name)) {
+    DBI::dbRemoveTable(con_pg, .name)
+  }
+  DBI::dbWriteTable(con_pg, .name, tibble::tibble(...))
+}
+
 is_named2 <- function(x) {
   is_empty(x) || is_named(x)
 }

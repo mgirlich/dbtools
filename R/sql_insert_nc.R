@@ -101,10 +101,3 @@ sql_clause_do_nothing_nc <- function(conflict_target, table, con) {
   where_clause <- sql_clause_where(con, translate_where(con, conflict_target))
   sql_clause_where_exists(con, table, where_clause, not = TRUE)
 }
-
-sql_insert_mode <- function(mode) {
-  switch (mode,
-    "new" = sql_insert,
-    "old" = sql_insert_nc
-  )
-}

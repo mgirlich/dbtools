@@ -167,7 +167,7 @@ sql_return_all <- function(con, table, returning, conflict) {
     sql_clause_select(con, sql("*")),
     sql_clause_from(con, ident("ins_result")),
     "UNION ALL",
-    sql_clause_select(con, ident(returning)),
+    sql_clause_select(con, maybe_ident(returning)),
     sql_clause_from(con, set_names(ident(table), target_tbl)),
     sql_clause_where_exists(con, ident(source_tbl), where_clause, not = FALSE)
   )
