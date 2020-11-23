@@ -1,11 +1,10 @@
-
 #' @noRd
 #' @param where
 #' * names = name of column in target table
 #' * character can be named
 #' * sql must not be named
 translate_where <- function(con, where, target_tbl = "target", source_tbl = "source") {
-  where_list <- auto_name_chr(cast_to_list(where))
+  where_list <- auto_name_chr(as.list(where))
   sql_flag <- are_sql(where_list)
 
   if (any(have_name(where_list[sql_flag]))) {
@@ -24,7 +23,7 @@ translate_where <- function(con, where, target_tbl = "target", source_tbl = "sou
     }
   )
 
-  sql(purrr::flatten_chr(where_list))
+  flatten_sql(where_list, names = FALSE)
 }
 
 #' @noRd
@@ -33,7 +32,7 @@ translate_where <- function(con, where, target_tbl = "target", source_tbl = "sou
 #' * character can be named
 #' * sql must be named
 translate_update <- function(con, update, source_tbl = "source") {
-  update_list <- auto_name_chr(cast_to_list(update))
+  update_list <- auto_name_chr(as.list(update))
   sql_flag <- are_sql(update_list)
 
   if (!is_named2(update_list[sql_flag])) {
@@ -45,21 +44,32 @@ translate_update <- function(con, update, source_tbl = "source") {
     ~ sql_table_prefix(con, .x, ident(source_tbl))
   )
 
-  update_list
+  flatten_sql(update_list, names = TRUE)
 }
 
 translate_conflict <- function(con, conflict) {
   sql_clause_on_conflict(
     con,
-    to_sql(conflict$conflict_target, con),
-    to_sql(conflict$conflict_action, con)
+    conflict_target = to_sql(conflict$conflict_target, con),
+    conflict_action = to_sql(conflict$conflict_action, con)
   )
 }
 
-cast_to_list <- function(x) {
-  if (is_sql(x)) {
-    purrr::map(x, sql)
-  } else {
-    as.list(x)
+#' @export
+as.list.sql <- function(x, ...) {
+  purrr::map(x, sql)
+}
+
+#' @export
+as.list.SQL <- function(x, ...) {
+  purrr::map(x, SQL)
+}
+
+flatten_sql <- function(x, names) {
+  x_out <- sql(purrr::flatten_chr(x))
+  if (is_true(names)) {
+    x_out <- set_names(x_out, names2(x))
   }
+
+  x_out
 }
