@@ -255,19 +255,43 @@ sql_clause_where <- function(con, where) {
   )
 }
 
+
+#' Add a RETURNING clause
+#'
+#' `sql_add_returning()` adds a `RETURNING` clause to an existing SQL clause.
+#'
+#' @param sql An SQL clause.
+#' @inheritParams sql_insert
+#'
+#' @return An SQL clause (a scalar object of class SQL). If `returning` is
+#' `NULL` then `sql` is returned as is.
+#'
+#' @export
 sql_clause_returning <- function(con, returning) {
   # TODO what classes to expect from `returning`?
   # * sql -> do nothing
   # * character -> treat as fields?
 
-    if (is_null(returning)) {
+  if (is_null(returning)) {
     return(NULL)
   }
+
+  returning <- purrr::map(
+    as.list(returning),
+    ~ {
+      if (is_sql(.x)) {
+        .x
+      } else {
+        ident(.x)
+      }
+    }
+  )
+
   # assert_that(is.character(returning))
 
   build_sql(
     "RETURNING ",
-    escape(returning, collapse = ", ", con = con),
+    escape(returning, parens = FALSE, collapse = ", ", con = con),
     con = con
   )
 }
