@@ -116,65 +116,59 @@ sql_insert_on_conflict <- function(data,
     returning = sql_clause_returning(con, returning)
   )
 
-  sql_with_clauses(
-    con = con,
-    sql_clause_data(con, data, source_tbl),
-    insert_clause
-  )
-
-  # add_sql_return_all(
-  #   insert_sql = insert_sql,
-  #   from_clause = from_clause,
-  #   table = table,
-  #   return_all = return_all,
-  #   returning = returning,
-  #   conflict = conflict,
-  #   con = con
-  # )
+  if (is_true(return_all)) {
+    sql_with_clauses(
+      con = con,
+      sql_clause_data(con, data, source_tbl),
+      sql_clause_cte_table(con, ident("ins_result"), insert_clause),
+      sql_return_all(con, table, returning, conflict)
+    )
+  } else {
+    sql_with_clauses(
+      con = con,
+      sql_clause_data(con, data, source_tbl),
+      insert_clause
+    )
+  }
 }
 
-add_sql_return_all <- function(insert_sql, from_clause, table,
-                               return_all, returning, conflict, con) {
-  if (is_true(return_all)) {
-    if (is_null(returning)) {
-      message <- c(
-        "`return_all` is `TRUE` but not specified what to return",
-        "specify what to return with `returning` argument"
-      )
-      abort_invalid_input(message)
-    }
-
-    if (!is_unique_cols(conflict$conflict_target)) {
-      message <- c(
-        "`return_all` is `TRUE` but a constraint is used",
-        "use unique columns instead"
-      )
-      abort_invalid_input(message)
-    }
-
-    # idea from
-    # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
-    # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
-    glue_sql("
-      WITH {from_clause}
-      , ins_result AS (
-        {insert_sql}
-      )
-      SELECT *
-        FROM ins_result
-      UNION ALL
-      SELECT {sql_clause_select_old(returning, con)}
-        FROM {`table`} AS {`'target'`}
-       WHERE EXISTS (
-         SELECT 1
-           FROM source
-          WHERE {sql_clause_where_old(conflict$conflict_target, con)}
-       )
-    ", .con = con)
-  } else {
-    glue_sql("
-      WITH {from_clause}
-      {insert_sql}
-    ", .con = con)
+# sql_return_all(
+#   con,
+#   table = "my table",
+#   returning = c("mpg", "cyl"),
+#   conflict = sql_do_nothing(c("id", "id 2"))
+# )
+sql_return_all <- function(con, table, returning, conflict) {
+  if (is_null(returning)) {
+    message <- c(
+      "`return_all` is `TRUE` but not specified what to return",
+      i = "specify what to return with `returning` argument"
+    )
+    abort_invalid_input(message)
   }
+
+  if (!is_unique_cols(conflict$conflict_target)) {
+    message <- c(
+      "`return_all` is `TRUE` but a constraint is used",
+      i = "use unique columns instead"
+    )
+    abort_invalid_input(message)
+  }
+
+  target_tbl <- "target"
+  source_tbl <- "source"
+
+  # idea from
+  # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
+  # https://stackoverflow.com/questions/36083669/get-id-from-a-conditional-insert/36090746#36090746
+  where_clause <- sql_clause_where(con, translate_where(con, conflict$conflict_target))
+  sql_statements(
+    con,
+    sql_clause_select(con, sql("*")),
+    sql_clause_from(con, ident("ins_result")),
+    "UNION ALL",
+    sql_clause_select(con, ident(returning)),
+    sql_clause_from(con, set_names(ident(table), target_tbl)),
+    sql_clause_where_exists(con, ident(source_tbl), where_clause, not = FALSE)
+  )
 }
