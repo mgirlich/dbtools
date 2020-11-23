@@ -59,6 +59,15 @@ sql_insert_nc <- function(data,
   )
 
   if (inherits(conflict$conflict_action, "dbtools_conflict_do_update")) {
+    if (is_sqlite(con)) {
+      message <- c(
+        "upsert is not possible in one operation for SQLite.",
+        i = 'use `mode = "new"` if there is a unique constraint;',
+        i = "use `sql_update()` and then `sql_insert_missing()` otherwise"
+      )
+      abort_invalid_input(message)
+    }
+
     update_clause <- sql_update(
       data = source_tbl,
       table = "dbtools_test",

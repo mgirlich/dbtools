@@ -12,7 +12,7 @@
 #'   table = "dbtools_mtcars",
 #'   con = con,
 #'   conflict_target = c("mpg", "cyl"),
-#'   returning = SQL("*"),
+#'   returning = sql("*"),
 #'   return_all = TRUE
 #' )
 sql_insert_missing <- function(data,
@@ -36,7 +36,7 @@ sql_insert_missing <- function(data,
 }
 
 
-#' SQL for inserting missing values
+#' SQL for upserting values
 #'
 #' @inheritParams sql_insert_missing
 #' @inheritParams sql_update

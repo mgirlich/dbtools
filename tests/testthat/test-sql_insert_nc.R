@@ -72,6 +72,7 @@ test_that("do nothing on conflict works", {
 })
 
 test_that("do update on conflict works", {
+  skip("not supported by SQLite")
   expect_snapshot(
     f_insert(
       conflict = sql_do_update(sql_unique_cols("id1", "id2"), c("value1")),

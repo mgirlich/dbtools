@@ -8,10 +8,10 @@
 #' Names can be used to update a column with values from a column with a
 #' different name. For example, `update = c(x = "y")` will column `x` of `table`
 #' with the column `y` of `data`.
-#' * a named list of scalar SQL (generated with [SQL()]. In the SQL code the
+#' * a named list of scalar SQL (generated with [sql()]. In the SQL code the
 #' database table is named `target` and the input data is named `source`.
 #' The name specifies the column to update. For example
-#' `update = list(update_counter = SQL("target.update_counter + 1"))`
+#' `update = list(update_counter = sql("target.update_counter + 1"))`
 #' will increase the column update_counter by one.
 #' * a mixture of these two: a list of scalar SQL and scalar character.
 #' @param where specifies how to join `table` and `data`. This can be one of
@@ -20,21 +20,21 @@
 #' corresponding columns. To join by different variables on `table` and `data`
 #' use a named vector. For example `where = c("a", x = "b")` will match
 #' `table.a` to `data.a` and `table.x` to `table.b`
-#' * an unnamed list of scalar SQL (generated with [SQL()]). In the SQL code the
+#' * an unnamed list of scalar SQL (generated with [sql()]). In the SQL code the
 #' database table is named `target` and the input data is named `source`.
 #' * a mixture of these two. For example, when using
-#' `where = list("name", SQL("target.country = 'de'"))`
+#' `where = list("name", sql("target.country = 'de'"))`
 #' all rows will be updated where name matches in `table` and `data` and
 #' the column country of `table` is equal to `"de"`.
 #' @param returning specifies the columns to return. If `NULL` (the default)
 #' the number of updated/inserted rows are returned.
 #' This can be one of the following:
 #' * a character vector of column names.
-#' * a list of scalar SQL (generated with [SQL()]). Note that only the
+#' * a list of scalar SQL (generated with [sql()]). Note that only the
 #' columns from `table` are visible, not the ones from `source`.
 #' * a mixture of these two.
 #' Names are used as the names of the returned columns. For example
-#' `returning = list("id", time = SQL("now()"))`
+#' `returning = list("id", time = sql("now()"))`
 #' will return a data.frame (or tibble if installed) with the columns
 #' id and time.
 #'
@@ -45,7 +45,7 @@
 #'   data = mtcars,
 #'   table = "target_table",
 #'   con = src_memdb2(),
-#'   update = list("value2", value1 = SQL("target.value1 + 1")),
+#'   update = list("value2", value1 = sql("target.value1 + 1")),
 #'   where = c("id1", "id2")
 #' )
 sql_update <- function(data,
