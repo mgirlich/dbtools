@@ -4,7 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{glue_sql}
-\alias{SQL}
+\alias{sql}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,7 +12,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{DBI}{\code{\link[DBI]{SQL}}}
+  \item{dbplyr}{\code{\link[dbplyr]{sql}}}
 
   \item{glue}{\code{\link[glue]{glue_sql}}}
 }}

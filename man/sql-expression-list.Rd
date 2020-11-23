@@ -16,7 +16,7 @@ An SQL expression list is either a character vector e.g. \code{c("id", "name")}.
 Or it can be a list where each element is
 \itemize{
 \item a scalar character, i.e. a character of length 1 which must not be \code{NA}.
-\item a SQL class generated with \code{\link[DBI:SQL]{DBI::SQL()}} or \code{\link[glue:glue_sql]{glue::glue_sql()}}.
+\item a SQL class generated with \code{\link[dbplyr:sql]{dbplyr::sql()}} or \code{\link[glue:glue_sql]{glue::glue_sql()}}.
 }
 
 A scalar character refers to a column in the dataframe and of the database

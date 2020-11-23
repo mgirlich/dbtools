@@ -64,6 +64,6 @@ sql_insert(
   con = con,
   conflict = sql_do_nothing("Species"),
   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
-  returning = list(width = "Sepal.Width", time = SQL("now()"))
+  returning = list(width = "Sepal.Width", time = sql("now()"))
 )
 }
