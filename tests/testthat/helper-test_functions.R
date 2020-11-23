@@ -26,14 +26,15 @@ test_db_f <- function(f,
     expected_returned <- expected_returned[do.call(order, expected_returned), ]
   }
 
-  expect_equivalent(
+  expect_equal(
     ret,
     expected_returned
   )
 
-  expect_equivalent(
+  expect_equal(
     get_tbl(),
-    expected_state
+    expected_state,
+    ignore_attr = "row.names"
   )
 }
 
