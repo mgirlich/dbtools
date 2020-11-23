@@ -27,20 +27,12 @@ test_that("full update works", {
     where = list("id1", sql("`target`.`id2` = `source`.`id_2`"))
   )
 
+  expect_snapshot(update_sql)
   DBI::dbExecute(src_memdb2(), update_sql)
 
   result <- DBI::dbReadTable(src_memdb2(), "sql_update_1")
   expect_equal(result$value1, c(101, NA, 103, NA))
   expect_equal(result$value2, c(1, NA, 3, NA))
-})
-
-test_that("sql_update works", {
-  expect_snapshot(
-    f_update(
-      update = c("value1", "value2"),
-      where = c("id1", "id_2")
-    )
-  )
 })
 
 test_that("`data` can be a SQL table", {

@@ -1,19 +1,17 @@
-# sql_update works
+# full update works
 
     Code
-      f_update(update = c("value1", "value2"), where = c("id1", "id_2"))
+      update_sql
     Output
-      <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
+      <SQL> WITH `source` (`id1`, `id_2`, `value1`, `value_2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1, 'a', 101, 1),
+          (2, 'c', 103, 3)
       )
-      UPDATE `dbtools_test` AS `target`
-      SET `value1` = `source`.`value1`, `value2` = `source`.`value2`
+      UPDATE `sql_update_1` AS `target`
+      SET `value1` = `source`.`value1`, `value2` = `source`.`value_2`
       FROM `source`
-      WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id_2` = `source`.`id_2`))
+      WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id2` = `source`.`id_2`))
 
 # `data` can be a SQL table
 
