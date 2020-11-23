@@ -20,7 +20,7 @@ prepare_table <- function(value = df) {
   fields <- vapply(value, function(x) DBI::dbDataType(con, x), character(1))
   field_names <- DBI::dbQuoteIdentifier(con, names(fields))
   field_types <- unname(fields)
-  fields <- SQL(paste0(field_names, " ", field_types))
+  fields <- DBI::SQL(paste0(field_names, " ", field_types))
 
   lcl_exec("
     CREATE TABLE {`test_table`} (
