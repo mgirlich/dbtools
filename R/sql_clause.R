@@ -16,6 +16,7 @@ sql_with_clauses <- function(con,
   if (n == 1) {
     dots[[1]]
   } else {
+    # TODO use `sql_statements()`?
     with_clauses <- sql_vector(
       dots[-n],
       parens = FALSE,
@@ -68,7 +69,8 @@ sql_insert_from_clauses <- function(con,
 sql_statements <- function(con, ...) {
   parts <- purrr::compact(list(...))
   # escape(unname(parts), collapse = "\n", parens = FALSE, con = con)
-  sql(paste0(parts, collapse = "\n"))
+  # sql(paste0(parts, collapse = "\n"))
+  collapse_sql(parts, collapse = "\n")
 }
 
 # SQL clauses -------------------------------------------------------------
@@ -151,12 +153,12 @@ sql_values <- function(con, data) {
 #'   columns = c("col 1", "col 2")
 #' )
 sql_clause_cte_table <- function(con, table, select_clause, columns = NULL) {
-  table <- escape(table, con = con)
+  table <- escape(maybe_ident(table), con = con)
 
   if (is_null(columns)) {
     cte_table <- table
   } else {
-    columns <- escape(columns, con = con)
+    columns <- escape(maybe_ident(columns), con = con)
     cte_table <- build_sql(
       table, " ",
       sql_vector(columns, parens = TRUE, collapse = ", ", con = con),
@@ -178,11 +180,11 @@ sql_clause_from  <- function(con, from) {
 }
 
 sql_clause_update <- function(con, table) {
-  sql_clause_generic(con, "UPDATE", table)
+  sql_clause_generic(con, "UPDATE", maybe_ident(table))
 }
 
 sql_clause_delete <- function(con, table) {
-  sql_clause_generic(con, "DELETE FROM", table)
+  sql_clause_generic(con, "DELETE FROM", maybe_ident(table))
 }
 
 sql_clause_where_exists <- function(con, table, where_clause, not) {
@@ -206,7 +208,7 @@ sql_clause_where_exists <- function(con, table, where_clause, not) {
 sql_clause_insert_into <- function(con, table, columns) {
   columns_esc <- escape(columns, parens = FALSE, con = con)
   build_sql(
-    "INSERT INTO ", table,
+    "INSERT INTO ", maybe_ident(table),
     " ", sql_vector(columns_esc, parens = TRUE, collapse = ", ", con = con),
     con = con
   )

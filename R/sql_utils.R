@@ -1,5 +1,6 @@
 paste_sql <- function(..., sep = "", collapse = NULL) {
-  SQL(paste(..., sep = sep, collapse = collapse))
+  # SQL(paste(..., sep = sep, collapse = collapse))
+  sql(paste(..., sep = sep, collapse = collapse))
 }
 
 collapse_sql <- function(x, collapse) {
@@ -16,4 +17,16 @@ are_sql <- function(x) {
 
 is_scalar_sql <- function(x) {
   is_sql(x) && (length(x) == 1)
+}
+
+maybe_ident <- function(x) {
+  UseMethod("maybe_ident")
+}
+
+maybe_ident.character <- function(x) {
+  ident(x)
+}
+
+maybe_ident.ident <- function(x) {
+  x
 }
