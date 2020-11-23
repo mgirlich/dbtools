@@ -17,6 +17,8 @@ sql_delete <- function(data,
                        con,
                        where,
                        returning = NULL) {
+  # TODO SQLite doesn't support `RETURNING` for `DELETE`
+  # -> error and inform how to handle this
   check_standard_args(data, table, con)
 
   source_tbl <- "source"
@@ -26,7 +28,7 @@ sql_delete <- function(data,
   delete_sql <- sql_statements(
     con = con,
     sql_clause_delete(con, ident(target = table)),
-    sql_clause_where_not_exists(con, ident(source_tbl), where_clause),
+    sql_clause_where_exists(con, ident(source_tbl), where_clause, not = FALSE),
     if (length(returning)) sql_clause_returning(con, returning)
   )
 

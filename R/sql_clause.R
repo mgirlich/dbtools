@@ -185,11 +185,11 @@ sql_clause_delete <- function(con, table) {
   sql_clause_generic(con, "DELETE FROM", table)
 }
 
-sql_clause_where_not_exists <- function(con, table, where_clause) {
+sql_clause_where_exists <- function(con, table, where_clause, not) {
   build_sql(
-    "WHERE NOT EXISTS (\n",
+    "WHERE ", if (is_true(not)) sql("NOT "), "EXISTS (\n",
     "  SELECT 1\n",
-    "    FROM ", table, "\n",
+    "    ", sql_clause_from(con, table), "\n",
     "   ", where_clause, "\n",
     ")",
     con = con

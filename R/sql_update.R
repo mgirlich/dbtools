@@ -78,13 +78,14 @@ sql_update <- function(data,
 
   # TODO should `source_tbl` and `target_tbl` be arguments?
   source_tbl <- "source"
+  target_tbl <- "target"
 
   update_clauses <- translate_update(con, update)
   where_clauses <- translate_where(con, where)
 
   update_clause <- sql_update_clauses(
     con,
-    update = sql_clause_update(con, c(target = ident(table))),
+    update = sql_clause_update(con, set_names(ident(table), target_tbl)),
     set = sql_clause_set(con, update_clauses),
     from = sql_clause_from(con, ident(source_tbl)),
     where = sql_clause_where(con, where_clauses),
