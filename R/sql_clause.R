@@ -80,24 +80,66 @@ sql_clause_data <- function(con, data, table) {
 
 #' @export
 sql_clause_data.data.frame <- function(con, data, table) {
-  values_clause <- sql_values(data, con)
+  values_clause <- sql_values(con, data)
   sql_clause_cte_table(
     con,
     ident(table),
     values_clause,
     columns = ident(colnames(data))
   )
-  # glue_sql("
-  #   {`table`} ({`colnames(data)`*}) AS (
-  #     {values_clause}
-  #   )", .con = con)
 }
 
 #' @export
 sql_clause_data.character <- function(con, data, table) {
   stopifnot(length(data) == 1)
-  # glue_sql("{`data`} AS {`table`}", .con = con)
   NULL
+}
+
+#' Generate an SQL VALUES clause
+#'
+#' `sql_values()` translates a data.frame to an SQL VALUES clause.
+#'
+#' @details
+#' Because a `VALUES` clause must have at least one row a `data.frame` with
+#' zero rows is translated as a `SELECT` clause that returns zero rows.
+#'
+#' @inheritParams default-args
+#'
+#' @return An SQL clause (a scalar object of class SQL).
+#'
+#' @export
+#' @examples
+#' con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
+#' sql_values(con, mtcars[1:3, c(1:3)])
+#' sql_values(con, mtcars[0, c(1:3)])
+sql_values <- function(con, data) {
+  stopifnot(is.data.frame(data))
+  stopifnot(inherits(con, "DBIConnection"))
+
+  if (nrow(data) == 0) {
+    # very hacky...
+    # https://stackoverflow.com/questions/56957406/postgresql-empty-list-values-expression
+    # https://stackoverflow.com/questions/12426363/casting-null-type-when-updating-multiple-rows/12427434#12427434
+    if (is_postgres(con)) {
+      casts <- lapply(data, DBI::dbQuoteLiteral, conn = con)
+      casts[lengths(casts) == 0] <- "::text"
+      escaped_data <- collapse_sql(sub("^.*?(::.*)$", "NULL\\1", casts), ", ")
+    } else if (is_sqlite(con)) {
+      escaped_data <- collapse_sql(rep_along(data, "NULL"), ", ")
+    }
+
+    paste_sql("SELECT ", escaped_data, " WHERE FALSE")
+  } else {
+    escaped_data <- sqlData(con, data)
+
+    vals <- purrr::pmap(
+      escaped_data,
+      ~ paste0("(", paste(..., sep = ", "), ")")
+    ) %>%
+      collapse_sql(",\n  ")
+
+    paste_sql("VALUES\n", "  ", vals)
+  }
 }
 
 #' @noRd
