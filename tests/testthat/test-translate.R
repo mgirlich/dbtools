@@ -7,7 +7,7 @@ test_that("`translate_update()` handles unnamed characters", {
       con,
       update = c("col 1", "col 2")
     ),
-    list(
+    sql(
       `col 1` = sql("`source`.`col 1`"),
       `col 2` = sql("`source`.`col 2`")
     )
@@ -20,7 +20,7 @@ test_that("`translate_update()` handles (partially) named characters", {
       con,
       update = c(`other name` = "col 1", "col 2")
     ),
-    list(
+    sql(
       `other name` = sql("`source`.`col 1`"),
       `col 2` = sql("`source`.`col 2`")
     )
@@ -35,7 +35,7 @@ test_that("`translate_update()` handles sql", {
       con,
       update = update_var
     ),
-    purrr::map(update_var, sql)
+    update_var
   )
 })
 
@@ -49,10 +49,10 @@ test_that("`translate_update()` handles lists", {
         `name of sql` = sql("now()")
       )
     ),
-    list(
-      unnamed_chr = sql("`source`.`unnamed_chr`"),
-      `name of chr` = sql("`source`.`named chr col`"),
-      `name of sql` = sql("now()")
+    sql(
+      unnamed_chr = "`source`.`unnamed_chr`",
+      `name of chr` = "`source`.`named chr col`",
+      `name of sql` = "now()"
     )
   )
 })
