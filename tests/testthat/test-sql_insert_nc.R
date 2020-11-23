@@ -6,8 +6,6 @@ f_insert <- purrr::partial(
 )
 
 test_that("insert works", {
-  mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
-
   memdb_frame2(
     !!!mtcars_df[1:2, ],
     .name = "sql_insert_1"

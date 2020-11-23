@@ -1,6 +1,4 @@
 test_that("sql_delete works", {
-  mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
-
   memdb_frame2(
     !!!mtcars_df[1:5, ],
     .name = "sql_delete_1"

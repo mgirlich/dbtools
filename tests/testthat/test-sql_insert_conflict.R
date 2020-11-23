@@ -1,6 +1,4 @@
 test_that("`sql_insert_missing()` works in new mode", {
-  mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
-
   memdb_frame2(
     !!!mtcars_df[1:3, ],
     .name = "sql_insert_missing_1"
@@ -38,8 +36,6 @@ test_that("`sql_insert_missing()` works in new mode", {
 })
 
 test_that("`sql_insert_missing()` works in old mode", {
-  mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
-
   memdb_frame2(
     !!!mtcars_df[1:3, ],
     .name = "sql_insert_missing_2"
