@@ -219,6 +219,10 @@ sql_clause_set <- function(con, updates) {
     abort_invalid_input("`updates` must be named.")
   }
 
+  if (!is_sql(updates)) {
+    abort_invalid_input("`updates` must be sql.")
+  }
+
   # compare to `sql_clause_where()`
   updates_esc <- purrr::imap(updates, ~ build_sql(ident(.y), " = ", .x, con = con))
   updates_esc <- unname(updates_esc)
