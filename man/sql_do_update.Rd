@@ -24,10 +24,10 @@ column a of \code{table} with the values of the column a \code{data}.
 Names can be used to update a column with values from a column with a
 different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
 with the column \code{y} of \code{data}.
-\item a named list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}. In the SQL code the
+\item a named list of scalar SQL (generated with \code{\link[=sql]{sql()}}. In the SQL code the
 database table is named \code{target} and the input data is named \code{source}.
 The name specifies the column to update. For example
-\code{update = list(update_counter = SQL("target.update_counter + 1"))}
+\code{update = list(update_counter = sql("target.update_counter + 1"))}
 will increase the column update_counter by one.
 \item a mixture of these two: a list of scalar SQL and scalar character.
 }}

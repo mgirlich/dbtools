@@ -33,11 +33,11 @@ the number of updated/inserted rows are returned.
 This can be one of the following:
 \itemize{
 \item a character vector of column names.
-\item a list of scalar SQL (generated with \code{\link[=SQL]{SQL()}}). Note that only the
+\item a list of scalar SQL (generated with \code{\link[=sql]{sql()}}). Note that only the
 columns from \code{table} are visible, not the ones from \code{source}.
 \item a mixture of these two.
 Names are used as the names of the returned columns. For example
-\code{returning = list("id", time = SQL("now()"))}
+\code{returning = list("id", time = sql("now()"))}
 will return a data.frame (or tibble if installed) with the columns
 id and time.
 }}
