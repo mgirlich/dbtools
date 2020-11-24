@@ -21,9 +21,10 @@ NULL
 
 #' Common arguments
 #'
-#' @param data a data.frame.
-#' @param table name of the database table.
-#' @param con a DBIConnection object, as returned by [DBI::dbConnect()].
+#' @param data A data frame or the name of a database table.
+#' @param table The name of the database table to update, insert to, or upsert
+#' to. Can be an unquoted character string or an identifier created with [ident()].
+#' @param con A DBIConnection object, as returned by [DBI::dbConnect()].
 #' @name default-args
 NULL
 
