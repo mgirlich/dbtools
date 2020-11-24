@@ -19,7 +19,7 @@
 # `sql_values()` works for empty dataframes and PostgreSQL
 
     Code
-      sql_values(con_pg, mtcars_df[0, ])
+      sql_values(con_pg(), mtcars_df[0, ])
     Output
       <SQL> SELECT NULL::text, NULL::float8, NULL::float8, NULL::float8 WHERE FALSE
 

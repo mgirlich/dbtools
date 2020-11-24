@@ -63,7 +63,7 @@ test_that("`sql_insert_missing()` works in old mode", {
 
 
 test_that("`sql_insert_missing()` works with `return_all`", {
-  skip("only test locally for now")
+  skip_if_not(has_pg())
 
   pg_frame2(
     !!!mtcars_df[1:3, ],

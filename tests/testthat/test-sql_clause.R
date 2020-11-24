@@ -34,7 +34,7 @@ test_that("`sql_values()` works for empty dataframes and SQLite", {
 })
 
 test_that("`sql_values()` works for empty dataframes and PostgreSQL", {
-  skip("only test locally for now")
+  skip_if_not(has_pg())
 
   expect_snapshot(sql_values(con_pg(), mtcars_df[0, ]))
 })
