@@ -5,9 +5,9 @@ test_that("`sql_upsert()` works in new mode", {
   )
 
   DBI::dbExecute(
-    src_memdb2(),
+    con_memdb(),
     dbplyr::sql_table_index(
-      src_memdb2(),
+      con_memdb(),
       "sql_upsert_1",
       columns = "rowname",
       name = "my_index_upsert",
@@ -21,7 +21,7 @@ test_that("`sql_upsert()` works in new mode", {
   upsert_sql <- sql_upsert(
     data = data_new,
     table = "sql_upsert_1",
-    con = src_memdb2(),
+    con = con_memdb(),
     conflict_target = c("rowname"),
     update = list("cyl", mpg = sql("-`EXCLUDED`.`mpg`")),
     insert_cols = c("rowname", "mpg", "cyl"),
@@ -31,7 +31,7 @@ test_that("`sql_upsert()` works in new mode", {
 
   expect_snapshot(upsert_sql)
 
-  DBI::dbExecute(src_memdb2(), upsert_sql)
+  DBI::dbExecute(con_memdb(), upsert_sql)
 
   out <- mtcars_df[1:5, ]
   out$mpg[3] <- -out$mpg[3]
@@ -39,7 +39,7 @@ test_that("`sql_upsert()` works in new mode", {
   out$disp[4:5] <- NA
 
   expect_equal(
-    DBI::dbReadTable(src_memdb2(), "sql_upsert_1"),
+    DBI::dbReadTable(con_memdb(), "sql_upsert_1"),
     out
   )
 })
@@ -57,7 +57,7 @@ test_that("`sql_upsert()` works in old mode", {
   upsert_sql <- sql_upsert(
     data = data_new,
     table = "sql_upsert_2",
-    con = src_memdb2(),
+    con = con_memdb(),
     conflict_target = c("rowname"),
     update = list("cyl", mpg = sql("-`EXCLUDED`.`mpg`")),
     insert_cols = c("rowname", "mpg", "cyl"),
@@ -67,7 +67,7 @@ test_that("`sql_upsert()` works in old mode", {
 
   expect_snapshot(upsert_sql)
 
-  DBI::dbExecute(src_memdb2(), upsert_sql)
+  DBI::dbExecute(con_memdb(), upsert_sql)
 
   out <- mtcars_df[1:5, ]
   out$mpg[3] <- -out$mpg[3]
@@ -75,7 +75,7 @@ test_that("`sql_upsert()` works in old mode", {
   out$disp[4:5] <- NA
 
   expect_equal(
-    DBI::dbReadTable(src_memdb2(), "sql_upsert_2"),
+    DBI::dbReadTable(con_memdb(), "sql_upsert_2"),
     out
   )
 })

@@ -22,15 +22,15 @@ test_that("full update works", {
       value_2 = c(1, 3)
     ),
     table = "sql_update_1",
-    con = src_memdb2(),
+    con = con_memdb(),
     update = c("value1", value2 = "value_2"),
     where = list("id1", sql("`target`.`id2` = `source`.`id_2`"))
   )
 
   expect_snapshot(update_sql)
-  DBI::dbExecute(src_memdb2(), update_sql)
+  DBI::dbExecute(con_memdb(), update_sql)
 
-  result <- DBI::dbReadTable(src_memdb2(), "sql_update_1")
+  result <- DBI::dbReadTable(con_memdb(), "sql_update_1")
   expect_equal(result$value1, c(101, NA, 103, NA))
   expect_equal(result$value2, c(1, NA, 3, NA))
 })

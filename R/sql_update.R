@@ -49,7 +49,7 @@
 #'     value = c("a", "b")
 #'   ),
 #'   table = "db_table",
-#'   con = src_memdb2(),
+#'   con = con_memdb(),
 #'   update = list("value", updated_at = sql("now()")),
 #'   where = list(id = "row_id", sql("target.updated = FALSE"))
 #' )

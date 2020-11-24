@@ -38,17 +38,6 @@ indent <- function(x) {
   paste0("  ", gsub(x = x, pattern = "\\n", replacement = "\n  "))
 }
 
-src_memdb2 <- function() {
-  dbplyr::src_memdb()$con
-}
-
-memdb_frame2 <- function(..., .name) {
-  if (DBI::dbExistsTable(src_memdb2(), .name)) {
-    DBI::dbRemoveTable(src_memdb2(), .name)
-  }
-  dbplyr::memdb_frame(..., .name = .name)
-}
-
 pg_frame2 <- function(..., .name) {
   if (DBI::dbExistsTable(con_pg, .name)) {
     DBI::dbRemoveTable(con_pg, .name)

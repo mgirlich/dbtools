@@ -5,9 +5,9 @@ test_that("`sql_insert_missing()` works in new mode", {
   )
 
   DBI::dbExecute(
-    src_memdb2(),
+    con_memdb(),
     dbplyr::sql_table_index(
-      src_memdb2(),
+      con_memdb(),
       "sql_insert_missing_1",
       columns = "rowname",
       name = "my_index",
@@ -18,7 +18,7 @@ test_that("`sql_insert_missing()` works in new mode", {
   insert_missing_sql <- sql_insert_missing(
     data = mtcars_df[3:5, ],
     table = "sql_insert_missing_1",
-    con = src_memdb2(),
+    con = con_memdb(),
     conflict_target = c("rowname"),
     # returning = sql("*"),
     # return_all = TRUE,
@@ -27,10 +27,10 @@ test_that("`sql_insert_missing()` works in new mode", {
 
   expect_snapshot(insert_missing_sql)
 
-  DBI::dbExecute(src_memdb2(), insert_missing_sql)
+  DBI::dbExecute(con_memdb(), insert_missing_sql)
 
   expect_equal(
-    DBI::dbReadTable(src_memdb2(), "sql_insert_missing_1"),
+    DBI::dbReadTable(con_memdb(), "sql_insert_missing_1"),
     mtcars_df[1:5, ]
   )
 })
@@ -44,7 +44,7 @@ test_that("`sql_insert_missing()` works in old mode", {
   insert_missing_sql <- sql_insert_missing(
     data = mtcars_df[3:5, ],
     table = "sql_insert_missing_2",
-    con = src_memdb2(),
+    con = con_memdb(),
     conflict_target = c("rowname"),
     # returning = sql("*"),
     # return_all = TRUE,
@@ -53,10 +53,10 @@ test_that("`sql_insert_missing()` works in old mode", {
 
   expect_snapshot(insert_missing_sql)
 
-  DBI::dbExecute(src_memdb2(), insert_missing_sql)
+  DBI::dbExecute(con_memdb(), insert_missing_sql)
 
   expect_equal(
-    DBI::dbReadTable(src_memdb2(), "sql_insert_missing_2"),
+    DBI::dbReadTable(con_memdb(), "sql_insert_missing_2"),
     mtcars_df[1:5, ]
   )
 })

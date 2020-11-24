@@ -13,10 +13,10 @@ test_that("sql_delete works", {
   )
 
   expect_snapshot(delete_sql)
-  DBI::dbExecute(src_memdb2(), delete_sql)
+  DBI::dbExecute(con_memdb(), delete_sql)
 
   expect_equal(
-    DBI::dbReadTable(src_memdb2(), "sql_delete_1"),
+    DBI::dbReadTable(con_memdb(), "sql_delete_1"),
     mtcars_df[1:3, ]
   )
 })

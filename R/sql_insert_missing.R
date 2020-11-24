@@ -14,7 +14,7 @@
 #'     value2 = 11:12
 #'   ),
 #'   table = "db_table",
-#'   con = src_memdb2(),
+#'   con = con_memdb(),
 #'   conflict_target = c("id"),
 #'   insert_cols = c("value", "value2")
 #' )

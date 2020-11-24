@@ -15,13 +15,13 @@ test_that("insert works", {
   insert_sql <- sql_insert_nc(
     data = mtcars_df[3:5, ],
     table = "sql_insert_1",
-    con = src_memdb2(),
+    con = con_memdb(),
     insert_cols = insert_cols
   )
 
-  DBI::dbExecute(src_memdb2(), insert_sql)
+  DBI::dbExecute(con_memdb(), insert_sql)
 
-  result <- DBI::dbReadTable(src_memdb2(), "sql_insert_1")
+  result <- DBI::dbReadTable(con_memdb(), "sql_insert_1")
   mtcars_df_sub <- mtcars_df[3:5, ]
   mtcars_df_sub[, 4] <- NA
   expect_equal(

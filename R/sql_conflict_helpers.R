@@ -58,7 +58,7 @@ new_conflict_clause <- function(conflict_target, conflict_action) {
 
 #' @export
 format.dbtools_conflict_clause <- function(x, ...) {
-  translate_conflict(src_memdb2(), x)
+  translate_conflict(con_memdb(), x)
 }
 
 #' @export
@@ -104,7 +104,7 @@ sql_unique_cols <- function(...) {
 
 #' @export
 format.dbtools_conflict_target <- function(x, ...) {
-  to_sql(x, src_memdb2())
+  to_sql(x, con_memdb())
 }
 
 #' @export
