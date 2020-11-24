@@ -16,13 +16,7 @@ sql_with_clauses <- function(con,
   if (n == 1) {
     dots[[1]]
   } else {
-    # TODO use `sql_statements()`?
-    with_clauses <- sql_vector(
-      dots[-n],
-      parens = FALSE,
-      collapse = ",\n",
-      con = con
-    )
+    with_clauses <- sql_statements(con, !!!dots[-n])
 
     build_sql(
       "WITH ", with_clauses, "\n",
@@ -67,9 +61,7 @@ sql_insert_from_clauses <- function(con,
 }
 
 sql_statements <- function(con, ...) {
-  parts <- purrr::compact(list(...))
-  # escape(unname(parts), collapse = "\n", parens = FALSE, con = con)
-  # sql(paste0(parts, collapse = "\n"))
+  parts <- purrr::compact(list2(...))
   collapse_sql(parts, collapse = "\n")
 }
 
@@ -105,6 +97,7 @@ sql_clause_data.character <- function(con, data, table) {
 #' Because a `VALUES` clause must have at least one row a `data.frame` with
 #' zero rows is translated as a `SELECT` clause that returns zero rows.
 #'
+#' @param data A data frame.
 #' @inheritParams default-args
 #'
 #' @return An SQL clause (a scalar object of class SQL).
@@ -112,6 +105,8 @@ sql_clause_data.character <- function(con, data, table) {
 #' @export
 #' @examples
 #' sql_values(src_memdb2(), mtcars[1:3, c(1:3)])
+#'
+#' # zero row data frames produce a SELECT query
 #' sql_values(src_memdb2(), mtcars[0, c(1:3)])
 sql_values <- function(con, data) {
   stopifnot(is.data.frame(data))
@@ -133,7 +128,7 @@ sql_values <- function(con, data) {
 
     paste_sql("SELECT ", escaped_data, " WHERE FALSE")
   } else {
-    escaped_data <- sqlData(con, data)
+    escaped_data <- DBI::sqlData(con, data)
 
     vals <- purrr::pmap(
       escaped_data,
@@ -229,13 +224,12 @@ sql_clause_set <- function(con, updates) {
   updates_esc <- unname(updates_esc)
 
   build_sql(
-    "SET ", sql_vector(updates_esc, parens = FALSE, collapse = ", ", con = con),
+    "SET\n  ", sql_vector(updates_esc, parens = FALSE, collapse = ",\n  ", con = con),
     con = con
   )
 }
 
 sql_clause_select <- function(con, select) {
-  assert_that(is.character(select))
   if (is_empty(select)) {
     abort("Query contains no columns")
   }
