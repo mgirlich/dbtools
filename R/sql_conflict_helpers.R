@@ -103,15 +103,8 @@ sql_unique_cols <- function(...) {
 }
 
 #' @export
-format.dbtools_unique_cols <- function(x, ...) {
-  x <- escape(vec_data(x), parens = TRUE, collapse = ", ", con = src_memdb2())
-  paste0("<unique cols> ", x)
-}
-
-#' @export
-format.dbtools_constraint <- function(x, ...) {
-  x <- escape(vec_data(x), parens = TRUE, con = src_memdb2())
-  paste0("<index> ", x)
+format.dbtools_conflict_target <- function(x, ...) {
+  to_sql(x, src_memdb2())
 }
 
 #' @export
