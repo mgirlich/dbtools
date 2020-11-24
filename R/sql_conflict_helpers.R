@@ -41,7 +41,7 @@ sql_do_update <- function(conflict_target, update) {
 new_conflict_clause <- function(conflict_target, conflict_action) {
   if (!is_conflict_target(conflict_target)) {
     if (is_bare_character(conflict_target)) {
-      conflict_target <- sql_unique_cols(conflict_target)
+      conflict_target <- sql_unique_cols(!!!conflict_target)
     } else {
       abort_invalid_input("must provide a valid conflict target")
     }
@@ -81,8 +81,10 @@ sql_constraint <- function(constraint) {
 #' @examples
 #' sql_unique_cols("a", "b")
 sql_unique_cols <- function(...) {
-  unique_cols <- purrr::flatten_chr(dots_list(...))
-  if (is_empty(unique_cols) || !is.character(unique_cols) ||
+  dots <- list2(...)
+  unique_cols <- vctrs::vec_c(..., .ptype = character())
+
+  if (is_empty(dots) || !all(lengths(dots) == 1) ||
       any(is.na(unique_cols))) {
     abort_invalid_input("... must be a non-empty non-NA character vector.")
   }

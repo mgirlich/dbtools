@@ -1,7 +1,12 @@
 test_that("sql_unique_cols works", {
   expect_s3_class(
-    sql_unique_cols("a", c("b", "c")),
+    sql_unique_cols("a", !!!c("b", "c")),
     class = "dbtools_unique_cols"
+  )
+
+  expect_snapshot_error(
+    sql_unique_cols("a", c("b", "c")),
+    class = "dbtools_error_invalid_input"
   )
 
   expect_error(
@@ -9,12 +14,9 @@ test_that("sql_unique_cols works", {
     class = "dbtools_error_invalid_input"
   )
 
-  expect_error(
-    sql_unique_cols(1),
-    class = "dbtools_error_invalid_input"
-  )
+  expect_snapshot_error(sql_unique_cols(1))
 
-  expect_error(
+  expect_snapshot_error(
     sql_unique_cols("a", NA),
     class = "dbtools_error_invalid_input"
   )
