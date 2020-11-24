@@ -56,6 +56,16 @@ new_conflict_clause <- function(conflict_target, conflict_action) {
   )
 }
 
+#' @export
+format.dbtools_conflict_clause <- function(x, ...) {
+  translate_conflict(src_memdb2(), x)
+}
+
+#' @export
+print.dbtools_conflict_clause <- function(x, ...) {
+  print(format(x, ...))
+}
+
 #' SQL conflict target
 #'
 #' @param constraint The name of a constraint (a scalar character). The
@@ -90,6 +100,23 @@ sql_unique_cols <- function(...) {
   }
 
   new_conflict_target(unique_cols, class = "dbtools_unique_cols")
+}
+
+#' @export
+format.dbtools_unique_cols <- function(x, ...) {
+  x <- escape(vec_data(x), parens = TRUE, collapse = ", ", con = src_memdb2())
+  paste0("<unique cols> ", x)
+}
+
+#' @export
+format.dbtools_constraint <- function(x, ...) {
+  x <- escape(vec_data(x), parens = TRUE, con = src_memdb2())
+  paste0("<index> ", x)
+}
+
+#' @export
+print.dbtools_conflict_target <- function(x, ...) {
+  cat(format(x, ...))
 }
 
 is_unique_cols <- function(x) {
