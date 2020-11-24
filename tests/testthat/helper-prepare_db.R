@@ -1,3 +1,20 @@
+con_pg <- function() {
+  cache_computation(
+    "con_pg",
+    DBI::dbConnect(RPostgres::Postgres(), dbname = "postgres")
+  )
+}
+
+pg_frame2 <- function(..., .name) {
+  con_frame(..., .name = .name, .con = con_pg())
+}
+
+has_pg <- function() {
+  is_null(purrr::safely(con_pg)()$error)
+}
+
+
+
 df <- data.frame(
   id1 = c(1, 1, 2, 3),
   id2 = c("a", "b", "b", "c"),

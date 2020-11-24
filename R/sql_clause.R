@@ -16,7 +16,7 @@ sql_with_clauses <- function(con,
   if (n == 1) {
     dots[[1]]
   } else {
-    with_clauses <- sql_statements(con, !!!dots[-n])
+    with_clauses <- sql_statements(con, !!!dots[-n], collapse = "\n,")
 
     build_sql(
       "WITH ", with_clauses, "\n",
@@ -60,9 +60,9 @@ sql_insert_from_clauses <- function(con,
   )
 }
 
-sql_statements <- function(con, ...) {
+sql_statements <- function(con, ..., collapse = "\n") {
   parts <- purrr::compact(list2(...))
-  collapse_sql(parts, collapse = "\n")
+  collapse_sql(parts, collapse = collapse)
 }
 
 # SQL clauses -------------------------------------------------------------

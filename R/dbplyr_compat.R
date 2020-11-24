@@ -66,13 +66,13 @@ memdb_frame2 <- function(..., .name) {
 }
 
 con_frame <- function(..., .name, .con) {
-  if (DBI::dbExistsTable(.con, .name)) {
-    DBI::dbRemoveTable(.con, .name)
-  }
-  dbplyr::db_copy_to(
-    con = .con,
-    table = .name,
-    values = tibble::tibble(...)
+  DBI::dbWriteTable(
+    conn = .con,
+    name = .name,
+    value = tibble::tibble(...),
+    temporary = TRUE,
+    overwrite = TRUE,
+    row.names = FALSE
   )
 }
 # nocov end

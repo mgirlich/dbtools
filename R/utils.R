@@ -38,17 +38,6 @@ indent <- function(x) {
   paste0("  ", gsub(x = x, pattern = "\\n", replacement = "\n  "))
 }
 
-con_pg <- function() {
-  cache_computation(
-    "con_pg",
-    DBI::dbConnect(RPostgres::Postgres(), dbname = "postgres")
-  )
-}
-
-pg_frame2 <- function(..., .name) {
-  con_frame(..., .name = .name, .con = con_pg())
-}
-
 is_named2 <- function(x) {
   is_empty(x) || is_named(x)
 }

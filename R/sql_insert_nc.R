@@ -70,7 +70,7 @@ sql_insert_nc <- function(data,
 
     update_clause <- sql_update(
       data = source_tbl,
-      table = "dbtools_test",
+      table = table,
       con = con,
       where = conflict$conflict_target,
       update = conflict$conflict_action
