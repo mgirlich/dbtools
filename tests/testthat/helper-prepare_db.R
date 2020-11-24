@@ -41,7 +41,7 @@ prepare_table <- function(value = df, con = con_memdb()) {
     CREATE TABLE {`test_table`} (
       {fields*},
       UNIQUE({`columns`*})
-    );")
+    );", con = con)
 
   DBI::dbAppendTable(
     conn = con,
@@ -53,6 +53,6 @@ prepare_table <- function(value = df, con = con_memdb()) {
     lcl_exec("
       ALTER TABLE {`test_table`}
       ADD CONSTRAINT {`index_name`}
-      UNIQUE ({`columns`*});")
+      UNIQUE ({`columns`*});", con = con)
   }
 }

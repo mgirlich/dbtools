@@ -46,8 +46,8 @@
           ('Datsun 710', 22.8::float8, 4::float8, 108::float8),
           ('Hornet 4 Drive', 21.4::float8, 6::float8, 258::float8),
           ('Hornet Sportabout', 18.7::float8, 8::float8, 360::float8)
-      )
-      ,"ins_result" AS (
+      ),
+      "ins_result" AS (
         INSERT INTO "sql_insert_missing_3" AS "target" ("rowname", "mpg", "cyl", "disp")
         SELECT "rowname", "mpg", "cyl", "disp"
         FROM "source"

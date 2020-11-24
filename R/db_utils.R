@@ -35,6 +35,7 @@ batch_wise <- function(data, batch_size, .f) {
     row_count <- nrow(data)
     batch_count <- ceiling(row_count / batch_size)
     ret <- vector("list", batch_count)
+
     for (i in 1:batch_count) {
       start <- ((i - 1) * batch_size) + 1
       end <- min(start + batch_size - 1, row_count)
@@ -55,7 +56,7 @@ get_or_execute <- function(con, sql, returning) {
 
 # nocov start
 maybe_trans <- function(con, code, trans) {
-  if (is_true(trans)) {
+  if (is_false(trans)) {
     return(code)
   }
 

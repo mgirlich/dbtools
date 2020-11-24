@@ -28,8 +28,8 @@
           ('Datsun 710', 22.8::float8, 6::float8, 108::float8),
           ('Hornet 4 Drive', 21.4::float8, 8::float8, 258::float8),
           ('Hornet Sportabout', 18.7::float8, 10::float8, 360::float8)
-      )
-      ,"insert_action" AS (
+      ),
+      "insert_action" AS (
         INSERT INTO "sql_upsert_2" AS "target" ("rowname", "mpg", "cyl")
         SELECT "rowname", "mpg", "cyl"
         FROM "source"

@@ -59,7 +59,7 @@ sql_update <- function(data,
                        update,
                        where,
                        returning = NULL) {
-  if (!is_null(returning) & inherits(con, "SQLiteConnection")) {
+  if (is_sqlite(con) && !is_null(returning)) {
     abort_invalid_input("`returning` doesn't work for SQLite")
   }
 

@@ -4,15 +4,15 @@ con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 
 mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
 
-lcl_exec <- function(...) {
-  sql <- glue::glue_sql(..., .con = con_memdb(), .envir = parent.frame())
-  DBI::dbExecute(conn = con_memdb(), sql)
+lcl_exec <- function(..., con = con_memdb()) {
+  sql <- glue::glue_sql(..., .con = con, .envir = parent.frame())
+  DBI::dbExecute(conn = con, sql)
 }
 
 
 
-get_tbl <- function() {
-  DBI::dbReadTable(con_memdb(), test_table, row.names = FALSE)
+get_tbl <- function(con = con_memdb()) {
+  DBI::dbReadTable(con, test_table, row.names = FALSE)
 }
 
 ref_file <- function(...) {

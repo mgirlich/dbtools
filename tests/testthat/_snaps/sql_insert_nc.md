@@ -82,8 +82,8 @@
           (1::float8, 'b', 20::float8, 'AA'),
           (2::float8, 'b', 11::float8, 'B'),
           (3::float8, 'c', 11::float8, 'B')
-      )
-      ,"insert_action" AS (
+      ),
+      "insert_action" AS (
         INSERT INTO "dbtools_test" AS "target" ("id1", "id2", "value1", "value2")
         SELECT "id1", "id2", "value1", "value2"
         FROM "source"
