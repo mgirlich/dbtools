@@ -13,6 +13,7 @@ prep_table(test_table2, iris)
 
 test_that("db_utils_table_size", {
   skip_if_not(has_pg())
+  skip("not yet decided whether to export")
 
   expect_snapshot_value(
     db_utils_table_size(con_pg()),
@@ -22,6 +23,7 @@ test_that("db_utils_table_size", {
 
 test_that("db_utils_index_infos", {
   skip_if_not(has_pg())
+  skip("not yet decided whether to export")
 
   index_infos <- db_utils_index_infos(con_pg())
   expect_snapshot_value(index_infos, style = "serialize")
@@ -34,6 +36,7 @@ test_that("db_utils_index_infos", {
 
 test_that("db_utils_running_queries", {
   skip_if_not(has_pg())
+  skip("not yet decided whether to export")
 
   expect_snapshot_value(
     db_utils_running_queries(con_pg())[0, ],

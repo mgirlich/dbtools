@@ -55,9 +55,7 @@ sql_insert <- function(data,
     check_has_cols(data, conflict$conflict_target)
   }
 
-  if (is_sqlite(con) && !is_null(returning)) {
-    abort_invalid_input("`returning` doesn't work for SQLite")
-  }
+  check_supports_returning(con, returning)
 
   f_insert <- switch(
     mode,

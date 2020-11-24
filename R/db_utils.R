@@ -40,6 +40,7 @@ batch_wise <- function(data, batch_size, .f) {
       start <- ((i - 1) * batch_size) + 1
       end <- min(start + batch_size - 1, row_count)
       ret[[i]] <- .f(data[start:end, , drop = FALSE])
+      # TODO use `vec_slice()` instead?
     }
 
     ret

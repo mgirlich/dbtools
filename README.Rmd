@@ -22,16 +22,12 @@ knitr::opts_chunk$set(
 
 The goal of dbtools is to support
 
-* insert all or only new rows
-* update existing rows
-* upsert - i.e. insert new and update existing - rows
-* delete rows
+* inserting all or non existing data,
+* updating existing data,
+* upserting - i.e. inserting new and updating existing - data
+* deleting data
 
-in a database table using data from a dataframe. Further, it provides some
-helpers to get some basic database information
-
-* table and index size
-* running queries
+in a database table using data from a dataframe.
 
 ## Installation
 
@@ -44,7 +40,7 @@ helpers to get some basic database information
 <!-- ### Development version -->
 <!-- To get a bug fix, or use a feature from the development version, you can install dbtools from GitHub. -->
 
-dbtools is not yet on CRAN and can only be installed from GitHub.
+`dbtools` is not yet on CRAN and can only be installed from GitHub.
 
 ```{r eval=FALSE}
 # install.packages("devtools")
@@ -80,9 +76,3 @@ modify the SQL. In addition there are some other helpers exported:
 `sql_conflict_insert()`.
 * `sql_values()` to generate a `VALUES` clause. 
 * `sql_add_returning()` to add a returning clause if returning is not `NULL`.
-
-### Database Infos
-
-* `db_utils_running_queries()` to get the currently running queries.
-* `db_utils_table_size()` to get size of the database tables.
-* `db_utils_index_infos()` to get information on the indexes.

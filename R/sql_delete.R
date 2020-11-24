@@ -18,9 +18,8 @@ sql_delete <- function(data,
                        con,
                        where,
                        returning = NULL) {
-  # TODO SQLite doesn't support `RETURNING` for `DELETE`
-  # -> error and inform how to handle this
   check_standard_args(data, table, con)
+  check_supports_returning(con, returning)
 
   source_tbl <- "source"
 

@@ -23,6 +23,14 @@ check_has_cols <- function(x, cols, x_arg = NULL, cols_arg = NULL) {
 }
 
 
+check_supports_returning <- function(con, returning) {
+  if (is_sqlite(con) && !is_null(returning)) {
+    abort_invalid_input("`returning` doesn't work for SQLite")
+    # TODO more information how to work around?
+  }
+}
+
+
 check_unique_cols <- function(x, cols, x_arg = NULL, cols_arg = NULL) {
   x_arg <- x_arg %||% as_label(ensym(x))
   cols_arg <- cols_arg %||% as_label(ensym(cols))

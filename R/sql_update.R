@@ -59,9 +59,7 @@ sql_update <- function(data,
                        update,
                        where,
                        returning = NULL) {
-  if (is_sqlite(con) && !is_null(returning)) {
-    abort_invalid_input("`returning` doesn't work for SQLite")
-  }
+  check_supports_returning(con, returning)
 
   # TODO why is `returning` handled so complicated in `sql_update_old()`?
   # see below:
@@ -81,7 +79,6 @@ sql_update <- function(data,
   # https://stackoverflow.com/questions/48690718/sqlite-update-column-from-column-in-another-table
   check_standard_args(data, table, con, from_table = TRUE)
 
-  # TODO should `source_tbl` and `target_tbl` be arguments?
   source_tbl <- "source"
   target_tbl <- "target"
 
