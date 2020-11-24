@@ -7,11 +7,12 @@
 sql_delete(data, table, con, where, returning = NULL)
 }
 \arguments{
-\item{data}{a data.frame.}
+\item{data}{A data frame or the name of a database table.}
 
-\item{table}{name of the database table.}
+\item{table}{The name of the database table to update, insert to, or upsert
+to. Can be an unquoted character string or an identifier created with \code{\link[=ident]{ident()}}.}
 
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
 \item{where}{specifies how to join \code{table} and \code{data}. This can be one of
 the following:
@@ -20,38 +21,41 @@ the following:
 corresponding columns. To join by different variables on \code{table} and \code{data}
 use a named vector. For example \code{where = c("a", x = "b")} will match
 \code{table.a} to \code{data.a} and \code{table.x} to \code{table.b}
-\item an unnamed list of scalar SQL (generated with \code{\link[=sql]{sql()}}). In the SQL code the
+\item an unnamed SQL vector (generated with \code{\link[=sql]{sql()}}). In the SQL code the
 database table is named \code{target} and the input data is named \code{source}.
-\item a mixture of these two. For example, when using
-\code{where = list("name", sql("target.country = 'de'"))}
-all rows will be updated where name matches in \code{table} and \code{data} and
-the column country of \code{table} is equal to \code{"de"}.
+\item a list of scalar SQL and scalar character. For example with
+\code{where = list("name", sql("target.update_counter < 2"))}
+all rows will be updated where the column \code{name} matches in \code{table} and
+\code{data} and the column \code{update_counter} of \code{table} smaller than 2.
 }}
 
-\item{returning}{specifies the columns to return. If \code{NULL} (the default)
-the number of updated/inserted rows are returned.
-This can be one of the following:
+\item{returning}{Specifies the columns to return. If \code{NULL} (the default)
+you have to use \code{\link[DBI:dbExecute]{DBI::dbExecute()}} to execute the SQL statement.
+
+If not \code{NULL} you have to use \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}} to get the updated rows.
+\code{returning} can be one of the following:
 \itemize{
-\item a character vector of column names.
-\item a list of scalar SQL (generated with \code{\link[=sql]{sql()}}). Note that only the
+\item a (named) character vector of column names.
+\item a (named) SQL vector (generated with \code{\link[=sql]{sql()}}). Note that only the
 columns from \code{table} are visible, not the ones from \code{source}.
-\item a mixture of these two.
+\item a list of scalar SQL and scalar character.
+}
+
 Names are used as the names of the returned columns. For example
 \code{returning = list("id", time = sql("now()"))}
-will return a data.frame (or tibble if installed) with the columns
-id and time.
-}}
+to return the column \code{id} and the current time in the column \code{time}.}
 }
 \description{
 SQL query to delete records
 }
 \examples{
-con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 sql_delete(
-  data = df,
-  table = "my_tbl",
-  con = con,
-  where = list("id1", sql("my_tbl.value1 > 1")),
-  returning = list(id = "id1", time = sql("now()"))
+  data = data.frame(
+    row_id = 1:2,
+    value = c("a", "b")
+  ),
+  table = "db_table",
+  con = src_memdb2(),
+  where = list(id = "row_id", sql("target.updated = FALSE"))
 )
 }

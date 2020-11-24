@@ -7,9 +7,10 @@
 db_utils_index_infos(con, table = NULL)
 }
 \arguments{
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
-\item{table}{name of the database table.}
+\item{table}{The name of the database table to update, insert to, or upsert
+to. Can be an unquoted character string or an identifier created with \code{\link[=ident]{ident()}}.}
 }
 \description{
 Get database index infos

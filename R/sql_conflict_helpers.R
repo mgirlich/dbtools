@@ -76,6 +76,8 @@ print.dbtools_conflict_clause <- function(x, ...) {
 #' @export
 #' @examples
 #' sql_constraint("unique_index")
+#'
+#' sql_unique_cols("a", "b")
 sql_constraint <- function(constraint) {
   if (!is_scalar_character(constraint)) {
     abort_invalid_input("constraint must be a scalar non-NA character.")
@@ -88,8 +90,6 @@ sql_constraint <- function(constraint) {
 #'
 #' @name conflict-target
 #' @export
-#' @examples
-#' sql_unique_cols("a", "b")
 sql_unique_cols <- function(...) {
   dots <- list2(...)
   unique_cols <- vctrs::vec_c(..., .ptype = character())

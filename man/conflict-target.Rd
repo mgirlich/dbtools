@@ -15,8 +15,13 @@ sql_unique_cols(...)
 constraint must be allowed to in use in the \verb{ON CONFLICT ON CONSTRAINT}
 clause.}
 
-\item{...}{A character vector of the names of the unique columns.}
+\item{...}{A character vector of names of unique columns.}
 }
 \description{
 SQL conflict target
+}
+\examples{
+sql_constraint("unique_index")
+
+sql_unique_cols("a", "b")
 }

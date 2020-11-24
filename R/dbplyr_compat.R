@@ -14,9 +14,8 @@ sql_escape_ident <- function (con, x) {
     UseMethod("sql_escape_ident")
 }
 
-sql_escape_ident.DBIConnection <- function (con, x)
-{
-    dbQuoteIdentifier(con, x)
+sql_escape_ident.DBIConnection <- function (con, x) {
+    DBI::dbQuoteIdentifier(con, x)
 }
 
 sql_escape_ident.TestConnection <- function (con, x) {

@@ -16,26 +16,27 @@ db_update_data(
 )
 }
 \arguments{
-\item{data}{a data.frame.}
+\item{data}{A data frame or the name of a database table.}
 
-\item{table}{name of the database table.}
+\item{table}{The name of the database table to update, insert to, or upsert
+to. Can be an unquoted character string or an identifier created with \code{\link[=ident]{ident()}}.}
 
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
 \item{update}{specifies the columns of \code{table} to update and its new values.
 This can be one of the following:
 \itemize{
-\item a character vector of column names, e.g. \code{c("a")} to update the
-column a of \code{table} with the values of the column a \code{data}.
-Names can be used to update a column with values from a column with a
-different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
-with the column \code{y} of \code{data}.
-\item a named list of scalar SQL (generated with \code{\link[=sql]{sql()}}. In the SQL code the
+\item a character vector of column names, e.g. \code{c("a", "b")} to update the
+columns \code{a} and \code{b} of \code{table} with the values of the columns \code{a} and \code{b} in
+\code{data}.
+To update with a different column, use a named vector. For example,
+\code{update = c(x = "y")} will update column \code{x} of \code{table} with column \code{y} of \code{data}.
+\item a named SQL vector (generated with \code{\link[=sql]{sql()}}. In the SQL code the
 database table is named \code{target} and the input data is named \code{source}.
 The name specifies the column to update. For example
-\code{update = list(update_counter = sql("target.update_counter + 1"))}
-will increase the column update_counter by one.
-\item a mixture of these two: a list of scalar SQL and scalar character.
+\code{update = sql(update_counter = "target.update_counter + 1")}
+will increase the column \code{update_counter} by one.
+\item a list of scalar SQL and scalar character.
 }}
 
 \item{where}{specifies how to join \code{table} and \code{data}. This can be one of
@@ -45,27 +46,29 @@ the following:
 corresponding columns. To join by different variables on \code{table} and \code{data}
 use a named vector. For example \code{where = c("a", x = "b")} will match
 \code{table.a} to \code{data.a} and \code{table.x} to \code{table.b}
-\item an unnamed list of scalar SQL (generated with \code{\link[=sql]{sql()}}). In the SQL code the
+\item an unnamed SQL vector (generated with \code{\link[=sql]{sql()}}). In the SQL code the
 database table is named \code{target} and the input data is named \code{source}.
-\item a mixture of these two. For example, when using
-\code{where = list("name", sql("target.country = 'de'"))}
-all rows will be updated where name matches in \code{table} and \code{data} and
-the column country of \code{table} is equal to \code{"de"}.
+\item a list of scalar SQL and scalar character. For example with
+\code{where = list("name", sql("target.update_counter < 2"))}
+all rows will be updated where the column \code{name} matches in \code{table} and
+\code{data} and the column \code{update_counter} of \code{table} smaller than 2.
 }}
 
-\item{returning}{specifies the columns to return. If \code{NULL} (the default)
-the number of updated/inserted rows are returned.
-This can be one of the following:
+\item{returning}{Specifies the columns to return. If \code{NULL} (the default)
+you have to use \code{\link[DBI:dbExecute]{DBI::dbExecute()}} to execute the SQL statement.
+
+If not \code{NULL} you have to use \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}} to get the updated rows.
+\code{returning} can be one of the following:
 \itemize{
-\item a character vector of column names.
-\item a list of scalar SQL (generated with \code{\link[=sql]{sql()}}). Note that only the
+\item a (named) character vector of column names.
+\item a (named) SQL vector (generated with \code{\link[=sql]{sql()}}). Note that only the
 columns from \code{table} are visible, not the ones from \code{source}.
-\item a mixture of these two.
+\item a list of scalar SQL and scalar character.
+}
+
 Names are used as the names of the returned columns. For example
 \code{returning = list("id", time = sql("now()"))}
-will return a data.frame (or tibble if installed) with the columns
-id and time.
-}}
+to return the column \code{id} and the current time in the column \code{time}.}
 
 \item{trans}{perform operation in a transaction?}
 

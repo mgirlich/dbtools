@@ -16,36 +16,39 @@ sql_insert(
 )
 }
 \arguments{
-\item{data}{a data.frame.}
+\item{data}{A data frame or the name of a database table.}
 
-\item{table}{name of the database table.}
+\item{table}{The name of the database table to update, insert to, or upsert
+to. Can be an unquoted character string or an identifier created with \code{\link[=ident]{ident()}}.}
 
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
-\item{conflict}{specifies the action on a given conflict. If \code{NULL} (the
+\item{conflict}{Specifies the action on a given conflict. If \code{NULL} (the
 default) conflicts produce an error. If given then it must be generated
 by \code{\link[=sql_do_update]{sql_do_update()}} or \code{\link[=sql_do_nothing]{sql_do_nothing()}}.}
 
-\item{insert_cols}{columns from \code{data} to insert.}
+\item{insert_cols}{Columns from \code{data} to insert.}
 
-\item{returning}{specifies the columns to return. If \code{NULL} (the default)
-the number of updated/inserted rows are returned.
-This can be one of the following:
+\item{returning}{Specifies the columns to return. If \code{NULL} (the default)
+you have to use \code{\link[DBI:dbExecute]{DBI::dbExecute()}} to execute the SQL statement.
+
+If not \code{NULL} you have to use \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}} to get the updated rows.
+\code{returning} can be one of the following:
 \itemize{
-\item a character vector of column names.
-\item a list of scalar SQL (generated with \code{\link[=sql]{sql()}}). Note that only the
+\item a (named) character vector of column names.
+\item a (named) SQL vector (generated with \code{\link[=sql]{sql()}}). Note that only the
 columns from \code{table} are visible, not the ones from \code{source}.
-\item a mixture of these two.
+\item a list of scalar SQL and scalar character.
+}
+
 Names are used as the names of the returned columns. For example
 \code{returning = list("id", time = sql("now()"))}
-will return a data.frame (or tibble if installed) with the columns
-id and time.
-}}
+to return the column \code{id} and the current time in the column \code{time}.}
 
-\item{return_all}{a boolean that specifies whether only newly inserted rows
-(\code{FALSE}, the default) are returned or also the matching, existing rows.}
+\item{return_all}{A boolean that specifies whether only newly inserted rows
+(\code{FALSE}, the default) are returned or also the matching existing rows.}
 
-\item{mode}{specify how to check for a conflict:
+\item{mode}{Specify how to check for a conflict:
 \itemize{
 \item "new": use the SQL "ON CONFLICT" clause.
 \item "old": do not use the "ON CONFLICT" clause but an anti-join.
@@ -55,7 +58,8 @@ id and time.
 An SQL query.
 }
 \description{
-SQL insert query
+The function powering \code{sql_insert_missing()} and \code{sql_upsert()}. Usually,
+there is no need to call this function directly.
 }
 \examples{
 sql_insert(

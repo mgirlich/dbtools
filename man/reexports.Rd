@@ -5,6 +5,7 @@
 \alias{reexports}
 \alias{glue_sql}
 \alias{sql}
+\alias{ident}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -12,7 +13,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dbplyr}{\code{\link[dbplyr]{sql}}}
+  \item{dbplyr}{\code{\link[dbplyr]{ident}}, \code{\link[dbplyr]{sql}}}
 
   \item{glue}{\code{\link[glue]{glue_sql}}}
 }}

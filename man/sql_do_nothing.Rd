@@ -2,20 +2,22 @@
 % Please edit documentation in R/sql_conflict_helpers.R
 \name{sql_do_nothing}
 \alias{sql_do_nothing}
-\title{On conflict DO NOTHING object}
+\title{On conflict DO NOTHING}
 \usage{
 sql_do_nothing(conflict_target)
 }
 \arguments{
-\item{conflict_target}{specifies the conflict target. This can be one of
+\item{conflict_target}{Specifies the conflict target. This can be one of
 the following:
 \itemize{
-\item a character vector of column names that should be unique.
-When using this together with mode "new" there must be a unique constraint
-on these columns.
-\item a constraint name specified by \code{\link[=sql_constraint]{sql_constraint()}}.
+\item a character vector that is passed on to \code{\link[=sql_unique_cols]{sql_unique_cols()}}.
+\item a constraint created with \code{\link[=sql_constraint]{sql_constraint()}} or \code{\link[=sql_unique_cols]{sql_unique_cols()}}.
 }}
 }
 \description{
-On conflict DO NOTHING object
+On conflict DO NOTHING
+}
+\examples{
+sql_do_nothing(c("id1", "id2"))
+sql_do_nothing(sql_constraint("unique_constraint"))
 }

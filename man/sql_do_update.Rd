@@ -2,36 +2,40 @@
 % Please edit documentation in R/sql_conflict_helpers.R
 \name{sql_do_update}
 \alias{sql_do_update}
-\title{On conflict DO UPDATE object}
+\title{On conflict DO UPDATE}
 \usage{
 sql_do_update(conflict_target, update)
 }
 \arguments{
-\item{conflict_target}{specifies the conflict target. This can be one of
+\item{conflict_target}{Specifies the conflict target. This can be one of
 the following:
 \itemize{
-\item a character vector of column names that should be unique.
-When using this together with mode "new" there must be a unique constraint
-on these columns.
-\item a constraint name specified by \code{\link[=sql_constraint]{sql_constraint()}}.
+\item a character vector that is passed on to \code{\link[=sql_unique_cols]{sql_unique_cols()}}.
+\item a constraint created with \code{\link[=sql_constraint]{sql_constraint()}} or \code{\link[=sql_unique_cols]{sql_unique_cols()}}.
 }}
 
 \item{update}{specifies the columns of \code{table} to update and its new values.
 This can be one of the following:
 \itemize{
-\item a character vector of column names, e.g. \code{c("a")} to update the
-column a of \code{table} with the values of the column a \code{data}.
-Names can be used to update a column with values from a column with a
-different name. For example, \code{update = c(x = "y")} will column \code{x} of \code{table}
-with the column \code{y} of \code{data}.
-\item a named list of scalar SQL (generated with \code{\link[=sql]{sql()}}. In the SQL code the
+\item a character vector of column names, e.g. \code{c("a", "b")} to update the
+columns \code{a} and \code{b} of \code{table} with the values of the columns \code{a} and \code{b} in
+\code{data}.
+To update with a different column, use a named vector. For example,
+\code{update = c(x = "y")} will update column \code{x} of \code{table} with column \code{y} of \code{data}.
+\item a named SQL vector (generated with \code{\link[=sql]{sql()}}. In the SQL code the
 database table is named \code{target} and the input data is named \code{source}.
 The name specifies the column to update. For example
-\code{update = list(update_counter = sql("target.update_counter + 1"))}
-will increase the column update_counter by one.
-\item a mixture of these two: a list of scalar SQL and scalar character.
+\code{update = sql(update_counter = "target.update_counter + 1")}
+will increase the column \code{update_counter} by one.
+\item a list of scalar SQL and scalar character.
 }}
 }
 \description{
-On conflict DO UPDATE object
+On conflict DO UPDATE
+}
+\examples{
+sql_do_update(
+  c("id1", "id2"),
+  update = list("value", updated_at = sql("now()"))
+)
 }

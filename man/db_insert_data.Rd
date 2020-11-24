@@ -15,27 +15,30 @@ db_insert_data(
 )
 }
 \arguments{
-\item{data}{a data.frame.}
+\item{data}{A data frame or the name of a database table.}
 
-\item{table}{name of the database table.}
+\item{table}{The name of the database table to update, insert to, or upsert
+to. Can be an unquoted character string or an identifier created with \code{\link[=ident]{ident()}}.}
 
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
-\item{insert_cols}{columns from \code{data} to insert.}
+\item{insert_cols}{Columns from \code{data} to insert.}
 
-\item{returning}{specifies the columns to return. If \code{NULL} (the default)
-the number of updated/inserted rows are returned.
-This can be one of the following:
+\item{returning}{Specifies the columns to return. If \code{NULL} (the default)
+you have to use \code{\link[DBI:dbExecute]{DBI::dbExecute()}} to execute the SQL statement.
+
+If not \code{NULL} you have to use \code{\link[DBI:dbGetQuery]{DBI::dbGetQuery()}} to get the updated rows.
+\code{returning} can be one of the following:
 \itemize{
-\item a character vector of column names.
-\item a list of scalar SQL (generated with \code{\link[=sql]{sql()}}). Note that only the
+\item a (named) character vector of column names.
+\item a (named) SQL vector (generated with \code{\link[=sql]{sql()}}). Note that only the
 columns from \code{table} are visible, not the ones from \code{source}.
-\item a mixture of these two.
+\item a list of scalar SQL and scalar character.
+}
+
 Names are used as the names of the returned columns. For example
 \code{returning = list("id", time = sql("now()"))}
-will return a data.frame (or tibble if installed) with the columns
-id and time.
-}}
+to return the column \code{id} and the current time in the column \code{time}.}
 
 \item{trans}{perform operation in a transaction?}
 

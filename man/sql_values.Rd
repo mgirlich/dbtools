@@ -2,27 +2,28 @@
 % Please edit documentation in R/sql_clause.R
 \name{sql_values}
 \alias{sql_values}
-\title{Generate an SQL VALUES clause}
+\title{SQL VALUES clause}
 \usage{
 sql_values(con, data)
 }
 \arguments{
-\item{con}{a DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
+\item{con}{A DBIConnection object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}.}
 
-\item{data}{a data.frame.}
+\item{data}{A data frame.}
 }
 \value{
 An SQL clause (a scalar object of class SQL).
 }
 \description{
-\code{sql_values()} translates a data.frame to an SQL VALUES clause.
+\code{sql_values()} translates a data frame to an SQL VALUES clause.
 }
 \details{
 Because a \code{VALUES} clause must have at least one row a \code{data.frame} with
 zero rows is translated as a \code{SELECT} clause that returns zero rows.
 }
 \examples{
-con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
-sql_values(con, mtcars[1:3, c(1:3)])
-sql_values(con, mtcars[0, c(1:3)])
+sql_values(src_memdb2(), mtcars[1:3, c(1:3)])
+
+# zero row data frames produce a SELECT query
+sql_values(src_memdb2(), mtcars[0, c(1:3)])
 }
