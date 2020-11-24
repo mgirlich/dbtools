@@ -35,7 +35,7 @@ maybe_as_tibble <- function(x) {
 }
 
 indent <- function(x) {
-  stringi::stri_paste("  ", stringr::str_replace_all(x, "\\n", "\n  "))
+  paste0("  ", gsub(x = x, pattern = "\\n", replacement = "\n  "))
 }
 
 src_memdb2 <- function() {
