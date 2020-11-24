@@ -16,7 +16,7 @@ sql_with_clauses <- function(con,
   if (n == 1) {
     dots[[1]]
   } else {
-    with_clauses <- sql_statements(con, !!!dots[-n], collapse = "\n,")
+    with_clauses <- sql_statements(con, !!!dots[-n], collapse = ",\n")
 
     build_sql(
       "WITH ", with_clauses, "\n",

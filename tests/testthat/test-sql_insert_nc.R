@@ -1,9 +1,11 @@
-f_insert <- purrr::partial(
-  sql_insert_nc,
-  data = df,
-  table = "dbtools_test",
-  con = con_memdb()
-)
+f_insert <- function(..., con = con_memdb()) {
+  sql_insert_nc(
+    data = df,
+    table = "dbtools_test",
+    con = con,
+    ...
+  )
+}
 
 test_that("insert works", {
   memdb_frame2(
@@ -72,9 +74,11 @@ test_that("do nothing on conflict works", {
 })
 
 test_that("do update on conflict works", {
-  skip("not supported by SQLite")
+  skip_if_not(has_pg())
+
   expect_snapshot(
     f_insert(
+      con = con_pg(),
       conflict = sql_do_update(sql_unique_cols("id1", "id2"), c("value1")),
       insert_cols = NULL,
       returning = sql("*"),

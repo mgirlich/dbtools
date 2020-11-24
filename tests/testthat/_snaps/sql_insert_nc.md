@@ -70,3 +70,33 @@
       )
       RETURNING *
 
+# do update on conflict works
+
+    Code
+      f_insert(con = con_pg(), conflict = sql_do_update(sql_unique_cols("id1", "id2"),
+      c("value1")), insert_cols = NULL, returning = sql("*"), return_all = FALSE)
+    Output
+      <SQL> WITH "source" ("id1", "id2", "value1", "value2") AS (
+        VALUES
+          (1::float8, 'a', 10::float8, 'A'),
+          (1::float8, 'b', 20::float8, 'AA'),
+          (2::float8, 'b', 11::float8, 'B'),
+          (3::float8, 'c', 11::float8, 'B')
+      )
+      ,"insert_action" AS (
+        INSERT INTO "dbtools_test" AS "target" ("id1", "id2", "value1", "value2")
+        SELECT "id1", "id2", "value1", "value2"
+        FROM "source"
+        WHERE NOT EXISTS (
+          SELECT 1
+            FROM "dbtools_test" AS "target"
+           WHERE (("target"."id1" = "source"."id1") AND ("target"."id2" = "source"."id2"))
+        )
+        RETURNING *
+      )
+      UPDATE "dbtools_test" AS "target"
+      SET
+        "value1" = "source"."value1"
+      FROM "source"
+      WHERE (("target"."id1" = "source"."id1") AND ("target"."id2" = "source"."id2"))
+

@@ -32,8 +32,6 @@ prepare_table <- function(value = df, con = con_memdb()) {
     DBI::dbRemoveTable(con, test_table)
   }
 
-  # table <- DBI::dbQuoteIdentifier(con, test_table)
-
   fields <- vapply(value, function(x) DBI::dbDataType(con, x), character(1))
   field_names <- DBI::dbQuoteIdentifier(con, names(fields))
   field_types <- unname(fields)

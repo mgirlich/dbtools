@@ -1,8 +1,6 @@
 #' Get database table sizes
 #'
 #' @inheritParams db_insert_data
-#'
-#' @export
 db_utils_table_size <- function(con) {
   if (!is_postgres(con)) {
     abort_invalid_input("db_utils_table_size only works with PostgreSQL.")
@@ -31,8 +29,6 @@ ORDER BY 3 Desc;"
 #' Get database index infos
 #'
 #' @inheritParams db_insert_data
-#'
-#' @export
 db_utils_index_infos <- function(con, table = NULL) {
   if (!is_postgres(con)) {
     abort_invalid_input("db_utils_index_infos only works with PostgreSQL.")
@@ -85,8 +81,6 @@ WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')",
 #' Get running queries
 #'
 #' @inheritParams db_insert_data
-#'
-#' @export
 db_utils_running_queries <- function(con) {
   if (!is_postgres(con)) {
     abort_invalid_input("db_utils_running_queries only works with PostgreSQL.")
