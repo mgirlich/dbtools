@@ -27,7 +27,7 @@ test_that("errors for invalid conflict target", {
     db_upsert_data(
       data = df,
       table = test_table,
-      con = con,
+      con = con_memdb(),
       conflict_target = conflict_target,
       update = "value1"
     )
@@ -37,7 +37,7 @@ test_that("errors for invalid conflict target", {
 })
 
 test_that("update works", {
-  skip_if(is_sqlite(con))
+  skip_if(is_sqlite(con_memdb()))
   prepare_table(df[1:2, ])
   state_new <- df
   state_new$value1[2] <- state_new$value1[2] + 5

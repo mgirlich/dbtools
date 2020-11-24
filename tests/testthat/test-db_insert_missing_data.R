@@ -78,7 +78,7 @@ test_that("insert cols work", {
 })
 
 test_that("constraint works", {
-  skip_if(is_sqlite(con))
+  skip_if(is_sqlite(con_memdb()))
   state_before <- get_tbl()
 
   new_row <- create_new_row(state_before)
@@ -94,7 +94,7 @@ test_that("constraint works", {
 })
 
 test_that("return_all works", {
-  skip_if(is_sqlite(con))
+  skip_if(is_sqlite(con_memdb()))
   state_before <- get_tbl()
 
   new_row <- create_new_row(state_before)
@@ -117,7 +117,7 @@ test_that("return_all errors for invalid input", {
     db_insert_missing_data(
       data = df,
       table = test_table,
-      con = con,
+      con = con_memdb(),
       conflict_target = conflict_target,
       insert_cols = NULL,
       returning = returning,

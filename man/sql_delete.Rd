@@ -55,7 +55,7 @@ sql_delete(
     value = c("a", "b")
   ),
   table = "db_table",
-  con = src_memdb2(),
+  con = con_memdb(),
   where = list(id = "row_id", sql("target.updated = FALSE"))
 )
 }

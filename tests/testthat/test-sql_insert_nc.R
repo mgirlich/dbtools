@@ -2,7 +2,7 @@ f_insert <- purrr::partial(
   sql_insert_nc,
   data = df,
   table = "dbtools_test",
-  con = con
+  con = con_memdb()
 )
 
 test_that("insert works", {

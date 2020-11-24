@@ -16,7 +16,7 @@ test_db_update_data <- function(data,
 }
 
 test_that("db_update_data works", {
-  skip_if(is_sqlite(con))
+  skip_if(is_sqlite(con_memdb()))
 
   prepare_table()
   state_new <- df

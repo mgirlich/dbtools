@@ -4,7 +4,7 @@
 test_that("`translate_update()` handles unnamed characters", {
   expect_equal(
     translate_update(
-      con,
+      con_memdb(),
       update = c("col 1", "col 2")
     ),
     sql(
@@ -17,7 +17,7 @@ test_that("`translate_update()` handles unnamed characters", {
 test_that("`translate_update()` handles (partially) named characters", {
   expect_equal(
     translate_update(
-      con,
+      con_memdb(),
       update = c(`other name` = "col 1", "col 2")
     ),
     sql(
@@ -32,7 +32,7 @@ test_that("`translate_update()` handles sql", {
 
   expect_equal(
     translate_update(
-      con,
+      con_memdb(),
       update = update_var
     ),
     update_var
@@ -42,7 +42,7 @@ test_that("`translate_update()` handles sql", {
 test_that("`translate_update()` handles lists", {
   expect_equal(
     translate_update(
-      con,
+      con_memdb(),
       update = list(
         "unnamed_chr",
         `name of chr` = "named chr col",
@@ -59,7 +59,7 @@ test_that("`translate_update()` handles lists", {
 
 test_that("`translate_update()` errors on unnamed sql", {
   expect_error(
-    translate_update(con, update = sql("now()")),
+    translate_update(con_memdb(), update = sql("now()")),
     class = "dbtools_error_invalid_input"
   )
 })
@@ -70,7 +70,7 @@ test_that("`translate_update()` errors on unnamed sql", {
 test_that("`translate_where()` handles unnamed characters", {
   expect_equal(
     translate_where(
-      con,
+      con_memdb(),
       where = c("col 1", "col 2")
     ),
     sql(
@@ -83,7 +83,7 @@ test_that("`translate_where()` handles unnamed characters", {
 test_that("`translate_where()` handles (partially) named characters", {
   expect_equal(
     translate_where(
-      con,
+      con_memdb(),
       where = c(`other name` = "col 1", "col 2")
     ),
     sql(
@@ -98,7 +98,7 @@ test_that("`translate_where()` handles sql", {
 
   expect_equal(
     translate_where(
-      con,
+      con_memdb(),
       where = where_var
     ),
     where_var
@@ -108,7 +108,7 @@ test_that("`translate_where()` handles sql", {
 test_that("`translate_where()` handles lists", {
   expect_equal(
     translate_where(
-      con,
+      con_memdb(),
       where = list(
         "unnamed_chr",
         `name of chr` = "named chr col",
@@ -125,7 +125,7 @@ test_that("`translate_where()` handles lists", {
 
 test_that("`translate_where()` errors on named sql", {
   expect_error(
-    translate_where(con, where = sql(target_col = "source_col")),
+    translate_where(con_memdb(), where = sql(target_col = "source_col")),
     class = "dbtools_error_invalid_input"
   )
 })
@@ -137,20 +137,20 @@ test_that("`translate_conflict()` works", {
   unique_cols <- sql_unique_cols("id1", "id2")
   unique_constraint <- sql_constraint("unique_constraint")
 
-  expect_snapshot(translate_conflict(con, sql_do_nothing(unique_cols)))
-  expect_snapshot(translate_conflict(con, sql_do_nothing(unique_constraint)))
+  expect_snapshot(translate_conflict(con_memdb(), sql_do_nothing(unique_cols)))
+  expect_snapshot(translate_conflict(con_memdb(), sql_do_nothing(unique_constraint)))
 
   update <- c(`target col` = "source col")
   expect_snapshot(
     translate_conflict(
-      con,
+      con_memdb(),
       sql_do_update(unique_cols, update)
     )
   )
 
   expect_snapshot(
     translate_conflict(
-      con,
+      con_memdb(),
       sql_do_update(unique_constraint, update)
     )
   )

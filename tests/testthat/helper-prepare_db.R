@@ -10,7 +10,7 @@ test_table <- "dbtools_test"
 columns <- c("id1", "id2")
 index_name <- paste(c(test_table, columns), collapse = "_")
 
-prepare_table <- function(value = df) {
+prepare_table <- function(value = df, con = con_memdb()) {
   if (DBI::dbExistsTable(con, test_table)) {
     DBI::dbRemoveTable(con, test_table)
   }

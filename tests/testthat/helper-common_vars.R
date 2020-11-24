@@ -1,7 +1,3 @@
-con_pg <- DBI::dbConnect(
-  RPostgres::Postgres(),
-  dbname = "postgres"
-)
 # tmp <- tempfile()
 con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
@@ -9,14 +5,14 @@ con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 mtcars_df <- tibble::rownames_to_column(mtcars)[, 1:4]
 
 lcl_exec <- function(...) {
-  sql <- glue::glue_sql(..., .con = con, .envir = parent.frame())
-  DBI::dbExecute(conn = con, sql)
+  sql <- glue::glue_sql(..., .con = con_memdb(), .envir = parent.frame())
+  DBI::dbExecute(conn = con_memdb(), sql)
 }
 
 
 
 get_tbl <- function() {
-  DBI::dbReadTable(con, test_table, row.names = FALSE)
+  DBI::dbReadTable(con_memdb(), test_table, row.names = FALSE)
 }
 
 ref_file <- function(...) {

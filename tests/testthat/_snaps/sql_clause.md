@@ -1,7 +1,7 @@
 # `sql_clause_data()` handles dataframes
 
     Code
-      sql_clause_data(con, mtcars_df[1:2, ], "values")
+      sql_clause_data(con_memdb(), mtcars_df[1:2, ], "values")
     Output
       <SQL> `values` (`rowname`, `mpg`, `cyl`, `disp`) AS (
         VALUES
@@ -12,7 +12,7 @@
 # `sql_values()` works for empty dataframes and SQLite
 
     Code
-      sql_values(con, mtcars_df[0, ])
+      sql_values(con_memdb(), mtcars_df[0, ])
     Output
       <SQL> SELECT NULL, NULL, NULL, NULL WHERE FALSE
 
@@ -35,7 +35,7 @@
 # `sql_clause_set()` works
 
     Code
-      sql_clause_set(con, sql(x = "a"))
+      sql_clause_set(con_memdb(), sql(x = "a"))
     Output
       <SQL> SET
         `x` = a
@@ -59,28 +59,28 @@
 # `sql_clause_returning()` works
 
     Code
-      sql_clause_returning(con, c(x = "a", "b"))
+      sql_clause_returning(con_memdb(), c(x = "a", "b"))
     Output
       <SQL> RETURNING `a` AS `x`, `b`
 
 ---
 
     Code
-      sql_clause_returning(con, ident(x = "a", "b"))
+      sql_clause_returning(con_memdb(), ident(x = "a", "b"))
     Output
       <SQL> RETURNING `a` AS `x`, `b`
 
 ---
 
     Code
-      sql_clause_returning(con, sql(time = "now()", "b + 1"))
+      sql_clause_returning(con_memdb(), sql(time = "now()", "b + 1"))
     Output
       <SQL> RETURNING now() AS `time`, b + 1
 
 ---
 
     Code
-      sql_clause_returning(con, list(time = sql("now()"), x = "a", "b"))
+      sql_clause_returning(con_memdb(), list(time = sql("now()"), x = "a", "b"))
     Output
       <SQL> RETURNING now() AS `time`, `a` AS `x`, `b`
 

@@ -71,9 +71,9 @@ test_that("`sql_insert_missing()` works with `return_all`", {
   )
 
   DBI::dbExecute(
-    con_pg,
+    con_pg(),
     dbplyr::sql_table_index(
-      con_pg,
+      con_pg(),
       "sql_insert_missing_3",
       columns = "rowname",
       name = "my_index",
@@ -84,7 +84,7 @@ test_that("`sql_insert_missing()` works with `return_all`", {
   insert_missing_sql <- sql_insert_missing(
     data = mtcars_df[3:5, ],
     table = "sql_insert_missing_3",
-    con = con_pg,
+    con = con_pg(),
     conflict_target = c("rowname"),
     returning = sql("*"),
     return_all = TRUE,
@@ -93,7 +93,7 @@ test_that("`sql_insert_missing()` works with `return_all`", {
 
   expect_snapshot(insert_missing_sql)
 
-  result <- DBI::dbGetQuery(con_pg, insert_missing_sql)
+  result <- DBI::dbGetQuery(con_pg(), insert_missing_sql)
   expect_equal(
     result[order(result$rowname), ],
     mtcars_df[3:5, ],

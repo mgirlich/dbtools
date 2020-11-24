@@ -7,7 +7,7 @@ test_that("sql_delete works", {
   delete_sql <- sql_delete(
     data = mtcars_df[3:5, ],
     table = "sql_delete_1",
-    con = con,
+    con = con_memdb(),
     where = list("mpg", sql("`source`.`cyl` > 4")),
     returning = NULL
   )

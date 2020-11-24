@@ -18,7 +18,7 @@
 # `data` can be a SQL table
 
     Code
-      sql_update(data = "my_tbl", table = "dbtools_test", con = con, update = c(
+      sql_update(data = "my_tbl", table = "dbtools_test", con = con_memdb(), update = c(
         "value1", "value2"), where = c("id1", "id2"))
     Output
       <SQL> UPDATE `dbtools_test` AS `target`
@@ -31,8 +31,8 @@
 # `data` can be a zero row df
 
     Code
-      sql_update(data = mtcars[0, ], table = "dbtools_test", con = con, update = c(
-        "value1", "value2"), where = c("id1", "id2"))
+      sql_update(data = mtcars[0, ], table = "dbtools_test", con = con_memdb(),
+      update = c("value1", "value2"), where = c("id1", "id2"))
     Output
       <SQL> WITH `source` (`mpg`, `cyl`, `disp`, `hp`, `drat`, `wt`, `qsec`, `vs`, `am`, `gear`, `carb`) AS (
         SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL WHERE FALSE

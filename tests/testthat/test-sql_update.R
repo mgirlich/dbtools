@@ -2,7 +2,7 @@ f_update <- purrr::partial(
   sql_update,
   data = df,
   table = "dbtools_test",
-  con = con
+  con = con_memdb()
 )
 
 test_that("full update works", {
@@ -40,7 +40,7 @@ test_that("`data` can be a SQL table", {
     sql_update(
       data = "my_tbl",
       table = "dbtools_test",
-      con = con,
+      con = con_memdb(),
       update = c("value1", "value2"),
       where = c("id1", "id2")
     )
@@ -52,7 +52,7 @@ test_that("`data` can be a zero row df", {
     sql_update(
       data = mtcars[0, ],
       table = "dbtools_test",
-      con = con,
+      con = con_memdb(),
       update = c("value1", "value2"),
       where = c("id1", "id2")
     )

@@ -30,7 +30,7 @@ NULL
 #' sql_insert(
 #'   data = iris[1:2, ],
 #'   table = "iris_tbl",
-#'   con = con,
+#'   con = con_memdb(),
 #'   conflict = sql_do_nothing("Species"),
 #'   insert_cols = c("Species", "Sepal.Length", "Sepal.Width"),
 #'   returning = list(width = "Sepal.Width", time = sql("now()"))

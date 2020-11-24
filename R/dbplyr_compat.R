@@ -11,17 +11,17 @@ sql_table_prefix <- function (con, var, table = NULL) {
 }
 
 sql_escape_ident <- function (con, x) {
-    UseMethod("sql_escape_ident")
+  UseMethod("sql_escape_ident")
 }
 
 #' @export
 sql_escape_ident.DBIConnection <- function (con, x) {
-    DBI::dbQuoteIdentifier(con, x)
+  DBI::dbQuoteIdentifier(con, x)
 }
 
 #' @export
 sql_escape_ident.TestConnection <- function (con, x) {
-    sql_quote(x, "`")
+  dbplyr::sql_quote(x, "`")
 }
 
 cache <- function() {
@@ -43,6 +43,11 @@ cache_computation <- function(name, computation) {
   }
 }
 
+#' Create a database table in temporary in-memory database
+#'
+#' `memdb_frame2()` works like [`dbplyr::memdb_frame()`]: it creates a table in
+#' an in-memory SQLite database.
+#'
 #' @export
 con_memdb <- function() {
   cache_computation(
@@ -51,13 +56,21 @@ con_memdb <- function() {
   )
 }
 
+#' @param ... Passed to [`tibble::tibble()`].
+#' @param .name Name of table in database.
+#'
 #' @export
+#' @rdname con_memdb
 memdb_frame2 <- function(..., .name) {
-  if (DBI::dbExistsTable(con_memdb(), .name)) {
-    DBI::dbRemoveTable(con_memdb(), .name)
+  con_frame(..., .name = .name, .con = con_memdb())
+}
+
+con_frame <- function(..., .name, .con) {
+  if (DBI::dbExistsTable(.con, .name)) {
+    DBI::dbRemoveTable(.con, .name)
   }
   dbplyr::db_copy_to(
-    con = con_memdb(),
+    con = .con,
     table = .name,
     values = tibble::tibble(...)
   )

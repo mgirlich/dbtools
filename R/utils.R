@@ -38,11 +38,15 @@ indent <- function(x) {
   paste0("  ", gsub(x = x, pattern = "\\n", replacement = "\n  "))
 }
 
+con_pg <- function() {
+  cache_computation(
+    "con_pg",
+    DBI::dbConnect(RPostgres::Postgres(), dbname = "postgres")
+  )
+}
+
 pg_frame2 <- function(..., .name) {
-  if (DBI::dbExistsTable(con_pg, .name)) {
-    DBI::dbRemoveTable(con_pg, .name)
-  }
-  DBI::dbWriteTable(con_pg, .name, tibble::tibble(...))
+  con_frame(..., .name = .name, .con = con_pg())
 }
 
 is_named2 <- function(x) {

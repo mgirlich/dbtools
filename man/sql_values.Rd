@@ -22,8 +22,8 @@ Because a \code{VALUES} clause must have at least one row a \code{data.frame} wi
 zero rows is translated as a \code{SELECT} clause that returns zero rows.
 }
 \examples{
-sql_values(src_memdb2(), mtcars[1:3, c(1:3)])
+sql_values(con_memdb(), mtcars[1:3, c(1:3)])
 
 # zero row data frames produce a SELECT query
-sql_values(src_memdb2(), mtcars[0, c(1:3)])
+sql_values(con_memdb(), mtcars[0, c(1:3)])
 }
