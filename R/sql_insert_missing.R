@@ -8,12 +8,15 @@
 #' @export
 #' @examples
 #' sql_insert_missing(
-#'   data = mtcars[c(1, 3), ],
-#'   table = "dbtools_mtcars",
-#'   con = con,
-#'   conflict_target = c("mpg", "cyl"),
-#'   returning = sql("*"),
-#'   return_all = TRUE
+#'   data = data.frame(
+#'     id = 1:2,
+#'     value = c("a", "b"),
+#'     value2 = 11:12
+#'   ),
+#'   table = "db_table",
+#'   con = src_memdb2(),
+#'   conflict_target = c("id"),
+#'   insert_cols = c("value", "value2")
 #' )
 sql_insert_missing <- function(data,
                                table,

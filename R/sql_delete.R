@@ -4,13 +4,14 @@
 #'
 #' @export
 #' @examples
-#' con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
 #' sql_delete(
-#'   data = df,
-#'   table = "my_tbl",
-#'   con = con,
-#'   where = list("id1", sql("my_tbl.value1 > 1")),
-#'   returning = list(id = "id1", time = sql("now()"))
+#'   data = data.frame(
+#'     row_id = 1:2,
+#'     value = c("a", "b")
+#'   ),
+#'   table = "db_table",
+#'   con = src_memdb2(),
+#'   where = list(id = "row_id", sql("target.updated = FALSE"))
 #' )
 sql_delete <- function(data,
                        table,

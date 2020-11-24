@@ -4,6 +4,18 @@
 #' @inheritParams sql_update
 #'
 #' @export
+#' @examples
+#' sql_upsert(
+#'   data = data.frame(
+#'     id = 1:2,
+#'     value = c("a", "b"),
+#'     value2 = 11:12
+#'   ),
+#'   table = "db_table",
+#'   con = src_memdb2(),
+#'   conflict_target = c("id"),
+#'   update = list("value", updated_at = sql("now()"))
+#' )
 sql_upsert <- function(data,
                        table,
                        con,

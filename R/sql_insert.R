@@ -1,24 +1,3 @@
-#' SQL expression list
-#'
-#' SQL expressions are used in the following arguments
-#' * `update` (in [db_update_data()] and [db_upsert_data()])
-#' * `where` (in [db_delete_data()], and [db_update_data()])
-#' * `returning` (in [db_delete_data()], [db_insert_data()], [db_insert_missing_data()], [db_update_data()], and [db_upsert_data()])
-#'
-#' An SQL expression list is either a character vector e.g. `c("id", "name")`.
-#' Or it can be a list where each element is
-#' * a scalar character, i.e. a character of length 1 which must not be `NA`.
-#' * a SQL class generated with [dbplyr::sql()] or [glue::glue_sql()].
-#'
-#' A scalar character refers to a column in the dataframe and of the database
-#' table. If the element is named then the name is used for the database.
-#' SQL elements are not translated but left as is. In an SQL expression
-#' the table to be updated is referred to as `target` and the input data
-#' as `source`.
-#'
-#' @name sql-expression-list
-NULL
-
 #' Common arguments
 #'
 #' @param data A data frame or the name of a database table.
@@ -30,15 +9,18 @@ NULL
 
 #' SQL insert query
 #'
+#' The function powering `sql_insert_missing()` and `sql_upsert()`. Usually,
+#' there is no need to call this function directly.
+#'
 #' @inheritParams default-args
-#' @param conflict specifies the action on a given conflict. If `NULL` (the
+#' @param conflict Specifies the action on a given conflict. If `NULL` (the
 #' default) conflicts produce an error. If given then it must be generated
 #' by [sql_do_update()] or [sql_do_nothing()].
-#' @param insert_cols columns from `data` to insert.
+#' @param insert_cols Columns from `data` to insert.
 #' @inheritParams sql_update
-#' @param return_all a boolean that specifies whether only newly inserted rows
-#' (`FALSE`, the default) are returned or also the matching, existing rows.
-#' @param mode specify how to check for a conflict:
+#' @param return_all A boolean that specifies whether only newly inserted rows
+#' (`FALSE`, the default) are returned or also the matching existing rows.
+#' @param mode Specify how to check for a conflict:
 #' * "new": use the SQL "ON CONFLICT" clause.
 #' * "old": do not use the "ON CONFLICT" clause but an anti-join.
 #'
@@ -97,7 +79,6 @@ sql_insert_on_conflict <- function(data,
                                    insert_cols = NULL,
                                    returning = NULL,
                                    return_all = FALSE) {
-  # TODO return_all
   source_tbl <- "source"
   target_tbl <- "target"
 

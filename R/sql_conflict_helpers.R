@@ -1,12 +1,10 @@
-#' On conflict DO NOTHING object
+#' On conflict DO NOTHING
 #'
-#' @param conflict_target specifies the conflict target. This can be one of
-#' the following:
-#' * a character vector of column names that should be unique.
-#' When using this together with mode "new" there must be a unique constraint
-#' on these columns.
-#' * a constraint name specified by [sql_constraint()].
+#' @inheritParams sql_do_update
 #' @export
+#' @examples
+#' sql_do_nothing(c("id1", "id2"))
+#' sql_do_nothing(sql_constraint("unique_constraint"))
 sql_do_nothing <- function(conflict_target) {
   new_conflict_clause(
     conflict_target,
@@ -17,11 +15,19 @@ sql_do_nothing <- function(conflict_target) {
   )
 }
 
-#' On conflict DO UPDATE object
+#' On conflict DO UPDATE
 #'
-#' @inheritParams sql_do_nothing
+#' @param conflict_target Specifies the conflict target. This can be one of
+#' the following:
+#' * a character vector that is passed on to [`sql_unique_cols()`].
+#' * a constraint created with [`sql_constraint()`] or [`sql_unique_cols()`].
 #' @inheritParams sql_update
 #' @export
+#' @examples
+#' sql_do_update(
+#'   c("id1", "id2"),
+#'   update = list("value", updated_at = sql("now()"))
+#' )
 sql_do_update <- function(conflict_target, update) {
   new_conflict_clause(
     conflict_target,
@@ -58,6 +64,8 @@ new_conflict_clause <- function(conflict_target, conflict_action) {
 #'
 #' @name conflict-target
 #' @export
+#' @examples
+#' sql_constraint("unique_index")
 sql_constraint <- function(constraint) {
   if (!is_scalar_character(constraint)) {
     abort_invalid_input("constraint must be a scalar non-NA character.")
@@ -66,12 +74,14 @@ sql_constraint <- function(constraint) {
   new_conflict_target(constraint, class = "dbtools_constraint")
 }
 
-#' @param ... A character vector of the names of the unique columns.
+#' @param ... A character vector of names of unique columns.
 #'
 #' @name conflict-target
 #' @export
+#' @examples
+#' sql_unique_cols("a", "b")
 sql_unique_cols <- function(...) {
-  unique_cols <- c(...)
+  unique_cols <- purrr::flatten_chr(dots_list(...))
   if (is_empty(unique_cols) || !is.character(unique_cols) ||
       any(is.na(unique_cols))) {
     abort_invalid_input("... must be a non-empty non-NA character vector.")

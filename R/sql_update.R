@@ -26,7 +26,7 @@
 #' `where = list("name", sql("target.update_counter < 2"))`
 #' all rows will be updated where the column `name` matches in `table` and
 #' `data` and the column `update_counter` of `table` smaller than 2.
-#' @param returning specifies the columns to return. If `NULL` (the default)
+#' @param returning Specifies the columns to return. If `NULL` (the default)
 #' you have to use [`DBI::dbExecute()`] to execute the SQL statement.
 #'
 #' If not `NULL` you have to use [`DBI::dbGetQuery()`] to get the updated rows.

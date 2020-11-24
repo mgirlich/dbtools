@@ -97,9 +97,9 @@ sql_clause_data.character <- function(con, data, table) {
   NULL
 }
 
-#' Generate an SQL VALUES clause
+#' SQL VALUES clause
 #'
-#' `sql_values()` translates a data.frame to an SQL VALUES clause.
+#' `sql_values()` translates a data frame to an SQL VALUES clause.
 #'
 #' @details
 #' Because a `VALUES` clause must have at least one row a `data.frame` with
@@ -111,9 +111,8 @@ sql_clause_data.character <- function(con, data, table) {
 #'
 #' @export
 #' @examples
-#' con <- DBI::dbConnect(RSQLite::SQLite(), tempfile())
-#' sql_values(con, mtcars[1:3, c(1:3)])
-#' sql_values(con, mtcars[0, c(1:3)])
+#' sql_values(src_memdb2(), mtcars[1:3, c(1:3)])
+#' sql_values(src_memdb2(), mtcars[0, c(1:3)])
 sql_values <- function(con, data) {
   stopifnot(is.data.frame(data))
   stopifnot(inherits(con, "DBIConnection"))
@@ -262,38 +261,20 @@ sql_clause_where <- function(con, where) {
 }
 
 
-#' Add a RETURNING clause
+#' SQL RETURNING clause
 #'
-#' `sql_add_returning()` adds a `RETURNING` clause to an existing SQL clause.
+#' `sql_clause_returning()` adds a `RETURNING` clause to an existing SQL clause.
 #'
-#' @param sql An SQL clause.
 #' @inheritParams sql_insert
 #'
 #' @return An SQL clause (a scalar object of class SQL). If `returning` is
-#' `NULL` then `sql` is returned as is.
-#'
-#' @export
+#' `NULL` then `NULL` is also returned.
 sql_clause_returning <- function(con, returning) {
-  # TODO what classes to expect from `returning`?
-  # * sql -> do nothing
-  # * character -> treat as fields?
-
   if (is_null(returning)) {
     return(NULL)
   }
 
-  returning <- purrr::map(
-    as.list(returning),
-    ~ {
-      if (is_sql(.x)) {
-        .x
-      } else {
-        ident(.x)
-      }
-    }
-  )
-
-  # assert_that(is.character(returning))
+  returning <- maybe_ident(as.list(returning))
 
   build_sql(
     "RETURNING ",
