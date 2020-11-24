@@ -95,7 +95,7 @@ sql_unique_cols <- function(...) {
   unique_cols <- vctrs::vec_c(..., .ptype = character())
 
   if (is_empty(dots) || !all(lengths(dots) == 1) ||
-      any(is.na(unique_cols))) {
+    any(is.na(unique_cols))) {
     abort_invalid_input("... must be a non-empty non-NA character vector.")
   }
 

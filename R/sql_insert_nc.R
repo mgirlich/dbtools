@@ -28,8 +28,7 @@ sql_insert_nc <- function(data,
                           conflict = NULL,
                           insert_cols = NULL,
                           returning = NULL,
-                          return_all = FALSE
-                          ) {
+                          return_all = FALSE) {
   if (!is_null(conflict) && !is_unique_cols(conflict$conflict_target)) {
     abort_invalid_input('cannot use constraint here for `mode = "old"`')
   }
@@ -50,11 +49,13 @@ sql_insert_nc <- function(data,
     ),
     select = sql_clause_select(con, ident(insert_cols)),
     from = sql_clause_from(con, ident(source_tbl)),
-    where = if (length(conflict)) sql_clause_do_nothing_nc(
-      conflict$conflict_target,
-      set_names(ident(table), target_tbl),
-      con
-    ),
+    where = if (length(conflict)) {
+      sql_clause_do_nothing_nc(
+        conflict$conflict_target,
+        set_names(ident(table), target_tbl),
+        con
+      )
+    },
     returning = sql_clause_returning(con, returning)
   )
 
@@ -87,7 +88,6 @@ sql_insert_nc <- function(data,
     # SELECT * FROM insert_action
     # UNION ALL
     # SELECT {sql_clause_select_old(returning, con)} FROM update_action
-
   } else {
     sql_with_clauses(
       con = con,

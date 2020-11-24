@@ -1,5 +1,5 @@
 # nocov start
-sql_table_prefix <- function (con, var, table = NULL) {
+sql_table_prefix <- function(con, var, table = NULL) {
   var <- sql_escape_ident(con, var)
   if (!is.null(table)) {
     table <- sql_escape_ident(con, table)
@@ -10,17 +10,17 @@ sql_table_prefix <- function (con, var, table = NULL) {
   }
 }
 
-sql_escape_ident <- function (con, x) {
+sql_escape_ident <- function(con, x) {
   UseMethod("sql_escape_ident")
 }
 
 #' @export
-sql_escape_ident.DBIConnection <- function (con, x) {
+sql_escape_ident.DBIConnection <- function(con, x) {
   DBI::dbQuoteIdentifier(con, x)
 }
 
 #' @export
-sql_escape_ident.TestConnection <- function (con, x) {
+sql_escape_ident.TestConnection <- function(con, x) {
   dbplyr::sql_quote(x, "`")
 }
 

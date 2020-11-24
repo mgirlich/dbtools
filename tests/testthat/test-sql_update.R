@@ -63,8 +63,9 @@ test_that("sql_update can handle lists in `update`", {
   expect_snapshot(
     f_update(
       update = list("value",
-                    target_id = "source_id",
-                    value1 = sql("target.value1 + 1")),
+        target_id = "source_id",
+        value1 = sql("target.value1 + 1")
+      ),
       where = c("id")
     )
   )
@@ -75,8 +76,9 @@ test_that("sql_update can handle lists in `where`", {
     f_update(
       update = c("value"),
       where = list("value",
-                   target_id = "source_id",
-                   sql("target.value1 + 1"))
+        target_id = "source_id",
+        sql("target.value1 + 1")
+      )
     )
   )
 })

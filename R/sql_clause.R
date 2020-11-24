@@ -171,7 +171,7 @@ sql_clause_cte_table <- function(con, table, select_clause, columns = NULL) {
   )
 }
 
-sql_clause_from  <- function(con, from) {
+sql_clause_from <- function(con, from) {
   sql_clause_generic(con, "FROM", from)
 }
 

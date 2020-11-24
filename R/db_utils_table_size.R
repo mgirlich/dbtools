@@ -37,7 +37,7 @@ db_utils_index_infos <- function(con, table = NULL) {
   df <- DBI::dbGetQuery(
     con,
     build_sql(
-    "SELECT
+      "SELECT
     t.schemaname,
     t.tablename,
     indexname,
@@ -69,9 +69,10 @@ LEFT OUTER JOIN (
     JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid
 ) AS foo ON t.tablename = foo.ctablename AND t.schemaname = foo.schemaname
 WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')",
-    if (!is_null(table)) glue_sql("\n  AND t.tablename = {table}\n", .con = con),
-    "   ORDER BY 1,2;",
-    con = con)
+      if (!is_null(table)) glue_sql("\n  AND t.tablename = {table}\n", .con = con),
+      "   ORDER BY 1,2;",
+      con = con
+    )
   ) %>%
     maybe_as_tibble()
 
