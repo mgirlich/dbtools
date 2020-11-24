@@ -14,5 +14,7 @@
       FROM `source`
       WHERE (true)
       ON CONFLICT ("rowname")
-      DO UPDATE SET `cyl` = `EXCLUDED`.`cyl`, `mpg` = -`EXCLUDED`.`mpg`
+      DO UPDATE SET
+        `cyl` = `EXCLUDED`.`cyl`,
+        `mpg` = -`EXCLUDED`.`mpg`
 

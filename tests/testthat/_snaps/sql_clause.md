@@ -37,7 +37,8 @@
     Code
       sql_clause_set(con, sql(x = "a"))
     Output
-      <SQL> SET `x` = a
+      <SQL> SET
+        `x` = a
 
 # `sql_clause_set()` checks input type
 

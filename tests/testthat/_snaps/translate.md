@@ -20,7 +20,8 @@
       translate_conflict(con, sql_do_update(unique_cols, update))
     Output
       <SQL> ON CONFLICT ("id1", "id2")
-      DO UPDATE SET `target col` = `EXCLUDED`.`source col`
+      DO UPDATE SET
+        `target col` = `EXCLUDED`.`source col`
 
 ---
 
@@ -28,5 +29,6 @@
       translate_conflict(con, sql_do_update(unique_constraint, update))
     Output
       <SQL> ON CONSTRAINT "unique_constraint"
-      DO UPDATE SET `target col` = `EXCLUDED`.`source col`
+      DO UPDATE SET
+        `target col` = `EXCLUDED`.`source col`
 

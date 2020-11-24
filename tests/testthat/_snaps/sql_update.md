@@ -9,7 +9,9 @@
           (2, 'c', 103, 3)
       )
       UPDATE `sql_update_1` AS `target`
-      SET `value1` = `source`.`value1`, `value2` = `source`.`value_2`
+      SET
+        `value1` = `source`.`value1`,
+        `value2` = `source`.`value_2`
       FROM `source`
       WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id2` = `source`.`id_2`))
 
@@ -20,7 +22,9 @@
         "value1", "value2"), where = c("id1", "id2"))
     Output
       <SQL> UPDATE `dbtools_test` AS `target`
-      SET `value1` = `source`.`value1`, `value2` = `source`.`value2`
+      SET
+        `value1` = `source`.`value1`,
+        `value2` = `source`.`value2`
       FROM `source`
       WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id2` = `source`.`id2`))
 
@@ -34,7 +38,9 @@
         SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL WHERE FALSE
       )
       UPDATE `dbtools_test` AS `target`
-      SET `value1` = `source`.`value1`, `value2` = `source`.`value2`
+      SET
+        `value1` = `source`.`value1`,
+        `value2` = `source`.`value2`
       FROM `source`
       WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id2` = `source`.`id2`))
 
@@ -52,7 +58,10 @@
           (3, 'c', 11, 'B')
       )
       UPDATE `dbtools_test` AS `target`
-      SET `value` = `source`.`value`, `target_id` = `source`.`source_id`, `value1` = target.value1 + 1
+      SET
+        `value` = `source`.`value`,
+        `target_id` = `source`.`source_id`,
+        `value1` = target.value1 + 1
       FROM `source`
       WHERE (`target`.`id` = `source`.`id`)
 
@@ -70,7 +79,8 @@
           (3, 'c', 11, 'B')
       )
       UPDATE `dbtools_test` AS `target`
-      SET `value` = `source`.`value`
+      SET
+        `value` = `source`.`value`
       FROM `source`
       WHERE ((`target`.`value` = `source`.`value`) AND (`target`.`target_id` = `source`.`source_id`) AND (target.value1 + 1))
 

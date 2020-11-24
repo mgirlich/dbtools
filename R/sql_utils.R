@@ -36,3 +36,17 @@ maybe_ident.ident <- function(x) {
 maybe_ident.sql <- function(x) {
   x # nocov
 }
+
+#' @export
+maybe_ident.list <- function(x) {
+  purrr::map(
+    x,
+    ~ {
+      if (is_sql(.x)) {
+        .x
+      } else {
+        maybe_ident(.x)
+      }
+    }
+  )
+}
