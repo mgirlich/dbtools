@@ -3,6 +3,7 @@ test_db_f <- function(f,
                       expected_returned,
                       expected_state,
                       ...,
+                      con = con_memdb(),
                       ignore_order = FALSE) {
   dots <- list(...)
   if (is_sqlite(con)) {

@@ -1,7 +1,7 @@
 # `translate_conflict()` works
 
     Code
-      translate_conflict(con, sql_do_nothing(unique_cols))
+      translate_conflict(con_memdb(), sql_do_nothing(unique_cols))
     Output
       <SQL> ON CONFLICT ("id1", "id2")
       DO NOTHING
@@ -9,7 +9,7 @@
 ---
 
     Code
-      translate_conflict(con, sql_do_nothing(unique_constraint))
+      translate_conflict(con_memdb(), sql_do_nothing(unique_constraint))
     Output
       <SQL> ON CONSTRAINT "unique_constraint"
       DO NOTHING
@@ -17,7 +17,7 @@
 ---
 
     Code
-      translate_conflict(con, sql_do_update(unique_cols, update))
+      translate_conflict(con_memdb(), sql_do_update(unique_cols, update))
     Output
       <SQL> ON CONFLICT ("id1", "id2")
       DO UPDATE SET
@@ -26,7 +26,7 @@
 ---
 
     Code
-      translate_conflict(con, sql_do_update(unique_constraint, update))
+      translate_conflict(con_memdb(), sql_do_update(unique_constraint, update))
     Output
       <SQL> ON CONSTRAINT "unique_constraint"
       DO UPDATE SET

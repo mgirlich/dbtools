@@ -38,15 +38,10 @@ db_utils_index_infos <- function(con, table = NULL) {
     abort_invalid_input("db_utils_index_infos only works with PostgreSQL.")
   }
 
-  if (!is_null(table)) {
-    table_filter <- glue_sql("AND t.tablename = {table}", .con = con)
-  } else {
-    table_filter <- sql("")
-  }
-
   df <- DBI::dbGetQuery(
     con,
-    glue_sql("SELECT
+    build_sql(
+    "SELECT
     t.schemaname,
     t.tablename,
     indexname,
@@ -77,9 +72,10 @@ LEFT OUTER JOIN (
     JOIN pg_class ipg ON ipg.oid = x.indexrelid
     JOIN pg_stat_all_indexes psai ON x.indexrelid = psai.indexrelid
 ) AS foo ON t.tablename = foo.ctablename AND t.schemaname = foo.schemaname
-WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')
-    {table_filter}
-ORDER BY 1,2;", .con = con)
+WHERE t.schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_temp_20')",
+    if (!is_null(table)) glue_sql("\n  AND t.tablename = {table}\n", .con = con),
+    "   ORDER BY 1,2;",
+    con = con)
   ) %>%
     maybe_as_tibble()
 
