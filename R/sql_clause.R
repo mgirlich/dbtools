@@ -128,7 +128,7 @@ sql_values <- function(con, data) {
 
     paste_sql("SELECT ", escaped_data, " WHERE FALSE")
   } else {
-    escaped_data <- DBI::sqlData(con, data)
+    escaped_data <- purrr::modify(data, escape_value, con = con)
 
     vals <- purrr::pmap(
       escaped_data,

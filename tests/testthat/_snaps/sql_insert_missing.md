@@ -5,9 +5,9 @@
     Output
       <SQL> WITH `source` (`rowname`, `mpg`, `cyl`, `disp`) AS (
         VALUES
-          ('Datsun 710', 22.8, 4, 108),
-          ('Hornet 4 Drive', 21.4, 6, 258),
-          ('Hornet Sportabout', 18.7, 8, 360)
+          ('Datsun 710', 22.8, 4.0, 108.0),
+          ('Hornet 4 Drive', 21.4, 6.0, 258.0),
+          ('Hornet Sportabout', 18.7, 8.0, 360.0)
       )
       INSERT INTO `sql_insert_missing_1` AS `target` (`rowname`, `mpg`, `cyl`, `disp`)
       SELECT `rowname`, `mpg`, `cyl`, `disp`
@@ -23,9 +23,9 @@
     Output
       <SQL> WITH `source` (`rowname`, `mpg`, `cyl`, `disp`) AS (
         VALUES
-          ('Datsun 710', 22.8, 4, 108),
-          ('Hornet 4 Drive', 21.4, 6, 258),
-          ('Hornet Sportabout', 18.7, 8, 360)
+          ('Datsun 710', 22.8, 4.0, 108.0),
+          ('Hornet 4 Drive', 21.4, 6.0, 258.0),
+          ('Hornet Sportabout', 18.7, 8.0, 360.0)
       )
       INSERT INTO `sql_insert_missing_2` AS `target` (`rowname`, `mpg`, `cyl`, `disp`)
       SELECT `rowname`, `mpg`, `cyl`, `disp`
@@ -43,9 +43,9 @@
     Output
       <SQL> WITH "source" ("rowname", "mpg", "cyl", "disp") AS (
         VALUES
-          ('Datsun 710', 22.8::float8, 4::float8, 108::float8),
-          ('Hornet 4 Drive', 21.4::float8, 6::float8, 258::float8),
-          ('Hornet Sportabout', 18.7::float8, 8::float8, 360::float8)
+          ('Datsun 710', 22.8, 4.0, 108.0),
+          ('Hornet 4 Drive', 21.4, 6.0, 258.0),
+          ('Hornet Sportabout', 18.7, 8.0, 360.0)
       ),
       "ins_result" AS (
         INSERT INTO "sql_insert_missing_3" AS "target" ("rowname", "mpg", "cyl", "disp")

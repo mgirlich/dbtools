@@ -29,6 +29,29 @@ test_that("`sql_clause_data()` handles characters", {
   expect_null(sql_clause_data(con_memdb(), "source_tbl", "values"))
 })
 
+test_that("`sql_values()` escapes different datatypes correctly", {
+  skip("not yet done")
+  data <- tibble::tibble(
+    blob = blob::as_blob(as.raw(c(0x01, 0x02, 0x03))),
+    character = c("a", "b", "c"),
+    date = Sys.Date(),
+    double = 1:3 + 0.0,
+    factor = factor(c("f1", "f2", "f3")),
+    ident = ident("i1", "i2", "i3"),
+    integer = 1L:3L,
+    integer64 = bit64::as.integer64("123456789123456789"),
+    list = list("l1", 2, Sys.time()),
+    logical = c(TRUE, FALSE, NA),
+    null = list(NULL),
+    posixt = c(Sys.time(), Sys.time() + 10, Sys.time() + 20),
+    sql = sql("s1", "s2", "s3")
+  )
+
+  expect_snapshot(sql_values(con_memdb(), data))
+
+  # TODO is this really correct like this?
+})
+
 test_that("`sql_values()` works for empty dataframes and SQLite", {
   expect_snapshot(sql_values(con_memdb(), mtcars_df[0, ]))
 })

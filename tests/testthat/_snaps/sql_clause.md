@@ -5,8 +5,8 @@
     Output
       <SQL> `values` (`rowname`, `mpg`, `cyl`, `disp`) AS (
         VALUES
-          ('Mazda RX4', 21, 6, 160),
-          ('Mazda RX4 Wag', 21, 6, 160)
+          ('Mazda RX4', 21.0, 6.0, 160.0),
+          ('Mazda RX4 Wag', 21.0, 6.0, 160.0)
       )
 
 # `sql_values()` works for empty dataframes and SQLite
