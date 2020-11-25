@@ -86,7 +86,21 @@ sql_clause_data.data.frame <- function(con, data, table) {
 #' @export
 sql_clause_data.character <- function(con, data, table) {
   stopifnot(length(data) == 1)
+  # NULL
+
   NULL
+
+  # inner_clause <- sql_statements(
+  #   con,
+  #   sql_clause_select(con, sql("*")),
+  #   sql_clause_from(con, ident(data))
+  # )
+  #
+  # sql_clause_cte_table(
+  #   con,
+  #   ident(table),
+  #   inner_clause
+  # )
 }
 
 #' SQL VALUES clause
@@ -202,10 +216,16 @@ sql_clause_where_exists <- function(con, table, where_clause, not) {
 #'   ident("id1", "id2", "value1")
 #' )
 sql_clause_insert_into <- function(con, table, columns) {
-  columns_esc <- escape(columns, parens = FALSE, con = con)
+  if (!is_empty(columns)) {
+    columns_esc <- escape(columns, parens = FALSE, con = con)
+    columns_clause <- sql_vector(columns_esc, parens = TRUE, collapse = ", ", con = con)
+  } else {
+    columns_clause <- NULL
+  }
+
   build_sql(
     "INSERT INTO ", maybe_ident(table),
-    " ", sql_vector(columns_esc, parens = TRUE, collapse = ", ", con = con),
+    " ", columns_clause,
     con = con
   )
 }

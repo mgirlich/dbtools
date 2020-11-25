@@ -22,13 +22,14 @@ sql_delete <- function(data,
   check_supports_returning(con, returning)
 
   source_tbl <- "source"
+  data_tbl <- ident_data(data, source_tbl)
 
   where_clause <- sql_clause_where(con, translate_where(con, where))
 
   delete_sql <- sql_statements(
     con = con,
     sql_clause_delete(con, ident(target = table)),
-    sql_clause_where_exists(con, ident(source_tbl), where_clause, not = FALSE),
+    sql_clause_where_exists(con, data_tbl, where_clause, not = FALSE),
     if (length(returning)) sql_clause_returning(con, returning)
   )
 

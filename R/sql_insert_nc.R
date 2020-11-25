@@ -37,6 +37,7 @@ sql_insert_nc <- function(data,
   # add_sql_return_all
   source_tbl <- "source"
   target_tbl <- "target"
+  data_tbl <- ident_data(data, source_tbl)
 
   insert_cols <- insert_cols %||% colnames(data)
 
@@ -47,8 +48,8 @@ sql_insert_nc <- function(data,
       set_names(ident(table), target_tbl),
       ident(insert_cols)
     ),
-    select = sql_clause_select(con, ident(insert_cols)),
-    from = sql_clause_from(con, ident(source_tbl)),
+    select = sql_clause_select(con, if (is_empty(insert_cols)) sql("*") else ident(insert_cols)),
+    from = sql_clause_from(con, data_tbl),
     where = if (length(conflict)) {
       sql_clause_do_nothing_nc(
         conflict$conflict_target,
@@ -70,7 +71,7 @@ sql_insert_nc <- function(data,
     }
 
     update_clause <- sql_update(
-      data = source_tbl,
+      data = vec_data(data_tbl),
       table = table,
       con = con,
       where = conflict$conflict_target,

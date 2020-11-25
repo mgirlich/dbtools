@@ -1,15 +1,20 @@
 check_standard_args <- function(data, table, con, from_table = FALSE) {
-  if (is_true(from_table)) {
-    stopifnot(is.data.frame(data) || is_bare_character(data, n = 1))
-  } else {
-    stopifnot(is.data.frame(data))
-  }
+  # if (is_true(from_table)) {
+  #   stopifnot(is.data.frame(data) || is_bare_character(data, n = 1))
+  # } else {
+  #   stopifnot(is.data.frame(data))
+  # }
+  stopifnot(is.data.frame(data) || is_bare_character(data, n = 1))
   stopifnot(is_bare_character(table, n = 1))
   stopifnot(inherits(con, "DBIConnection"))
 }
 
 
 check_has_cols <- function(x, cols, x_arg = NULL, cols_arg = NULL) {
+  if (is.character(x)) {
+    return()
+  }
+
   x_arg <- x_arg %||% as_label(enexpr(x))
   cols_arg <- cols_arg %||% as_label(enexpr(cols))
 

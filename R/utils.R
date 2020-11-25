@@ -51,3 +51,17 @@ is_named2 <- function(x) {
 `[[.sql` <- function(x, i, ...) {
   sql(NextMethod("[["))
 }
+
+ident_data <- function(x, name = "source") {
+  UseMethod("ident_data")
+}
+
+#' @export
+ident_data.character <- function(x, name = "source") {
+  set_names(ident(x), name)
+}
+
+#' @export
+ident_data.data.frame <- function(x, name = "source") {
+  ident(name)
+}

@@ -83,6 +83,10 @@ sql_insert_on_conflict <- function(data,
                                    return_all = FALSE) {
   source_tbl <- "source"
   target_tbl <- "target"
+  data_tbl <- ident_data(data, source_tbl)
+
+  # TODO handling of empty insert_cols isn't nice
+  # --> maybe do not allow them?
 
   # `WHERE true` is needed for SQLite
   # see: https://modern-sql.com/blog/2019-01/sqlite-in-2018#upsert
@@ -93,8 +97,8 @@ sql_insert_on_conflict <- function(data,
       set_names(ident(table), target_tbl),
       ident(insert_cols)
     ),
-    select = sql_clause_select(con, ident(insert_cols)),
-    from = sql_clause_from(con, ident(source_tbl)),
+    select = sql_clause_select(con, if (is_empty(insert_cols)) sql("*") else ident(insert_cols)),
+    from = sql_clause_from(con, data_tbl),
     where = if (length(conflict)) sql_clause_where(con, sql("true")),
     on_conflict = if (length(conflict)) translate_conflict(con, conflict),
     returning = sql_clause_returning(con, returning)
@@ -105,7 +109,7 @@ sql_insert_on_conflict <- function(data,
       con = con,
       sql_clause_data(con, data, source_tbl),
       sql_clause_cte_table(con, ident("ins_result"), insert_clause),
-      sql_return_all(con, table, returning, conflict)
+      sql_return_all(con, table, returning, conflict, data_tbl)
     )
   } else {
     sql_with_clauses(
@@ -122,7 +126,7 @@ sql_insert_on_conflict <- function(data,
 #   returning = c("mpg", "cyl"),
 #   conflict = sql_do_nothing(c("id", "id 2"))
 # )
-sql_return_all <- function(con, table, returning, conflict) {
+sql_return_all <- function(con, table, returning, conflict, source_tbl) {
   if (is_null(returning)) {
     message <- c(
       "`return_all` is `TRUE` but not specified what to return",
@@ -140,7 +144,6 @@ sql_return_all <- function(con, table, returning, conflict) {
   }
 
   target_tbl <- "target"
-  source_tbl <- "source"
 
   # idea from
   # https://stackoverflow.com/questions/35949877/how-to-include-excluded-rows-in-returning-from-insert-on-conflict/35953488#35953488
@@ -153,6 +156,6 @@ sql_return_all <- function(con, table, returning, conflict) {
     "UNION ALL",
     sql_clause_select(con, maybe_ident(returning)),
     sql_clause_from(con, set_names(ident(table), target_tbl)),
-    sql_clause_where_exists(con, ident(source_tbl), where_clause, not = FALSE)
+    sql_clause_where_exists(con, source_tbl, where_clause, not = FALSE)
   )
 }
