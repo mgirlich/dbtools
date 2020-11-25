@@ -10,7 +10,7 @@ batch_wise_db <- function(data,
     get_or_execute(con, sql, returning = returning)
   }
 
-  ret <- maybe_trans(
+  ret <- with_transaction(
     con,
     batch_wise(
       data,
