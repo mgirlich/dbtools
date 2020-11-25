@@ -5,10 +5,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       INSERT INTO `dbtools_test` AS `target` (`id1`, `id2`, `value1`, `value2`)
       SELECT `id1`, `id2`, `value1`, `value2`
@@ -21,10 +21,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       INSERT INTO `dbtools_test` AS `target` (`id1`, `value1`)
       SELECT `id1`, `value1`
@@ -37,10 +37,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       INSERT INTO `dbtools_test` AS `target` (`id1`, `id2`, `value1`, `value2`)
       SELECT `id1`, `id2`, `value1`, `value2`
@@ -55,10 +55,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       INSERT INTO `dbtools_test` AS `target` (`id1`, `id2`, `value1`, `value2`)
       SELECT `id1`, `id2`, `value1`, `value2`
@@ -78,10 +78,10 @@
     Output
       <SQL> WITH "source" ("id1", "id2", "value1", "value2") AS (
         VALUES
-          (1::float8, 'a', 10::float8, 'A'),
-          (1::float8, 'b', 20::float8, 'AA'),
-          (2::float8, 'b', 11::float8, 'B'),
-          (3::float8, 'c', 11::float8, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       ),
       "insert_action" AS (
         INSERT INTO "dbtools_test" AS "target" ("id1", "id2", "value1", "value2")

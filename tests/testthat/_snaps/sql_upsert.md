@@ -5,9 +5,9 @@
     Output
       <SQL> WITH `source` (`rowname`, `mpg`, `cyl`, `disp`) AS (
         VALUES
-          ('Datsun 710', 22.8, 6, 108),
-          ('Hornet 4 Drive', 21.4, 8, 258),
-          ('Hornet Sportabout', 18.7, 10, 360)
+          ('Datsun 710', 22.8, 6.0, 108.0),
+          ('Hornet 4 Drive', 21.4, 8.0, 258.0),
+          ('Hornet Sportabout', 18.7, 10.0, 360.0)
       )
       INSERT INTO `sql_upsert_1` AS `target` (`rowname`, `mpg`, `cyl`)
       SELECT `rowname`, `mpg`, `cyl`
@@ -25,9 +25,9 @@
     Output
       <SQL> WITH "source" ("rowname", "mpg", "cyl", "disp") AS (
         VALUES
-          ('Datsun 710', 22.8::float8, 6::float8, 108::float8),
-          ('Hornet 4 Drive', 21.4::float8, 8::float8, 258::float8),
-          ('Hornet Sportabout', 18.7::float8, 10::float8, 360::float8)
+          ('Datsun 710', 22.8, 6.0, 108.0),
+          ('Hornet 4 Drive', 21.4, 8.0, 258.0),
+          ('Hornet Sportabout', 18.7, 10.0, 360.0)
       ),
       "insert_action" AS (
         INSERT INTO "sql_upsert_2" AS "target" ("rowname", "mpg", "cyl")

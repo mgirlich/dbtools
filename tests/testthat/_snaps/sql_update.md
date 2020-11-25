@@ -5,8 +5,8 @@
     Output
       <SQL> WITH `source` (`id1`, `id_2`, `value1`, `value_2`) AS (
         VALUES
-          (1, 'a', 101, 1),
-          (2, 'c', 103, 3)
+          (1.0, 'a', 101.0, 1.0),
+          (2.0, 'c', 103.0, 3.0)
       )
       UPDATE `sql_update_1` AS `target`
       SET
@@ -25,7 +25,7 @@
       SET
         `value1` = `source`.`value1`,
         `value2` = `source`.`value2`
-      FROM `source`
+      FROM `my_tbl` AS `source`
       WHERE ((`target`.`id1` = `source`.`id1`) AND (`target`.`id2` = `source`.`id2`))
 
 # `data` can be a zero row df
@@ -52,10 +52,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       UPDATE `dbtools_test` AS `target`
       SET
@@ -73,10 +73,10 @@
     Output
       <SQL> WITH `source` (`id1`, `id2`, `value1`, `value2`) AS (
         VALUES
-          (1, 'a', 10, 'A'),
-          (1, 'b', 20, 'AA'),
-          (2, 'b', 11, 'B'),
-          (3, 'c', 11, 'B')
+          (1.0, 'a', 10.0, 'A'),
+          (1.0, 'b', 20.0, 'AA'),
+          (2.0, 'b', 11.0, 'B'),
+          (3.0, 'c', 11.0, 'B')
       )
       UPDATE `dbtools_test` AS `target`
       SET
