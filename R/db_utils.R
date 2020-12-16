@@ -4,21 +4,28 @@ batch_wise_db <- function(data,
                           trans,
                           returning = NULL,
                           batch_size = 50e3) {
+  # TODO support `trans` argument
   .f <- rlang::as_function(.f)
   f_chunk <- function(chunk) {
     sql <- .f(chunk)
     get_or_execute(con, sql, returning = returning)
   }
 
-  ret <- with_transaction(
-    con,
-    batch_wise(
-      data,
-      batch_size,
-      f_chunk
-    ),
-    trans = trans
-  )
+  if (is.character(data)) {
+    ret <- with_transaction(
+      con,
+      f_chunk(data)
+    )
+  } else {
+    ret <- with_transaction(
+      con,
+      batch_wise(
+        data,
+        batch_size,
+        f_chunk
+      )
+    )
+  }
 
   if (is_null(returning)) {
     sum(unlist(ret))
@@ -39,8 +46,9 @@ batch_wise <- function(data, batch_size, .f) {
     for (i in 1:batch_count) {
       start <- ((i - 1) * batch_size) + 1
       end <- min(start + batch_size - 1, row_count)
-      ret[[i]] <- .f(data[start:end, , drop = FALSE])
-      # TODO use `vec_slice()` instead?
+      # TODO
+      # ret[[i]] <- .f(data[start:end, , drop = FALSE])
+      ret[[i]] <- .f(vec_slice(data, start:end))
     }
 
     ret

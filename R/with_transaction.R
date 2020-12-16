@@ -25,7 +25,10 @@
 #' )
 with_transaction <- function(con, code, ...) {
   cache <- cache()
-  label <- paste0("trans_", rlang::env_label(con@ref))
+  # label <- paste0("trans_", rlang::env_label(con@ref))
+  pointer_expr <- capture.output(print(attr(con, "ptr")))
+  label <- gsub("pointer: ", "", pointer_expr)
+
 
   if (env_get(cache, label, FALSE)) {
     on.exit(env_poke(cache, label, FALSE))
