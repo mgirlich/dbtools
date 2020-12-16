@@ -40,7 +40,7 @@ test_that("`sql_values()` escapes different datatypes correctly", {
     ident = ident("i1", "i2", "i3"),
     integer = 1L:3L,
     integer64 = bit64::as.integer64("123456789123456789"),
-    list = list("l1", 2, Sys.time()),
+    # list = list("l1", 2, Sys.time()),
     logical = c(TRUE, FALSE, NA),
     null = list(NULL),
     posixt = c(Sys.time(), Sys.time() + 10, Sys.time() + 20),
@@ -48,6 +48,9 @@ test_that("`sql_values()` escapes different datatypes correctly", {
   )
 
   expect_snapshot(sql_values(con_memdb(), data))
+
+  skip_if_not(has_pg())
+  expect_snapshot(sql_values(con_pg(), data))
 
   # TODO is this really correct like this?
 })
