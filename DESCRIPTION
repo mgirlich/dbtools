@@ -28,3 +28,5 @@ Imports:
     dbplyr,
     assertthat
 Config/testthat/edition: 3
+URL: https://github.com/mgirlich/dbtools
+BugReports: https://github.com/mgirlich/dbtools/issues
