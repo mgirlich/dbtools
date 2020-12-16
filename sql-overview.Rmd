@@ -1,0 +1,275 @@
+---
+title: "test"
+author: "Maximilian Girlich"
+date: "11/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Delete
+
+### Documentation links
+* [PostgreSQL](https://www.postgresql.org/docs/current/sql-delete.html)
+* [SQLite](https://sqlite.org/lang_delete.html)
+* [MariaDB](https://mariadb.com/kb/en/delete/)
+* [MySQL](https://dev.mysql.com/doc/refman/8.0/en/delete.html)
+
+### PostgreSQL Syntax
+```sql
+[ WITH [ RECURSIVE ] with_query [, ...] ]
+DELETE FROM [ ONLY ] table_name [ * ] [ [ AS ] alias ]
+    [ USING from_item [, ...] ]
+    [ WHERE condition | WHERE CURRENT OF cursor_name ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+```
+
+### Simplified Syntax
+* `WITH`: with clauses are handled via separate helper
+* `ONLY`: might make sense
+* `USING`: not needed, use standard syntax via `WHERE` condition
+
+```sql
+DELETE FROM [ ONLY ] table_name [ * ] [ [ AS ] alias ]
+    [ WHERE condition ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+```
+
+### Example
+```sql
+DELETE FROM films
+  WHERE producer_id IN (SELECT id FROM producers WHERE name = 'foo')
+  RETURNING *;
+```
+
+### Functions
+-------------------------------
+* `sql_delete()`
+  * generic delete
+  * interface: `sql_delete(table, where, returning = NULL)`
+  * SQL code
+  ```sql
+    DELETE FROM table
+    WHERE <where>
+    RETURNING <returning>;
+  ```
+* `sql_delete_data()`
+  * delete rows that exists (or not) in some data
+  * `sql_delete_data(data, table, by, where = NULL, returning = NULL)`
+  * SQL code
+  ```sql
+    DELETE FROM table
+    WHERE (NOT) EXISTS (
+      SELECT 1
+      FROM data
+      WHERE <by>
+    )
+      AND <where>
+    RETURNING <returning>;
+  ```
+
+## Update
+
+### Documentation links
+* [PostgreSQL](https://www.postgresql.org/docs/current/sql-update.html)
+* [SQLite](https://sqlite.org/lang_update.html)
+* [MariaDB](https://mariadb.com/kb/en/update/)
+* [MySQL](https://dev.mysql.com/doc/refman/8.0/en/update.html)
+
+### PostgreSQL Syntax
+```sql
+[ WITH [ RECURSIVE ] with_query [, ...] ]
+UPDATE [ ONLY ] table_name [ * ] [ [ AS ] alias ]
+    SET { column_name = { expression | DEFAULT } |
+          ( column_name [, ...] ) = [ ROW ] ( { expression | DEFAULT } [, ...] ) |
+          ( column_name [, ...] ) = ( sub-SELECT )
+        } [, ...]
+    [ FROM from_item [, ...] ]
+    [ WHERE condition | WHERE CURRENT OF cursor_name ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+```
+
+### Simplified Syntax
+* `WITH`: with clauses are handled via separate helper
+* `ONLY`: might make sense
+
+```sql
+UPDATE [ ONLY ] table_name [ * ] [ [ AS ] alias ]
+    SET { column_name = { expression } |
+          ( column_name [, ...] ) = [ ROW ] ( { expression | DEFAULT } [, ...] ) |
+          ( column_name [, ...] ) = ( sub-SELECT )
+        } [, ...]
+    [ FROM from_item [, ...] ]
+    [ WHERE condition ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+```
+
+???? ( column_name [, ...] ) = ( sub-SELECT )
+
+### Example
+```sql
+UPDATE films SET kind = 'Dramatic' WHERE kind = 'Drama';
+
+```
+
+Subselect vs join
+
+Example 1
+```sql
+UPDATE employees
+SET sales_count = sales_count + 1
+FROM accounts
+  WHERE accounts.name = 'Acme Corporation'
+  AND employees.id = accounts.sales_person;
+```
+
+```sql
+UPDATE employees
+SET sales_count = sales_count + 1
+WHERE id =
+  (SELECT sales_person FROM accounts WHERE name = 'Acme Corporation');
+```
+
+Example 2
+
+```sql
+UPDATE accounts SET contact_first_name = first_name,
+                    contact_last_name = last_name
+  FROM salesmen WHERE salesmen.id = accounts.sales_id;
+```
+> this query is unsafe if `id` is not a unique key!
+
+```sql
+UPDATE accounts SET (contact_first_name, contact_last_name) =
+    (SELECT first_name, last_name FROM salesmen
+     WHERE salesmen.id = accounts.sales_id);
+```
+> guaranteed to raise an error if there are multiple id matches
+--> seems to be better
+BUT
+> if there is no match for a particular accounts.sales_id entry, the second query
+will set the corresponding name fields to NULL, whereas the first query will
+not update that row at all
+
+to avoid updating with `NULL` and have a safe query use the version below
+
+```sql
+UPDATE accounts SET (contact_first_name, counter) =
+    (SELECT first_name, accounts.counter + 1 FROM salesmen
+     WHERE salesmen.id = accounts.sales_id)
+WHERE EXISTS (
+  SELECT 1
+    FROM salesmen
+   WHERE salesmen.id = accounts.sales_id
+);
+```
+
+### Functions
+-------------------------------
+* `sql_update()`
+  * simple update, not from data?
+  * interface: `sql_update(table, update, where = NULL, returning = NULL)`
+  * SQL code
+  ```sql
+    UPDATE <table>
+    SET <update>
+    WHERE <where>
+    RETURNING <returning>;
+    
+    UPDATE weather
+    SET temp_lo = temp_lo+1, temp_hi = temp_lo+15, prcp = DEFAULT
+    WHERE city = 'San Francisco' AND date = '2003-07-03'
+    RETURNING temp_lo, temp_hi, prcp;
+  ```
+* `sql_update_data()`
+  * update rows from another table
+  * SQL code
+  ```sql
+    UPDATE <table>
+    SET <update columns> = (
+      SELECT <update values>
+      FROM <data>
+      WHERE <by>
+    )
+    WHERE <by> AND <where>;
+  
+    UPDATE accounts SET (contact_first_name, counter) =
+      (SELECT first_name, accounts.counter + 1 FROM salesmen
+      WHERE salesmen.id = accounts.sales_id)
+    WHERE EXISTS (
+      SELECT 1
+        FROM salesmen
+       WHERE salesmen.id = accounts.sales_id
+    );
+  ```
+  
+  
+  
+## Insert
+
+### Documentation links
+* [PostgreSQL](https://www.postgresql.org/docs/current/sql-insert.html)
+* [SQLite](https://sqlite.org/lang_insert.html)
+* [MariaDB](https://mariadb.com/kb/en/insert/)
+* [MySQL](https://dev.mysql.com/doc/refman/8.0/en/insert.html)
+
+### PostgreSQL Syntax
+```sql
+[ WITH [ RECURSIVE ] with_query [, ...] ]
+INSERT INTO table_name [ AS alias ] [ ( column_name [, ...] ) ]
+    [ OVERRIDING { SYSTEM | USER } VALUE ]
+    { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) [, ...] | query }
+    [ ON CONFLICT [ conflict_target ] conflict_action ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+
+where conflict_target can be one of:
+
+    ( { index_column_name | ( index_expression ) } [ COLLATE collation ] [ opclass ] [, ...] ) [ WHERE index_predicate ]
+    ON CONSTRAINT constraint_name
+
+and conflict_action is one of:
+
+    DO NOTHING
+    DO UPDATE SET { column_name = { expression | DEFAULT } |
+                    ( column_name [, ...] ) = [ ROW ] ( { expression | DEFAULT } [, ...] ) |
+                    ( column_name [, ...] ) = ( sub-SELECT )
+                  } [, ...]
+              [ WHERE condition ]
+```
+
+### Simplified Syntax
+* `WITH`: with clauses are handled via separate helper
+* `conflict_target`: can only be a set of unique columns?
+* `conflict_action`: see `UPDATE`
+
+```sql
+INSERT INTO table_name [ AS alias ] [ ( column_name [, ...] ) ]
+    { VALUES ( { expression | DEFAULT } [, ...] ) [, ...] | query }
+    [ ON CONFLICT [ conflict_target ] conflict_action ]
+    [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
+
+where conflict_target can be one of:
+
+    ( { index_column_name } [, ...] )
+
+and conflict_action is one of:
+
+    DO NOTHING
+    DO UPDATE SET { column_name = { expression | DEFAULT } |
+              [ WHERE condition ]
+```
+
+### Example
+```sql
+```
+
+### Functions
+-------------------------------
+
+
+## General Thoughts
+* make it easy to combine results from different queries, e.g. use data from a custom SQL query
+  --> delay rendering?
+* should be easy to adapt/extend
